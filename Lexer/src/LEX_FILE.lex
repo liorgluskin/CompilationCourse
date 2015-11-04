@@ -62,8 +62,15 @@ import java_cup.runtime.*;
 /***********************/
 LineTerminator	= \r|\n|\r\n
 WhiteSpace		= {LineTerminator} | [ \t\f]
+
+LINE_COMMENT	= "//".*{LineTerminator}?
+COMMENT			= {LINE_COMMENT} | "/*"~"*/"
+COMMENT_ERROR	= "/*"
+
 INTEGER			= 0 | [1-9][0-9]*
-IDENTIFIER		= [A-Za-z_][A-Za-z_0-9]*
+LEADING_ZEROES	= 0[0-9]+
+IDENTIFIER		= [a-z][A-Za-z_0-9]*
+CLASS_ID		= [A-Z][A-Za-z_0-9]*
    
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
@@ -82,24 +89,49 @@ IDENTIFIER		= [A-Za-z_][A-Za-z_0-9]*
 /**************************************************************/
    
 <YYINITIAL> {
-   
-";"					{ System.out.print("SEMICOLON "); return symbol(sym.SEMICOLON);}
-"+"					{ System.out.print("PLUS ");      return symbol(sym.PLUS);}
-"*"					{ System.out.print("TIMES ");     return symbol(sym.TIMES);}
-"/"					{ System.out.print("DIVIDE ");    return symbol(sym.DIVIDE);}
-"("					{ System.out.print("LPAREN ");    return symbol(sym.LPAREN);}
-")"					{ System.out.print("RPAREN ");    return symbol(sym.RPAREN);}
+
+"."					{ System.out.print(yyline+1+": DOT\n");		return symbol(sym.DOT);}
+","					{ System.out.print(yyline+1+": COMMA\n");	  	return symbol(sym.COMMA);}
+";"					{ System.out.print(yyline+1+": SEMICOLON\n"); return symbol(sym.SEMICOLON);}
+"+"					{ System.out.print(yyline+1+": PLUS\n");      return symbol(sym.PLUS);}
+"*"					{ System.out.print(yyline+1+": TIMES\n");		return symbol(sym.TIMES);}
+"/"					{ System.out.print(yyline+1+": DIVIDE\n");    return symbol(sym.DIVIDE);}
+"("					{ System.out.print(yyline+1+": LPAREN\n");    return symbol(sym.LPAREN);}
+")"					{ System.out.print(yyline+1+": RPAREN\n");    return symbol(sym.RPAREN);}
+"="					{ System.out.print(yyline+1+": ASSIGN\n");    return symbol(sym.ASSIGN);}
+"=="				{ System.out.print(yyline+1+": EQUAL\n");     return symbol(sym.EQUAL);}
+
+"boolean"			{ System.out.print(yyline+1+": BOOLEAN\n");	return symbol(sym.BOOLEAN);}
+"break"				{ System.out.print(yyline+1+": BREAK\n");		return symbol(sym.BREAK);}
+"class"				{ System.out.print(yyline+1+": CLASS\n");		return symbol(sym.CLASS);}
+"continue"			{ System.out.print(yyline+1+": CONTINUE\n");	return symbol(sym.CONTINUE);}
+"extends"			{ System.out.print(yyline+1+": EXTENDS\n");	return symbol(sym.EXTENDS);}
+"else"				{ System.out.print(yyline+1+": ELSE\n");		return symbol(sym.ELSE);}
+"false"				{ System.out.print(yyline+1+": FALSE\n");		return symbol(sym.FALSE);}
+
+
 {INTEGER}			{
-						System.out.print("INT(");
+						System.out.print(yyline+1+": INT(");
 						System.out.print(yytext());
-						System.out.print(") ");
+						System.out.print(")\n");
 						return symbol(sym.NUMBER, new Integer(yytext()));
 					}   
 {IDENTIFIER}		{
-						System.out.print("ID(");
+						System.out.print(yyline+1+": ID(");
 						System.out.print(yytext());
-						System.out.print(") ");
+						System.out.print(")\n");
 						return symbol(sym.ID, new String(yytext()));
 					}
-{WhiteSpace}		{ /* just skip what was found, do nothing */ }   
+{CLASS_ID}			{
+						System.out.print(yyline+1+": CLASS_ID(");
+						System.out.print(yytext());
+						System.out.print(")\n");
+						return symbol(sym.CLASS_ID, new String(yytext()));
+					}
+{WhiteSpace}		{ /* just skip what was found, do nothing */ }
+{COMMENT}			{ /* just skip what was found, do nothing */ }
+
+{COMMENT_ERROR}		{ throw new Error("Unclosed comment"); }
+{LEADING_ZEROES}	{ throw new Error("Leading zeroes number"); }
+
 }
