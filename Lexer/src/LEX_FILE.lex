@@ -71,6 +71,10 @@ INTEGER			= 0 | [1-9][0-9]*
 LEADING_ZEROES	= 0[0-9]+
 IDENTIFIER		= [a-z][A-Za-z_0-9]*
 CLASS_ID		= [A-Z][A-Za-z_0-9]*
+
+//errors
+ERROR			= "$"
+
    
 /******************************/
 /* DOLAR DOLAR - DON'T TOUCH! */
@@ -102,7 +106,24 @@ CLASS_ID		= [A-Z][A-Za-z_0-9]*
 "=="				{ System.out.print(yyline+1+": EQUAL\n");     return symbol(sym.EQUAL);}
 ">"					{ System.out.print(yyline+1+": GT\n");		  return symbol(sym.GT);}
 ">="				{ System.out.print(yyline+1+": GTE\n");		  return symbol(sym.GTE);}
-"&&"				{ System.out.print(yyline+1+": LAND\n");	  return symbol(sym.LAND);}
+
+
+//Lior
+
+"["					{ System.out.print(yyline+1+": LB\n");	  	  return symbol(sym.LB);}
+"{"					{ System.out.print(yyline+1+": LCBR\n");	  return symbol(sym.LAND);}
+"length"			{ System.out.print(yyline+1+": LENGTH\n");	  return symbol(sym.LENGTH);}
+"new"				{ System.out.print(yyline+1+": NEW\n");	  	  return symbol(sym.NEW);}
+"!"					{ System.out.print(yyline+1+": LNEG\n");	  return symbol(sym.LNEG);}
+"||"				{ System.out.print(yyline+1+": LOR\n");	  	  return symbol(sym.LOR);}
+"<"					{ System.out.print(yyline+1+": LT\n");	  	  return symbol(sym.LT);}
+"<="				{ System.out.print(yyline+1+": LTE\n");	   	  return symbol(sym.LTE);}
+"-"					{ System.out.print(yyline+1+": MINUS\n");	  return symbol(sym.MINUS);}
+"%"					{ System.out.print(yyline+1+": MOD\n");	  	  return symbol(sym.MOD);}
+"!="				{ System.out.print(yyline+1+": NEQUAL\n");	  return symbol(sym.NEQUAL);}
+
+
+//Keren
 
 "boolean"			{ System.out.print(yyline+1+": BOOLEAN\n");	  return symbol(sym.BOOLEAN);}
 "break"				{ System.out.print(yyline+1+": BREAK\n");	  return symbol(sym.BREAK);}
@@ -135,7 +156,14 @@ CLASS_ID		= [A-Z][A-Za-z_0-9]*
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 {COMMENT}			{ /* just skip what was found, do nothing */ }
 
-{COMMENT_ERROR}		{ throw new Error("Unclosed comment"); }
-{LEADING_ZEROES}	{ throw new Error("Leading zeroes number"); }
+
+//ERRORS
+//COMMENTS - TO BE DELETED BEFORE SUNDAY
+//Lior --> added line print
+
+{COMMENT_ERROR}		{ throw new Error(yyline+1  +":Lexical Error:Unclosed comment"); }
+{LEADING_ZEROES}	{ throw new Error(yyline+1  +":Leading zeroes number"); }
+
+{ERROR}				{ System.out.print(yyline+1  +":Lexical error: illegal character: " + yytext()); }
 
 }

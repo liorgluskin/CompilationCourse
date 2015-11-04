@@ -1,3 +1,4 @@
+
 /************************************/
 /* PRELIMINARY DECLARATIONS SECTION */
 /************************************/
@@ -87,8 +88,10 @@ terminal LP;
 terminal SEMI;
 terminal PLUS;
 
+//Lior
 terminal LB;
 terminal LCBR;
+terminal LENGTH;
 terminal NEW;
 terminal LNEG;
 terminal LOR;
@@ -96,6 +99,8 @@ terminal LT;
 terminal LTE;
 terminal MINUS;
 terminal MOD;
+terminal NEQUAL;
+ 
 
 /**********************/
 /* TERMINALS (TOKENS) */
