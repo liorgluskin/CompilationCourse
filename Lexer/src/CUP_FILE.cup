@@ -64,12 +64,6 @@ parser code {:
 /**********************/
 /* TERMINALS (TOKENS) */
 /**********************/
-terminal SEMICOLON;
-terminal PLUS;
-terminal TIMES;
-terminal LPAREN;
-terminal RPAREN;
-
 terminal ASSIGN;
 terminal BOOLEAN;
 terminal BREAK;
@@ -82,7 +76,26 @@ terminal EQUAL;
 terminal EXTENDS;
 terminal ELSE;
 terminal FALSE;
+terminal GT;
+terminal GTE;
+terminal IF;
+terminal INT;
+terminal LAND;
+terminal MULTIPLY;
+terminal RP;
+terminal LP;
+terminal SEMI;
+terminal PLUS;
 
+terminal LB;
+terminal LCBR;
+terminal NEW;
+terminal LNEG;
+terminal LOR;
+terminal LT;
+terminal LTE;
+terminal MINUS;
+terminal MOD;
 
 /**********************/
 /* TERMINALS (TOKENS) */
@@ -104,19 +117,19 @@ non terminal Integer    expr, factor, term;
 expr_list ::=	expr_list expr_part |
 				expr_part;
 				
-expr_part ::=	expr:e {: System.out.println(" = " + e); :} SEMICOLON
+expr_part ::=	expr:e {: System.out.println(" = " + e); :} SEMI
 				;
       
 expr      ::=	expr:e PLUS  factor:f {: RESULT = new Integer(e.intValue() + f.intValue()); :} |
 				factor:f              {: RESULT = new Integer(f.intValue());                :}
 				;
       
-factor    ::=	factor:f TIMES term:t  {: RESULT = new Integer(f.intValue() * t.intValue()); :} |
-				factor:f DIVIDE term:t {: RESULT = new Integer(f.intValue() / t.intValue()); :} |
-				term:t                 {: RESULT = new Integer(t.intValue());                :}
+factor    ::=	factor:f MULTIPLY term:t	{: RESULT = new Integer(f.intValue() * t.intValue()); :} |
+				factor:f DIVIDE term:t 		{: RESULT = new Integer(f.intValue() / t.intValue()); :} |
+				term:t                		{: RESULT = new Integer(t.intValue());                :}
 				;
    
-term      ::=	LPAREN expr:e RPAREN {: RESULT = e; :} |
+term      ::=	LP expr:e RP 	 	 {: RESULT = e; :} |
 				NUMBER:n             {: RESULT = n; :} |
 				ID:i                 {: RESULT = i; :}
 				;

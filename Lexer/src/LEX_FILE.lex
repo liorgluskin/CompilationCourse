@@ -90,25 +90,29 @@ CLASS_ID		= [A-Z][A-Za-z_0-9]*
    
 <YYINITIAL> {
 
-"."					{ System.out.print(yyline+1+": DOT\n");		return symbol(sym.DOT);}
-","					{ System.out.print(yyline+1+": COMMA\n");	  	return symbol(sym.COMMA);}
-";"					{ System.out.print(yyline+1+": SEMICOLON\n"); return symbol(sym.SEMICOLON);}
+"."					{ System.out.print(yyline+1+": DOT\n");		  return symbol(sym.DOT);}
+","					{ System.out.print(yyline+1+": COMMA\n");	  return symbol(sym.COMMA);}
+";"					{ System.out.print(yyline+1+": SEMI\n"); 	  return symbol(sym.SEMI);}
 "+"					{ System.out.print(yyline+1+": PLUS\n");      return symbol(sym.PLUS);}
-"*"					{ System.out.print(yyline+1+": TIMES\n");		return symbol(sym.TIMES);}
+"*"					{ System.out.print(yyline+1+": MULTIPLY\n");  return symbol(sym.MULTIPLY);}
 "/"					{ System.out.print(yyline+1+": DIVIDE\n");    return symbol(sym.DIVIDE);}
-"("					{ System.out.print(yyline+1+": LPAREN\n");    return symbol(sym.LPAREN);}
-")"					{ System.out.print(yyline+1+": RPAREN\n");    return symbol(sym.RPAREN);}
+"("					{ System.out.print(yyline+1+": LP\n");    	  return symbol(sym.LP);}
+")"					{ System.out.print(yyline+1+": RP\n");    	  return symbol(sym.RP);}
 "="					{ System.out.print(yyline+1+": ASSIGN\n");    return symbol(sym.ASSIGN);}
 "=="				{ System.out.print(yyline+1+": EQUAL\n");     return symbol(sym.EQUAL);}
+">"					{ System.out.print(yyline+1+": GT\n");		  return symbol(sym.GT);}
+">="				{ System.out.print(yyline+1+": GTE\n");		  return symbol(sym.GTE);}
+"&&"				{ System.out.print(yyline+1+": LAND\n");	  return symbol(sym.LAND);}
 
-"boolean"			{ System.out.print(yyline+1+": BOOLEAN\n");	return symbol(sym.BOOLEAN);}
-"break"				{ System.out.print(yyline+1+": BREAK\n");		return symbol(sym.BREAK);}
-"class"				{ System.out.print(yyline+1+": CLASS\n");		return symbol(sym.CLASS);}
-"continue"			{ System.out.print(yyline+1+": CONTINUE\n");	return symbol(sym.CONTINUE);}
-"extends"			{ System.out.print(yyline+1+": EXTENDS\n");	return symbol(sym.EXTENDS);}
-"else"				{ System.out.print(yyline+1+": ELSE\n");		return symbol(sym.ELSE);}
-"false"				{ System.out.print(yyline+1+": FALSE\n");		return symbol(sym.FALSE);}
-
+"boolean"			{ System.out.print(yyline+1+": BOOLEAN\n");	  return symbol(sym.BOOLEAN);}
+"break"				{ System.out.print(yyline+1+": BREAK\n");	  return symbol(sym.BREAK);}
+"class"				{ System.out.print(yyline+1+": CLASS\n");	  return symbol(sym.CLASS);}
+"continue"			{ System.out.print(yyline+1+": CONTINUE\n");  return symbol(sym.CONTINUE);}
+"extends"			{ System.out.print(yyline+1+": EXTENDS\n");	  return symbol(sym.EXTENDS);}
+"else"				{ System.out.print(yyline+1+": ELSE\n");	  return symbol(sym.ELSE);}
+"false"				{ System.out.print(yyline+1+": FALSE\n");	  return symbol(sym.FALSE);}
+"if"				{ System.out.print(yyline+1+": IF\n");		  return symbol(sym.IF);}
+"int"				{ System.out.print(yyline+1+": INT\n");		  return symbol(sym.INT);}
 
 {INTEGER}			{
 						System.out.print(yyline+1+": INT(");
