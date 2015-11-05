@@ -156,7 +156,7 @@ ERROR			= "$"
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 {COMMENT}			{ /* just skip what was found, do nothing */ }
 
-
+//Tomer test comment
 //ERRORS
 //COMMENTS - TO BE DELETED BEFORE SUNDAY
 //Lior --> added line print
