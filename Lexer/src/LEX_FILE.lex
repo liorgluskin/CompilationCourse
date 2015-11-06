@@ -72,7 +72,8 @@ LEADING_ZEROES	= 0[0-9]+
 IDENTIFIER		= [a-z][A-Za-z_0-9]*
 CLASS_ID		= [A-Z][A-Za-z_0-9]*
 
-QUOTE			= "\"".*"\""
+StringIC		= \n|\t|\\
+QUOTE			= "\""([^\"\\]|{StringIC})*"\""
 
 //errors
 ERROR			= "$"
