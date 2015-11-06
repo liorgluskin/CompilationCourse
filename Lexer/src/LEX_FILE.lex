@@ -72,6 +72,8 @@ LEADING_ZEROES	= 0[0-9]+
 IDENTIFIER		= [a-z][A-Za-z_0-9]*
 CLASS_ID		= [A-Z][A-Za-z_0-9]*
 
+QUOTE			= "\"".*"\""
+
 //errors
 ERROR			= "$"
 
@@ -136,26 +138,21 @@ ERROR			= "$"
 "int"				{ System.out.print(yyline+1+": INT\n");		  return symbol(sym.INT);}
 
 
-//Tomer
+//Tomer 
 
 "null"				{ System.out.print(yyline+1+": NULL\n");	  return symbol(sym.NULL);}
 "+"					{ System.out.print(yyline+1+": PLUS\n");	  return symbol(sym.PLUS);}
-"]"					{ System.out.print(yyline+1+": RB\n");	  return symbol(sym.RB);}
+"]"					{ System.out.print(yyline+1+": RB\n");	 	  return symbol(sym.RB);}
 "}"					{ System.out.print(yyline+1+": RCBR\n");	  return symbol(sym.RCBR);}
 "return"			{ System.out.print(yyline+1+": RETURN\n");	  return symbol(sym.RETURN);}
-")"					{ System.out.print(yyline+1+": RP\n");	  return symbol(sym.RP);}
+")"					{ System.out.print(yyline+1+": RP\n");	  	  return symbol(sym.RP);}
 ";"					{ System.out.print(yyline+1+": SEMI\n");	  return symbol(sym.SEMI);}
 "static"			{ System.out.print(yyline+1+": STATIC\n");	  return symbol(sym.STATIC);}
-"string (keyword)"	{ System.out.print(yyline+1+": STRING\n");	  return symbol(sym.STRING);}
-"quoted string"		{ System.out.print(yyline+1+": QUOTE\n");	  return symbol(sym.QUOTE);}
+"string"			{ System.out.print(yyline+1+": STRING\n");	  return symbol(sym.STRING);}
 "this"				{ System.out.print(yyline+1+": THIS\n");	  return symbol(sym.THIS);}
 "true"				{ System.out.print(yyline+1+": TRUE\n");	  return symbol(sym.TRUE);}
 "void"				{ System.out.print(yyline+1+": VOID\n");	  return symbol(sym.VOID);}
 "while"				{ System.out.print(yyline+1+": WHILE\n");	  return symbol(sym.WHILE);}
-
-
-
-
 
 
 {INTEGER}			{
@@ -176,10 +173,16 @@ ERROR			= "$"
 						System.out.print(")\n");
 						return symbol(sym.CLASS_ID, new String(yytext()));
 					}
+{QUOTE}				{
+						System.out.print(yyline+1+": QUOTE(");
+						System.out.print(yytext());
+						System.out.print(")\n");
+						return symbol(sym.QUOTE, new String(yytext()));
+					}
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 {COMMENT}			{ /* just skip what was found, do nothing */ }
 
-//Tomer test comment
+
 //ERRORS
 //COMMENTS - TO BE DELETED BEFORE SUNDAY
 //Lior --> added line print
