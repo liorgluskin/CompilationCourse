@@ -65,7 +65,7 @@ WhiteSpace		= {LineTerminator} | [ \t\f]
 
 LINE_COMMENT	= "//".*{LineTerminator}?
 COMMENT			= {LINE_COMMENT} | "/*"~"*/"
-COMMENT_ERROR	= "/*"
+COMMENT_ERROR	= "/*"^("*/")
 
 INTEGER			= 0 | [1-9][0-9]*
 LEADING_ZEROES	= 0[0-9]+
