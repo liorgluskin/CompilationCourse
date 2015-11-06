@@ -83,10 +83,7 @@ terminal IF;
 terminal INT;
 terminal LAND;
 terminal MULTIPLY;
-terminal RP;
 terminal LP;
-terminal SEMI;
-terminal PLUS;
 
 //Lior
 terminal LB;
@@ -100,6 +97,22 @@ terminal LTE;
 terminal MINUS;
 terminal MOD;
 terminal NEQUAL;
+
+//Tomer
+terminal NULL
+terminal PLUS;
+terminal RB
+terminal RCBR
+terminal RETURN
+terminal RP
+terminal SEMI
+terminal STATIC
+terminal STRING
+terminal QUOTE
+terminal THIS
+terminal TRUE
+terminal VOID
+terminal WHILE
  
 
 /**********************/

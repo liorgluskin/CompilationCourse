@@ -135,6 +135,29 @@ ERROR			= "$"
 "if"				{ System.out.print(yyline+1+": IF\n");		  return symbol(sym.IF);}
 "int"				{ System.out.print(yyline+1+": INT\n");		  return symbol(sym.INT);}
 
+
+//Tomer
+
+"null"				{ System.out.print(yyline+1+": NULL\n");	  return symbol(sym.NULL);}
+"+"					{ System.out.print(yyline+1+": PLUS\n");	  return symbol(sym.PLUS);}
+"]"					{ System.out.print(yyline+1+": RB\n");	  return symbol(sym.RB);}
+"}"					{ System.out.print(yyline+1+": RCBR\n");	  return symbol(sym.RCBR);}
+"return"			{ System.out.print(yyline+1+": RETURN\n");	  return symbol(sym.RETURN);}
+")"					{ System.out.print(yyline+1+": RP\n");	  return symbol(sym.RP);}
+";"					{ System.out.print(yyline+1+": SEMI\n");	  return symbol(sym.SEMI);}
+"static"			{ System.out.print(yyline+1+": STATIC\n");	  return symbol(sym.STATIC);}
+"string (keyword)"	{ System.out.print(yyline+1+": STRING\n");	  return symbol(sym.STRING);}
+"quoted string"		{ System.out.print(yyline+1+": QUOTE\n");	  return symbol(sym.QUOTE);}
+"this"				{ System.out.print(yyline+1+": THIS\n");	  return symbol(sym.THIS);}
+"true"				{ System.out.print(yyline+1+": TRUE\n");	  return symbol(sym.TRUE);}
+"void"				{ System.out.print(yyline+1+": VOID\n");	  return symbol(sym.VOID);}
+"while"				{ System.out.print(yyline+1+": WHILE\n");	  return symbol(sym.WHILE);}
+
+
+
+
+
+
 {INTEGER}			{
 						System.out.print(yyline+1+": INT(");
 						System.out.print(yytext());
