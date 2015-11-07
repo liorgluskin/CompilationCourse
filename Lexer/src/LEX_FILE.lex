@@ -75,8 +75,8 @@ CLASS_ID		= [A-Z][A-Za-z_0-9]*
 StringIC		= \n|\t|\\
 QUOTE			= "\""([^\"\\]|{StringIC})*"\""
 
-//errors
-ERROR			= "$"
+//error fallback - matches any character in any state that has not been matched by another rule
+ERROR			= [^]
 
    
 /******************************/
