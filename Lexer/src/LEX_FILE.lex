@@ -65,7 +65,7 @@ WhiteSpace		= {LineTerminator} | [ \t\f]
 
 LINE_COMMENT	= "//".*{LineTerminator}?
 COMMENT			= {LINE_COMMENT} | "/*"~"*/"
-COMMENT_ERROR	= "/*"^("*/")
+COMMENT_ERROR	= "/*"([^\*]|(\*[^/]))*
 
 INTEGER			= 0 | [1-9][0-9]*
 LEADING_ZEROES	= 0[0-9]+
@@ -135,7 +135,7 @@ CLASS_ID		= [A-Z][A-Za-z_0-9]*
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 {COMMENT}			{ /* just skip what was found, do nothing */ }
 
-{COMMENT_ERROR}		{ throw new Error("Unclosed comment"); }
-{LEADING_ZEROES}	{ throw new Error("Leading zeroes number"); }
+{COMMENT_ERROR}		{ System.out.print(yyline+1+": Unclosed comment"); }
+{LEADING_ZEROES}	{ System.out.print(yyline+1+": Leading zeroes"); }
 
 }
