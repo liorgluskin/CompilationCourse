@@ -155,6 +155,8 @@ ERROR			= "$"
 "void"				{ System.out.print(yyline+1+": VOID\n");	  return symbol(sym.VOID);}
 "while"				{ System.out.print(yyline+1+": WHILE\n");	  return symbol(sym.WHILE);}
 
+// Tomer: Dealing with end of file
+<<EOF>> 			{ System.out.print(yyline+2+": EOF\n");	  return symbol(sym.EOF);}
 
 {INTEGER}			{
 						System.out.print(yyline+1+": INT(");
@@ -186,11 +188,16 @@ ERROR			= "$"
 
 //ERRORS
 //COMMENTS - TO BE DELETED BEFORE SUNDAY
-//Lior --> added line print
+//Tomer: 7/11 - changed errors to prints given ex1 instructions
+//Tomer:	also - after error written that program must exit - so exit(0)
 
-{COMMENT_ERROR}		{ throw new Error(yyline+1  +":Lexical Error:Unclosed comment"); }
-{LEADING_ZEROES}	{ throw new Error(yyline+1  +":Leading zeroes number"); }
+{COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'\n"); 
+					  System.exit(0); }
+					  
+{LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'\n"); 
+					  System.exit(0); }
 
-{ERROR}				{ System.out.print(yyline+1  +":Lexical error: illegal character: " + yytext()); }
+{ERROR}				{ System.out.print(yyline+1  +": Lexical error: illegal character '" +yytext()+"'\n"); 
+					  System.exit(0); }
 
 }
