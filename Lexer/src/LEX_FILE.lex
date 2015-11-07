@@ -65,7 +65,7 @@ WhiteSpace		= {LineTerminator} | [ \t\f]
 
 LINE_COMMENT	= "//".*{LineTerminator}?
 COMMENT			= {LINE_COMMENT} | "/*"~"*/"
-COMMENT_ERROR	= "/*"
+COMMENT_ERROR	= "/*"^("*/")
 
 INTEGER			= 0 | [1-9][0-9]*
 LEADING_ZEROES	= 0[0-9]+
@@ -160,7 +160,7 @@ ERROR			= [^]
 <<EOF>> 			{ System.out.print(yyline+2+": EOF");	  return symbol(sym.EOF);}
 
 {INTEGER}			{
-						System.out.print(yyline+1+": INT(");
+						System.out.print(yyline+1+": INTEGER(");
 						System.out.print(yytext());
 						System.out.print(")\n");
 						return symbol(sym.NUMBER, new Integer(yytext()));
@@ -192,13 +192,13 @@ ERROR			= [^]
 //Tomer: 7/11 - changed errors to prints given ex1 instructions
 //Tomer:	also - after error written that program must exit - so exit(0)
 
-{COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'\n"); 
+{COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'"); 
 					  System.exit(0); }
 					  
-{LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'\n"); 
+{LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'"); 
 					  System.exit(0); }
 
-{ERROR}				{ System.out.print(yyline+1  +": Lexical error: illegal character '" +yytext()+"'\n"); 
+{ERROR}				{ System.out.print(yyline+1  +": Lexical error: illegal character '" +yytext()+"'"); 
 					  System.exit(0); }
 
 }
