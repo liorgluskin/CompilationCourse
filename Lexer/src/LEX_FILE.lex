@@ -72,8 +72,9 @@ LEADING_ZEROES	= 0[0-9]+
 IDENTIFIER		= [a-z][A-Za-z_0-9]*
 CLASS_ID		= [A-Z][A-Za-z_0-9]*
 
-StringIC		= \n|\t|\\
-QUOTE			= "\""([^\"\\]|{StringIC})*"\""
+QUOTE_MARK		= "\""
+CHAR 			= (\\n|\\t|\\\\|\\\"|[^\\\"])
+QUOTE			= {QUOTE_MARK}{CHAR}*{QUOTE_MARK}
 
 //error fallback - matches any character in any state that has not been matched by another rule
 ERROR			= [^]
