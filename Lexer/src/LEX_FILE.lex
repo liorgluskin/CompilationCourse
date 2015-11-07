@@ -72,8 +72,12 @@ LEADING_ZEROES	= 0[0-9]+
 IDENTIFIER		= [a-z][A-Za-z_0-9]*
 CLASS_ID		= [A-Z][A-Za-z_0-9]*
 
-//errors
-ERROR			= "$"
+QUOTE_MARK		= "\""
+CHAR 			= (\\n|\\t|\\\\|\\\"|[^\\\"])
+QUOTE			= {QUOTE_MARK}{CHAR}*{QUOTE_MARK}
+
+//error fallback - matches any character in any state that has not been matched by another rule
+ERROR			= [^]
 
    
 /******************************/
@@ -135,6 +139,26 @@ ERROR			= "$"
 "if"				{ System.out.print(yyline+1+": IF\n");		  return symbol(sym.IF);}
 "int"				{ System.out.print(yyline+1+": INT\n");		  return symbol(sym.INT);}
 
+
+//Tomer 
+
+"null"				{ System.out.print(yyline+1+": NULL\n");	  return symbol(sym.NULL);}
+"+"					{ System.out.print(yyline+1+": PLUS\n");	  return symbol(sym.PLUS);}
+"]"					{ System.out.print(yyline+1+": RB\n");	 	  return symbol(sym.RB);}
+"}"					{ System.out.print(yyline+1+": RCBR\n");	  return symbol(sym.RCBR);}
+"return"			{ System.out.print(yyline+1+": RETURN\n");	  return symbol(sym.RETURN);}
+")"					{ System.out.print(yyline+1+": RP\n");	  	  return symbol(sym.RP);}
+";"					{ System.out.print(yyline+1+": SEMI\n");	  return symbol(sym.SEMI);}
+"static"			{ System.out.print(yyline+1+": STATIC\n");	  return symbol(sym.STATIC);}
+"string"			{ System.out.print(yyline+1+": STRING\n");	  return symbol(sym.STRING);}
+"this"				{ System.out.print(yyline+1+": THIS\n");	  return symbol(sym.THIS);}
+"true"				{ System.out.print(yyline+1+": TRUE\n");	  return symbol(sym.TRUE);}
+"void"				{ System.out.print(yyline+1+": VOID\n");	  return symbol(sym.VOID);}
+"while"				{ System.out.print(yyline+1+": WHILE\n");	  return symbol(sym.WHILE);}
+
+// Tomer: Dealing with end of file
+<<EOF>> 			{ System.out.print(yyline+2+": EOF");	  return symbol(sym.EOF);}
+
 {INTEGER}			{
 						System.out.print(yyline+1+": INT(");
 						System.out.print(yytext());
@@ -153,17 +177,28 @@ ERROR			= "$"
 						System.out.print(")\n");
 						return symbol(sym.CLASS_ID, new String(yytext()));
 					}
+{QUOTE}				{
+						System.out.print(yyline+1+": QUOTE(");
+						System.out.print(yytext());
+						System.out.print(")\n");
+						return symbol(sym.QUOTE, new String(yytext()));
+					}
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 {COMMENT}			{ /* just skip what was found, do nothing */ }
 
 
 //ERRORS
 //COMMENTS - TO BE DELETED BEFORE SUNDAY
-//Lior --> added line print
+//Tomer: 7/11 - changed errors to prints given ex1 instructions
+//Tomer:	also - after error written that program must exit - so exit(0)
 
-{COMMENT_ERROR}		{ throw new Error(yyline+1  +":Lexical Error:Unclosed comment"); }
-{LEADING_ZEROES}	{ throw new Error(yyline+1  +":Leading zeroes number"); }
+{COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'\n"); 
+					  System.exit(0); }
+					  
+{LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'\n"); 
+					  System.exit(0); }
 
-{ERROR}				{ System.out.print(yyline+1  +":Lexical error: illegal character: " + yytext()); }
+{ERROR}				{ System.out.print(yyline+1  +": Lexical error: illegal character '" +yytext()+"'\n"); 
+					  System.exit(0); }
 
 }
