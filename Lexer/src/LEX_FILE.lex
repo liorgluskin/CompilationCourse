@@ -156,7 +156,7 @@ ERROR			= [^]
 "while"				{ System.out.print(yyline+1+": WHILE\n");	  return symbol(sym.WHILE);}
 
 // Tomer: Dealing with end of file
-<<EOF>> 			{ System.out.print(yyline+2+": EOF\n");	  return symbol(sym.EOF);}
+<<EOF>> 			{ System.out.print(yyline+2+": EOF");	  return symbol(sym.EOF);}
 
 {INTEGER}			{
 						System.out.print(yyline+1+": INT(");
