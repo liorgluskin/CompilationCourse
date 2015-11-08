@@ -60,25 +60,25 @@ import java_cup.runtime.*;
 /***********************/
 /* MACRO DECALARATIONS */
 /***********************/
-LineTerminator	= \r|\n|\r\n
-WhiteSpace		= {LineTerminator} | [ \t\f]
+LineTerminator		= \r|\n|\r\n
+WhiteSpace			= {LineTerminator} | [ \t\f]
 
-LINE_COMMENT	= "//".*{LineTerminator}?
-COMMENT			= {LINE_COMMENT} | "/*"~"*/"
-COMMENT_ERROR	= "/*"([^\*]|(\*[^/]*))*
+LINE_COMMENT		= "//".*{LineTerminator}?
+COMMENT				= {LINE_COMMENT} | "/*"~"*/"
+UNCLOSED_COMMENT	= "/*"([^\*]|(\*[^/]*))*
 
-INTEGER			= 0 | (-?)[1-9][0-9]* //added - support to Integer
-LEADING_ZEROES	= 0[0-9]+
-IDENTIFIER		= [a-z][A-Za-z_0-9]*
-CLASS_ID		= [A-Z][A-Za-z_0-9]*
+INTEGER				= 0 | (-?)[1-9][0-9]* //added - support to Integer
+LEADING_ZEROES		= 0[0-9]+
+IDENTIFIER			= [a-z][A-Za-z_0-9]*
+CLASS_ID			= [A-Z][A-Za-z_0-9]*
 
-QUOTE_MARK		= "\""
-CHAR 			= (\\n|\\t|\\\\|\\\"|[^\\\"])
-QUOTE			= {QUOTE_MARK}{CHAR}*{QUOTE_MARK}
-QUOTE_ERROR		= {QUOTE_MARK}{CHAR}*
+QUOTE_MARK			= "\""
+CHAR 				= (\\n|\\t|\\\\|\\\"|[^\\\"])
+QUOTE				= {QUOTE_MARK}{CHAR}*{QUOTE_MARK}
+QUOTE_ERROR			= {QUOTE_MARK}{CHAR}*
 
 //error fallback - matches any character in any state that has not been matched by another rule
-ERROR			= [^]
+ERROR				= [^]
 
    
 /******************************/
@@ -197,7 +197,7 @@ ERROR			= [^]
 {QUOTE_ERROR} 		{ System.out.print(yyline+1  +": Lexical Error: Unclosed quote missing '" +yytext()+"'"); 
 					  System.exit(0); }
 
-{COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'"); 
+{UNCLOSED_COMMENT}	{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'"); 
 					  System.exit(0); }
 					  
 {LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'"); 
