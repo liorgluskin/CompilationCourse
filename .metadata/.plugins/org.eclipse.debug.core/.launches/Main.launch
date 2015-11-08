@@ -7,6 +7,6 @@
 <listEntry value="1"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="Main"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="input\Input.ic"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="input\InvalidFile.ic"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Lexer"/>
 </launchConfiguration>

@@ -62,20 +62,27 @@ import java_cup.runtime.*;
 /***********************/
 LineTerminator		= \r|\n|\r\n
 WhiteSpace			= {LineTerminator} | [ \t\f]
+InputCharacter 		= [^\r\n]
 
-LINE_COMMENT		= "//".*{LineTerminator}?
-COMMENT				= {LINE_COMMENT} | "/*"~"*/"
-UNCLOSED_COMMENT	= "/*"([^\*]|(\*[^/]*))*
+TRADITIONAL_COMMENT   	= "/*" [^*] ~"*/" | "/*" "*"+ "/"
+END_OF_LINE_COMMENT     = "//" {InputCharacter}* {LineTerminator}?
 
-INTEGER				= 0 | (-?)[1-9][0-9]* //added - support to Integer
+COMMENT 				= {TRADITIONAL_COMMENT} | {END_OF_LINE_COMMENT}
+
+COMMENT_CONTENT    		= ( [^*] | \*+ [^/*] )*
+UNCLOSED_COMMENT		= "/*"{COMMENT_CONTENT}
+
 LEADING_ZEROES		= 0[0-9]+
+INTEGER				= 0+ | [1-9][0-9]*
+
 IDENTIFIER			= [a-z][A-Za-z_0-9]*
 CLASS_ID			= [A-Z][A-Za-z_0-9]*
 
 QUOTE_MARK			= "\""
 CHAR 				= (\\n|\\t|\\\\|\\\"|[^\\\"])
 QUOTE				= {QUOTE_MARK}{CHAR}*{QUOTE_MARK}
-QUOTE_ERROR			= {QUOTE_MARK}{CHAR}*
+
+QUOTE_ERROR			= {QUOTE_MARK}{CHAR}* 
 
 //error fallback - matches any character in any state that has not been matched by another rule
 ERROR				= [^]
@@ -179,26 +186,39 @@ ERROR				= [^]
 						return symbol(sym.CLASS_ID, new String(yytext()));
 					}
 {QUOTE}				{
-						System.out.print(yyline+1+": QUOTE(");
-						System.out.print(yytext());
-						System.out.print(")\n");
-						return symbol(sym.QUOTE, new String(yytext()));
+						String str = new String(yytext());
+						boolean validStr = true;
+						char badChar = 0;
+						for(int i=0; i < str.length(); i++){
+							int asciiVal = (int) str.charAt(i);
+							if(asciiVal < 32 || asciiVal > 126 ){
+								validStr = false;
+								badChar = str.charAt(i);
+								break;
+							}
+						}
+						if(validStr){
+						
+							System.out.print(yyline+1+": QUOTE(");
+							System.out.print(yytext());
+							System.out.print(")\n");
+							return symbol(sym.QUOTE, new String(yytext()));
+						}else{
+							System.out.print(yyline+1  +": Lexical error: ASCII char not between 32 and 126: '" +badChar+"'"); 
+					  		System.exit(0);
+						}
 					}
 {WhiteSpace}		{ /* just skip what was found, do nothing */ }
 {COMMENT}			{ /* just skip what was found, do nothing */ }
 
 
 //ERRORS
-//COMMENTS - TO BE DELETED BEFORE SUNDAY
-//Tomer: 7/11 - changed errors to prints given ex1 instructions
-//Tomer:	also - after error written that program must exit - so exit(0)
-//Lior: 	added QUEOTE_ERROR to handle strings that doesn't end with "
+
 
 {QUOTE_ERROR} 		{ System.out.print(yyline+1  +": Lexical Error: Unclosed quote missing '" +yytext()+"'"); 
 					  System.exit(0); }
 
-{UNCLOSED_COMMENT}	{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'"); 
-					  System.exit(0); }
+{UNCLOSED_COMMENT}	{ /* Do nothing --OREN said */ }
 					  
 {LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'"); 
 					  System.exit(0); }
