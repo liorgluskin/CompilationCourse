@@ -1,0 +1,21 @@
+For the homework grader:
+
+ID:
+305741977
+305598427
+302026315
+
+Notes:
+
+1 - On unclosed comments, Oren the TA wrote to us that when encountering an
+unclosed cooment /*
+we must regard the rest of the test in file as comment and print EOF.
+Although this is in contrary to what is in the IC specifications.
+
+2 - Oren the TA said that it is legal to treat negative int like '-5' as:
+MINUS 
+INTEGER(5)
+
+3 - We allow strings to have only ASCII chars between 32 and 126
+
+4 - We allow ints to be only within the range (-2^31) up to (2^31 - 1)
