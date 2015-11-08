@@ -65,9 +65,9 @@ WhiteSpace		= {LineTerminator} | [ \t\f]
 
 LINE_COMMENT	= "//".*{LineTerminator}?
 COMMENT			= {LINE_COMMENT} | "/*"~"*/"
-COMMENT_ERROR	= "/*"([^\*] | (\*[^/]))*
+COMMENT_ERROR	= "/*"([^\*]|(\*[^/]*))*
 
-INTEGER			= 0 | [1-9][0-9]*
+INTEGER			= 0 | (-?)[1-9][0-9]* //added - support to Integer
 LEADING_ZEROES	= 0[0-9]+
 IDENTIFIER		= [a-z][A-Za-z_0-9]*
 CLASS_ID		= [A-Z][A-Za-z_0-9]*
@@ -194,7 +194,7 @@ ERROR			= [^]
 //Tomer:	also - after error written that program must exit - so exit(0)
 //Lior: 	added QUEOTE_ERROR to handle strings that doesn't end with "
 
-{QUOTE_ERROR} 		{ System.out.print(yyline+1  +": Lexical Error: Unclosed quote missing  " +yytext()+"\n"); 
+{QUOTE_ERROR} 		{ System.out.print(yyline+1  +": Lexical Error: Unclosed quote missing '" +yytext()+"'"); 
 					  System.exit(0); }
 
 {COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'"); 
