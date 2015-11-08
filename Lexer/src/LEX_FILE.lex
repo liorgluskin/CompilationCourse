@@ -197,13 +197,13 @@ ERROR			= [^]
 {QUOTE_ERROR} 		{ System.out.print(yyline+1  +": Lexical Error: Unclosed quote missing  " +yytext()+"\n"); 
 					  System.exit(0); }
 
-{COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'\n"); 
+{COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'"); 
 					  System.exit(0); }
 					  
-{LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'\n"); 
+{LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'"); 
 					  System.exit(0); }
 
-{ERROR}				{ System.out.print(yyline+1  +": Lexical error: illegal character '" +yytext()+"'\n"); 
+{ERROR}				{ System.out.print(yyline+1  +": Lexical error: illegal character '" +yytext()+"'"); 
 					  System.exit(0); }
 
 }
