@@ -60,9 +60,9 @@ import java_cup.runtime.*;
 /***********************/
 /* MACRO DECALARATIONS */
 /***********************/
-LineTerminator		= \r|\n|\r\n
-WhiteSpace			= {LineTerminator} | [ \t\f]
-InputCharacter 		= [^\r\n]
+LineTerminator			= \r|\n|\r\n
+WhiteSpace				= {LineTerminator} | [ \t\f]
+InputCharacter 			= [^\r\n]
 
 TRADITIONAL_COMMENT   	= "/*" [^*] ~"*/" | "/*" "*"+ "/"
 END_OF_LINE_COMMENT     = "//" {InputCharacter}* {LineTerminator}?
@@ -72,20 +72,20 @@ COMMENT 				= {TRADITIONAL_COMMENT} | {END_OF_LINE_COMMENT}
 COMMENT_CONTENT    		= ( [^*] | \*+ [^/*] )*
 UNCLOSED_COMMENT		= "/*"{COMMENT_CONTENT}
 
-LEADING_ZEROES		= 0[0-9]+
-INTEGER				= 0+ | [1-9][0-9]*
+LEADING_ZEROES			= 0[0-9]+
+INTEGER					= 0+ | [1-9][0-9]*
 
-IDENTIFIER			= [a-z][A-Za-z_0-9]*
-CLASS_ID			= [A-Z][A-Za-z_0-9]*
+IDENTIFIER				= [a-z][A-Za-z_0-9]*
+CLASS_ID				= [A-Z][A-Za-z_0-9]*
 
-QUOTE_MARK			= "\""
-CHAR 				= (\\n|\\t|\\\\|\\\"|[^\\\"])
-QUOTE				= {QUOTE_MARK}{CHAR}*{QUOTE_MARK}
+QUOTE_MARK				= "\""
+CHAR 					= (\\n|\\t|\\\\|\\\"|[^\\\"])
+QUOTE					= {QUOTE_MARK}{CHAR}*{QUOTE_MARK}
 
-QUOTE_ERROR			= {QUOTE_MARK}{CHAR}* 
+QUOTE_ERROR				= {QUOTE_MARK}{CHAR}* 
 
 //error fallback - matches any character in any state that has not been matched by another rule
-ERROR				= [^]
+ERROR					= [^]
 
    
 /******************************/
@@ -168,6 +168,15 @@ ERROR				= [^]
 <<EOF>> 			{ System.out.print(yyline+2+": EOF");	  return symbol(sym.EOF);}
 
 {INTEGER}			{
+						Integer num = 0;
+						try{
+							num = new Integer(yytext());
+							}
+							catch(NumberFormatException e){
+								System.out.print(yyline+1  +": Lexical Error: number not within valid IC range '" +yytext()+"'"); 
+					  			System.exit(0); 
+							}
+						
 						System.out.print(yyline+1+": INTEGER(");
 						System.out.print(yytext());
 						System.out.print(")\n");
