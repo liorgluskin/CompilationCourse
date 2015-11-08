@@ -64,12 +64,11 @@ LineTerminator			= \r|\n|\r\n
 WhiteSpace				= {LineTerminator} | [ \t\f]
 InputCharacter 			= [^\r\n]
 
+COMMENT_CONTENT    		= ( [^*] | \*+ [^/*] )*
+DOCUMENTATION_COMMENT = "/**" {COMMENT_CONTENT} "*"+ "/"
 TRADITIONAL_COMMENT   	= "/*" [^*] ~"*/" | "/*" "*"+ "/"
 END_OF_LINE_COMMENT     = "//" {InputCharacter}* {LineTerminator}?
-
-COMMENT 				= {TRADITIONAL_COMMENT} | {END_OF_LINE_COMMENT}
-
-COMMENT_CONTENT    		= ( [^*] | \*+ [^/*] )*
+COMMENT 				= {TRADITIONAL_COMMENT} | {END_OF_LINE_COMMENT} | {DOCUMENTATION_COMMENT }
 UNCLOSED_COMMENT		= "/*"{COMMENT_CONTENT}
 
 LEADING_ZEROES			= 0[0-9]+
@@ -123,7 +122,7 @@ ERROR					= [^]
 //Lior
 
 "["					{ System.out.print(yyline+1+": LB\n");	  	  return symbol(sym.LB);}
-"{"					{ System.out.print(yyline+1+": LCBR\n");	  return symbol(sym.LAND);}
+"{"					{ System.out.print(yyline+1+": LCBR\n");	  return symbol(sym.LCBR);}
 "length"			{ System.out.print(yyline+1+": LENGTH\n");	  return symbol(sym.LENGTH);}
 "new"				{ System.out.print(yyline+1+": NEW\n");	  	  return symbol(sym.NEW);}
 "!"					{ System.out.print(yyline+1+": LNEG\n");	  return symbol(sym.LNEG);}
@@ -171,16 +170,16 @@ ERROR					= [^]
 						Integer num = 0;
 						try{
 							num = new Integer(yytext());
-							}
-							catch(NumberFormatException e){
-								System.out.print(yyline+1  +": Lexical Error: number not within valid IC range '" +yytext()+"'"); 
-					  			System.exit(0); 
-							}
+						}
+						catch(NumberFormatException e){
+							System.out.print(yyline+1  +": Lexical Error: number not within valid IC range '" +yytext()+"'"); 
+					  		System.exit(0); 
+						}
 						
 						System.out.print(yyline+1+": INTEGER(");
 						System.out.print(yytext());
 						System.out.print(")\n");
-						return symbol(sym.NUMBER, new Integer(yytext()));
+						return symbol(sym.NUMBER, num);
 					}   
 {IDENTIFIER}		{
 						System.out.print(yyline+1+": ID(");
@@ -206,8 +205,7 @@ ERROR					= [^]
 								break;
 							}
 						}
-						if(validStr){
-						
+						if(validStr){					
 							System.out.print(yyline+1+": QUOTE(");
 							System.out.print(yytext());
 							System.out.print(")\n");
