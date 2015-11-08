@@ -65,7 +65,7 @@ WhiteSpace		= {LineTerminator} | [ \t\f]
 
 LINE_COMMENT	= "//".*{LineTerminator}?
 COMMENT			= {LINE_COMMENT} | "/*"~"*/"
-COMMENT_ERROR	= "/*"^("*/")
+COMMENT_ERROR	= "/*"([^\*] | (\*[^/]))*
 
 INTEGER			= 0 | [1-9][0-9]*
 LEADING_ZEROES	= 0[0-9]+
@@ -75,6 +75,7 @@ CLASS_ID		= [A-Z][A-Za-z_0-9]*
 QUOTE_MARK		= "\""
 CHAR 			= (\\n|\\t|\\\\|\\\"|[^\\\"])
 QUOTE			= {QUOTE_MARK}{CHAR}*{QUOTE_MARK}
+QUOTE_ERROR		= {QUOTE_MARK}{CHAR}*
 
 //error fallback - matches any character in any state that has not been matched by another rule
 ERROR			= [^]
@@ -160,7 +161,7 @@ ERROR			= [^]
 <<EOF>> 			{ System.out.print(yyline+2+": EOF");	  return symbol(sym.EOF);}
 
 {INTEGER}			{
-						System.out.print(yyline+1+": INT(");
+						System.out.print(yyline+1+": INTEGER(");
 						System.out.print(yytext());
 						System.out.print(")\n");
 						return symbol(sym.NUMBER, new Integer(yytext()));
@@ -191,6 +192,10 @@ ERROR			= [^]
 //COMMENTS - TO BE DELETED BEFORE SUNDAY
 //Tomer: 7/11 - changed errors to prints given ex1 instructions
 //Tomer:	also - after error written that program must exit - so exit(0)
+//Lior: 	added QUEOTE_ERROR to handle strings that doesn't end with "
+
+{QUOTE_ERROR} 		{ System.out.print(yyline+1  +": Lexical Error: Unclosed quote missing  " +yytext()+"\n"); 
+					  System.exit(0); }
 
 {COMMENT_ERROR}		{ System.out.print(yyline+1  +": Lexical Error: Unclosed comment '" +yytext()+"'\n"); 
 					  System.exit(0); }
