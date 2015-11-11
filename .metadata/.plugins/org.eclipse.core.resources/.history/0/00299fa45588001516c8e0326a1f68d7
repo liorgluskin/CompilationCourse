@@ -1,7 +1,7 @@
 /* Quicksort <n>: sorts an array of n integers initialized
    with random values.
    Output: the array contents before and after sorting.
-*/
+*
 
 //class Library{
 //    void println(string s) {}
@@ -28,7 +28,7 @@ class Quicksort {
         if (i >= j) break;
 
         tmp = a[i];
-        a[i]/* = a[j];
+        a[i] = a[j];
         a[j] = tmp;
         i = i+1;
         j = j-1;
@@ -48,7 +48,7 @@ class Quicksort {
     void initArray() {
     int i = 0;
     while(i < a.length) {
-        a[i] =  Library.r***&*7*andom(a.length*/2/);
+        a[i] =  Library.random(a.length*2);
         i = i+1;
     }
     }

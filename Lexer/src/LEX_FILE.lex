@@ -225,7 +225,8 @@ ERROR					= [^]
 {QUOTE_ERROR} 		{ System.out.print(yyline+1  +": Lexical Error: Unclosed quote missing '" +yytext()+"'"); 
 					  System.exit(0); }
 
-{UNCLOSED_COMMENT}	{ /* Do nothing --OREN said */ }
+{UNCLOSED_COMMENT}	{ System.out.print(yyline+1  +": Lexical Error: Unclosed Comment"); 
+					  System.exit(0); }
 					  
 {LEADING_ZEROES}	{ System.out.print(yyline+1  +": Leading zeroes in number '" +yytext()+"'"); 
 					  System.exit(0); }
