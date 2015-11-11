@@ -7,7 +7,10 @@ ID:
 
 Notes:
 
-1 - On unclosed comments, after talking to Oren the TA we print an error after unclosed comments.
+1 - On unclosed comments, Oren the TA wrote to us that when encountering an
+unclosed comment /*
+we must regard the rest of the test in file as comment and print EOF.
+Although this is in contrary to what is in the IC specifications.
 
 2 - Oren the TA said that it is legal to treat negative int like '-5' as:
 MINUS 
