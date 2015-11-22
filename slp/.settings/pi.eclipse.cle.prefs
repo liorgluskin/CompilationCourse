@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //slp/src/slp/slp.cup/cup-compact-red=false
 //slp/src/slp/slp.cup/cup-debug=false
 //slp/src/slp/slp.cup/cup-expected-conflicts=0
@@ -8,6 +9,8 @@
 //slp/src/slp/slp.cup/cup-parser-class=Parser
 //slp/src/slp/slp.cup/cup-symbols-class=sym
 //slp/src/slp/slp.cup/cup-symbols-if=true
+=======
+>>>>>>> origin/Lior_brunch
 //src/slp/slp.cup/cup-compact-red=false
 //src/slp/slp.cup/cup-debug=false
 //src/slp/slp.cup/cup-expected-conflicts=0

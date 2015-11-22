@@ -8,11 +8,14 @@
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="intege"/>
-			<item value="integer"/>
-			<item value="ZZ_ERROR_MSG"/>
-			<item value="MOD"/>
-			<item value="string"/>
+			<item value="lexer.g"/>
+			<item value="Symbol"/>
+			<item value="EOF"/>
+			<item value="Uminus"/>
+			<item value="SlpSym"/>
+			<item value="Sym"/>
+			<item value="SlpCup"/>
+			<item value="LOR"/>
 		</list>
 		<list key="replacehistory">
 		</list>
