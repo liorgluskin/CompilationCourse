@@ -1,6 +1,24 @@
 package slp;
 
+/** A class for the AST nodes for array length expression.
+ */
+
 public class Length extends Expr{
+	private Expr expr;
+	
+	/**
+	 * Constructs an array length expression. 
+	 * 
+	 * @param expr Array length expression.
+	 */
+	public Length(Expr expr){
+		this.expr = expr;
+	}
+	
+	public Expr getExpression(){
+		return this.expr;
+	}
+	
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */

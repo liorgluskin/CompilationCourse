@@ -2,11 +2,12 @@ package slp;
 
 /** An AST node for unary expressions.
  */
+
 public class UnaryOpExpr extends Expr {
-	public final Operator op;
+	public final UnOperator op;
 	public final Expr operand;
 	
-	public UnaryOpExpr(Expr operand, Operator op) {
+	public UnaryOpExpr(Expr operand, UnOperator op) {
 		this.operand = operand;
 		this.op = op;
 	}

@@ -187,11 +187,11 @@ expr ::= location:l
 	|	NEW type:t LB expr:e RB
 	{:	RESULT = new NewArray(t,e); :}
 	|	expr:e DOT LENGTH
-	{:	RESULT = new Length(e); :}				//
-	|	binop:bop
-	{:	RESULT = bop; :}
-	|	unop:uop
-	{:	RESULT = uop; :}
+	{:	RESULT = new Length(e); :}
+	|	binop:b
+	{:	RESULT = b; :}
+	|	unop:u
+	{:	RESULT = u; :}
 	|	literal:lit
 	{:	RESULT = lit; :}
 	|	LP expr:e RP
@@ -236,18 +236,50 @@ location ::= ID:id
 	{:	RESULT = new VarLocation(id,e); :}
 	|	expr:e1 LB expr:e2 RB
 	{:	RESSULT = new ArrLocation(e1,e2); :}
+;
 
+binop ::= expr:e1 PLUS expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.PLUS); :}
+	|	expr:e1 MINUS expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.MINUS); :}
+	|	expr:e1 MULTIPLY expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.MULTIPLY); :}
+	|	expr:e1 DIVIDE expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.DIVIDE); :}
+	|	expr:e1 MOD expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.MOD); :}
+	|	expr:e1 LAND expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LAND); :}
+	|	expr:e1 LOR expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LOR); :}
+	|	expr:e1 LT expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LT); :}
+	|	expr:e1 GT expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.GT); :}
+	|	expr:e1 LTE expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LTE); :}
+	|	expr:e1 GTE expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.GTE); :}
+	|	expr:e1 EQUAL expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.EQUAL); :}
+	|	expr:e1 NEQUAL expr:e2
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.NEQUAL); :}
+;
+
+unop ::= LNEG expr:e
+	{:	RESULT = new UnaryOpExpr(e, UnOperator.LNEG); :}
+;
 
 literal ::= INTEGER:i
-	{:	RESULT = new Literal(LiteralTypes.INTEGER, i); :}
-	| QUOTE:q
-	{:	RESULT = new Literal(LiteralTypes.STRING, q); :}
-	| TRUE:t
-	{:	RESULT = new Literal(LiteralTypes.TRUE); :}
-	| FALSE:f
-	{:	RESULT = new Literal(LiteralTypes.FALSE); :}
-	| NULL:n
-	{:	RESULT = new Literal(LiteralTypes.NULL); :}
+	{:	RESULT = new Literal(LiteralType.INTEGER, i); :}
+	|	QUOTE:q
+	{:	RESULT = new Literal(LiteralType.STRING, q); :}
+	|	TRUE
+	{:	RESULT = new Literal(LiteralType.TRUE); :}
+	|	FALSE
+	{:	RESULT = new Literal(LiteralType.FALSE); :}
+	|	NULL
+	{:	RESULT = new Literal(LiteralType.NULL); :}
 ;
 */
 stmt_list ::= stmt:s

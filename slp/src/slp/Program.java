@@ -4,6 +4,7 @@ import java.util.List;
 
 /** A class for the AST root for an ic program.
  */
+
 public class Program extends ASTNode{
 	private List<ClassDecl> classes;
 	
