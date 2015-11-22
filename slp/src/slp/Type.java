@@ -5,4 +5,35 @@ public abstract class Type extends ASTNode{
 	 * @param visitor A visitor.
 	 */
 	public abstract void accept(Visitor visitor);
+	
+	/**
+	 * Number of array 'dimensions' in data type. For example, int[][] ->
+	 * dimension = 2.
+	 */
+	private int ArrayDimenstion = 0;
+
+	/**
+	 * Constructs a new type node. Used by subclasses.
+	 * 
+	 * @param line
+	 *            Line number of type declaration.
+	 */
+	protected Type() {
+	}
+
+	public abstract String getName();
+	
+	public String getFullName(){
+		String str = getName();
+		for(int i = 0; i < getDimension(); i++) str += "[]";
+		return str;
+	}
+
+	public int getDimension() {
+		return ArrayDimenstion;
+	}
+
+	public void incrementDimension() {
+		++ArrayDimenstion;
+	}
 }

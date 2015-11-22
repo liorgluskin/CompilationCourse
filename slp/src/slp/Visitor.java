@@ -5,6 +5,10 @@ package slp;
 public interface Visitor {
 	public void visit(Program program);
 	public void visit(ClassDecl class_decl);
+	public void visit(ClassMethod method);
+	public void visit(StaticMethod method);
+	public void visit(PrimitiveType primitiveType);
+	public void visit(ClassType classType);
 	public void visit(Field field);
 	public void visit(Formal formal);
 	public void visit(VarLocation var_loc);

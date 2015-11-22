@@ -69,4 +69,106 @@ public class PrettyPrinter implements Visitor {
 		System.out.print(expr.op);
 		expr.rhs.accept(this);
 	}
+
+	@Override
+	public void visit(Program program) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(ClassDecl class_decl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(ClassMethod method) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(StaticMethod method) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(PrimitiveType primitiveType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(ClassType classType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Field field) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Formal formal) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(VarLocation var_loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(ArrLocation arr_loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(StaticCall static_call) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(VirtualCall virtual_call) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Literal literal) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(This t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(NewObject new_obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(NewArray new_arr) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Length length) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -125,4 +125,94 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 		}
 		return new Integer(result);
 	}
+
+	@Override
+	public Integer visit(Program program, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ClassDecl class_decl, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(Field field, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(StaticMethod staticMethod, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ClassMethod classMethod, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(Formal formal, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(VarLocation var_loc, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ArrLocation arr_loc, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(StaticCall static_call, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(VirtualCall virtual_call, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(This t, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(NewObject new_obj, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(NewArray new_arr, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(Length length, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(Literal literal, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

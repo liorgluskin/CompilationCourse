@@ -164,26 +164,19 @@ id_list ::= ID:id
 method ::= STATIC VOID ID:id LP RP LCBR stmt_list:sl RCBR 
 	{: RESULT = new StaticMethod(new PrimitiveType(DataTypes.VOID), id, new ArrayList<Formal>(), sl); :}
 	| STATIC type:t ID:id LP RP LCBR stmt_list:sl RCBR
-	{: RESULT = new StaticMethod(t, id, new ArrayList<Formal>(), sl);
-	   // System.out.println("Reduced rule static t id(){sl} for t=" + t + ", id=" + id + " and sl=" + sl); :}
+	{: RESULT = new StaticMethod(t, id, new ArrayList<Formal>(), sl); :}
 	| STATIC VOID ID:id LP formal_list:f RP LCBR stmt_list:sl RCBR
-	{: RESULT = new StaticMethod(new PrimitiveType(idleft, DataTypes.VOID), id, f, sl);
-	   // System.out.println("Reduced rule static void id(f){sl} for id=" + id + ", f=" + f + " and sl=" + sl); :}
+	{: RESULT = new StaticMethod(new PrimitiveType(DataTypes.VOID), id, f, sl); :}
 	| STATIC type:t ID:id LP formal_list:f RP LCBR stmt_list:sl RCBR
-	{: RESULT = new StaticMethod(t, id, f, sl);
-	   // System.out.println("Reduced rule static t id(f){sl} for t=" + t + ", id=" + id + ", f=" + f + " and sl=" + sl); :}
+	{: RESULT = new StaticMethod(t, id, f, sl); :}
 	| VOID ID:id LP RP LCBR stmt_list:sl RCBR 
-	{: RESULT = new VirtualMethod(new PrimitiveType(idleft, DataTypes.VOID), id, new ArrayList<Formal>(), sl);
-	   // System.out.println("Reduced rule void id(){sl} for id=" + id + " and sl=" + sl); :}
+	{: RESULT = new ClassMethod(new PrimitiveType(DataTypes.VOID), id, new ArrayList<Formal>(), sl);:}
 	| type:t ID:id LP RP LCBR stmt_list:sl RCBR
-	{: RESULT = new VirtualMethod(t, id, new ArrayList<Formal>(), sl);
-	   // System.out.println("Reduced rule t id(){sl} for t=" + t + ", id=" + id + " and sl=" + sl); :}
+	{: RESULT = new ClassMethod(t, id, new ArrayList<Formal>(), sl); :}
 	| VOID ID:id LP formal_list:f RP LCBR stmt_list:sl RCBR
-	{: RESULT = new VirtualMethod(new PrimitiveType(idleft, DataTypes.VOID), id, f, sl);
-	   // System.out.println("Reduced rule void id(f){sl} for id=" + id + ", f=" + f + " and sl=" + sl); :}
+	{: RESULT = new ClassMethod(new PrimitiveType(DataTypes.VOID), id, f, sl); :}
 	| type:t ID:id LP formal_list:f RP LCBR stmt_list:sl RCBR
-	{: RESULT = new VirtualMethod(t, id, f, sl);
-	   // System.out.println("Reduced rule t id(f){sl} for t=" + t + ", id=" + id + ", f=" + f + " and sl=" + sl); :}
+	{: RESULT = new ClassMethod(t, id, f, sl); :}
 
 formals ::= formal:f
 	{: List<Formal> flst = new ArrayList<Formal>();
@@ -200,6 +193,12 @@ formal ::= type:t ID:id
 	{: RESULT = new Formal(t, id); :}
 ;
 
+type ::= INT:i {: RESULT = new PrimitiveType(DataTypes.INT); :}
+	| BOOLEAN:b {: RESULT = new PrimitiveType(DataTypes.BOOLEAN); :}
+	| STRING:s {: RESULT = new PrimitiveType(DataTypes.STRING); :}
+	| CLASS_ID:ci {: RESULT = new ClassType(ci); :}
+	| type:t LB RB {: t.incrementDimension(); RESULT = t; :}
+
 expr ::= location:l
 	{:	RESULT = l; :}
 	|	call:c
@@ -211,7 +210,7 @@ expr ::= location:l
 	|	NEW type:t LB expr:e RB
 	{:	RESULT = new NewArray(t,e); :}
 	|	expr:e DOT LENGTH
-	{:	RESULT = new Length(e); :}				//
+	{:	RESULT = new Length(e); :}
 	|	binop:bop
 	{:	RESULT = bop; :}
 	|	unop:uop
