@@ -1,7 +1,13 @@
 eclipse.preferences.version=1
-org.eclipse.jdt.core.classpathVariable.CUP_JAR=C\:/Compilation/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/java-cup-0.11a-beta-20060608.jar
-org.eclipse.jdt.core.classpathVariable.CUP_RUNTIME_JAR=C\:/Compilation/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/java-cup-0.11a-beta-20060608-runtime.jar
-org.eclipse.jdt.core.classpathVariable.LEX_JAR=C\:/Compilation/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/jflex-1.4.3.jar
+org.eclipse.jdt.core.classpathVariable.CUP_JAR=C\:/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/java-cup-0.11a-beta-20060608.jar
+org.eclipse.jdt.core.classpathVariable.CUP_RUNTIME_JAR=C\:/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/java-cup-0.11a-beta-20060608-runtime.jar
+org.eclipse.jdt.core.classpathVariable.ECLIPSE_HOME=C\:/eclipse/
+org.eclipse.jdt.core.classpathVariable.JRE_LIB=C\:/Program Files/Java/jre1.8.0_65/lib/rt.jar
+org.eclipse.jdt.core.classpathVariable.JRE_SRC=
+org.eclipse.jdt.core.classpathVariable.JRE_SRCROOT=
+org.eclipse.jdt.core.classpathVariable.JUNIT_HOME=C\:/eclipse/plugins/org.junit_4.12.0.v201504281640/
+org.eclipse.jdt.core.classpathVariable.LEX_JAR=C\:/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/jflex-1.4.3.jar
+org.eclipse.jdt.core.classpathVariable.M2_REPO=C\:/Users/lllio/.m2/repository
 org.eclipse.jdt.core.codeComplete.visibilityCheck=enabled
 org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
 org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.8

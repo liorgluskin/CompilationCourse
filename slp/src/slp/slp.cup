@@ -161,6 +161,30 @@ id_list ::= ID:id
 	:}
 ;
 
+method ::= STATIC VOID ID:id LP RP LCBR stmt_list:sl RCBR 
+	{: RESULT = new StaticMethod(new PrimitiveType(DataTypes.VOID), id, new ArrayList<Formal>(), sl); :}
+	| STATIC type:t ID:id LP RP LCBR stmt_list:sl RCBR
+	{: RESULT = new StaticMethod(t, id, new ArrayList<Formal>(), sl);
+	   // System.out.println("Reduced rule static t id(){sl} for t=" + t + ", id=" + id + " and sl=" + sl); :}
+	| STATIC VOID ID:id LP formal_list:f RP LCBR stmt_list:sl RCBR
+	{: RESULT = new StaticMethod(new PrimitiveType(idleft, DataTypes.VOID), id, f, sl);
+	   // System.out.println("Reduced rule static void id(f){sl} for id=" + id + ", f=" + f + " and sl=" + sl); :}
+	| STATIC type:t ID:id LP formal_list:f RP LCBR stmt_list:sl RCBR
+	{: RESULT = new StaticMethod(t, id, f, sl);
+	   // System.out.println("Reduced rule static t id(f){sl} for t=" + t + ", id=" + id + ", f=" + f + " and sl=" + sl); :}
+	| VOID ID:id LP RP LCBR stmt_list:sl RCBR 
+	{: RESULT = new VirtualMethod(new PrimitiveType(idleft, DataTypes.VOID), id, new ArrayList<Formal>(), sl);
+	   // System.out.println("Reduced rule void id(){sl} for id=" + id + " and sl=" + sl); :}
+	| type:t ID:id LP RP LCBR stmt_list:sl RCBR
+	{: RESULT = new VirtualMethod(t, id, new ArrayList<Formal>(), sl);
+	   // System.out.println("Reduced rule t id(){sl} for t=" + t + ", id=" + id + " and sl=" + sl); :}
+	| VOID ID:id LP formal_list:f RP LCBR stmt_list:sl RCBR
+	{: RESULT = new VirtualMethod(new PrimitiveType(idleft, DataTypes.VOID), id, f, sl);
+	   // System.out.println("Reduced rule void id(f){sl} for id=" + id + ", f=" + f + " and sl=" + sl); :}
+	| type:t ID:id LP formal_list:f RP LCBR stmt_list:sl RCBR
+	{: RESULT = new VirtualMethod(t, id, f, sl);
+	   // System.out.println("Reduced rule t id(f){sl} for t=" + t + ", id=" + id + ", f=" + f + " and sl=" + sl); :}
+
 formals ::= formal:f
 	{: List<Formal> flst = new ArrayList<Formal>();
 	   flst.add(f);
