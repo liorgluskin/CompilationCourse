@@ -1,31 +1,29 @@
 package slp;
 
-import java.util.List;
-
-/** A class for the AST root for an ic program.
+/** A class for array reference AST node
  */
-public class Program extends ASTNode{
-	private List<ClassDecl> classes;
-	
-	/**
-	 * Constructs a new program node.
-	 * 
-	 * @param classes List of all classes declared in the program.
-	 */
-	public Program(List<ClassDecl> classes) {
-		this.classes = classes;
-	}
 
-	public List<ClassDecl> getClasses() {
-		return classes;
-	}
+public class ArrLocation extends Location{
+	private Expr arr_location;
+	private Expr index;
 	
 	/**
-	 * Adds a class to the program.
-	 * @param class_decl Class declaration
+	 * Constructs a new array reference node.
+	 * 
+	 * @param arr_location Array location.
+	 * @param index Numeric index in the array.
 	 */
-	public void addClass(ClassDecl class_decl){
-		classes.add(class_decl);
+	public ArrLocation(Expr arr_location, Expr index){
+		this.arr_location = arr_location;
+		this.index = index;
+	}
+	
+	public Expr getArrLocation(){
+		return this.arr_location;
+	}
+	
+	public Expr getIndex(){
+		return this.index;
 	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -48,5 +46,5 @@ public class Program extends ASTNode{
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}	
+	}
 }

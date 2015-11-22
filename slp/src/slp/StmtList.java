@@ -1,33 +1,25 @@
 package slp;
 
 import java.util.List;
+import java.util.ArrayList;
 
-/** A class for the AST root for an ic program.
+/** An AST node for a list of statements.
  */
-public class Program extends ASTNode{
-	private List<ClassDecl> classes;
+public class StmtList extends ASTNode {
+	public final List<Stmt> statements = new ArrayList<Stmt>();
 	
-	/**
-	 * Constructs a new program node.
-	 * 
-	 * @param classes List of all classes declared in the program.
-	 */
-	public Program(List<ClassDecl> classes) {
-		this.classes = classes;
+	public StmtList(Stmt stmt) {
+		statements.add(stmt);
 	}
 
-	public List<ClassDecl> getClasses() {
-		return classes;
-	}
-	
-	/**
-	 * Adds a class to the program.
-	 * @param class_decl Class declaration
+	/** Adds a statement to the tail of the list.
+	 * 
+	 * @param stmt A program statement.
 	 */
-	public void addClass(ClassDecl class_decl){
-		classes.add(class_decl);
+	public void addStmt(Stmt stmt) {
+		statements.add(stmt);
 	}
-	
+
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */

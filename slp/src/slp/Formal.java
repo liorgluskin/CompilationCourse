@@ -1,31 +1,20 @@
 package slp;
 
-import java.util.List;
-
-/** A class for the AST root for an ic program.
- */
-public class Program extends ASTNode{
-	private List<ClassDecl> classes;
+public class Formal extends ASTNode{
+	private Type type;
+	private String name;
 	
-	/**
-	 * Constructs a new program node.
-	 * 
-	 * @param classes List of all classes declared in the program.
-	 */
-	public Program(List<ClassDecl> classes) {
-		this.classes = classes;
-	}
-
-	public List<ClassDecl> getClasses() {
-		return classes;
+	public Formal(Type type, String name){
+		this.type = type;
+		this.name = name;
 	}
 	
-	/**
-	 * Adds a class to the program.
-	 * @param class_decl Class declaration
-	 */
-	public void addClass(ClassDecl class_decl){
-		classes.add(class_decl);
+	public Type getType() {
+		return type;
+	}
+
+	public String getName() {
+		return name;
 	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -48,5 +37,5 @@ public class Program extends ASTNode{
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}	
+	}
 }

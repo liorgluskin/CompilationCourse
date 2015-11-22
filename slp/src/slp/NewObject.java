@@ -1,31 +1,22 @@
 package slp;
 
-import java.util.List;
-
-/** A class for the AST root for an ic program.
+/** A class for AST nodes for a new object.
  */
-public class Program extends ASTNode{
-	private List<ClassDecl> classes;
-	
-	/**
-	 * Constructs a new program node.
-	 * 
-	 * @param classes List of all classes declared in the program.
-	 */
-	public Program(List<ClassDecl> classes) {
-		this.classes = classes;
-	}
 
-	public List<ClassDecl> getClasses() {
-		return classes;
-	}
+public class NewObject extends New{
+	private String class_name;
 	
 	/**
-	 * Adds a class to the program.
-	 * @param class_decl Class declaration
+	 * Constructs a new node for a new object.
+	 * 
+	 * @param class_name Object class name.
 	 */
-	public void addClass(ClassDecl class_decl){
-		classes.add(class_decl);
+	public NewObject(String class_name){
+		this.class_name = class_name;
+	}
+	
+	public String getClassName(){
+		return this.class_name;
 	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.

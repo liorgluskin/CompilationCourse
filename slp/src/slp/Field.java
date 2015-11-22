@@ -1,46 +1,26 @@
 package slp;
 
-import java.util.List;
-
-/** Class declaration AST node.
-*/
-
-public class ClassDecl extends ASTNode {
+public class Field extends ASTNode{
+	private Type type;
 	private String name;
-	private String superClassName = null;	//Default value for super class - null
-	private List<Field> fields;
-	private List<Method> methods;
 	
 	/**
-	 * Constructs a new class declaration node.
+	 * Constructs a new field node.
 	 * 
-	 * @param
+	 * @param type Data type of field
+	 * @param name Name of field.
 	 */
-	public ClassDecl(String name,List<Field> fields, List<Method> methods) {
+	public Field(Type type, String name) {
+		this.type = type;
 		this.name = name;
-		this.fields = fields;
-		this.methods = methods;
 	}
 	
-	public ClassDecl(String name, String superClassName,List<Field> fields, List<Method> methods) {
-		this(name, fields, methods);
-		this.superClassName = superClassName;
-	}
-	
-	public String getName() {
-		return name;
+	public Type getType() {
+		return type;
 	}
 
-	public String getSuperClassName() {
-		return superClassName;
-	}
-	
-	public List<Field> getFields() {
-		return fields;
-	}
-	
-	public List<Method> getMethods() {
-		return methods;
+	public String getName() {
+		return name;
 	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -63,5 +43,5 @@ public class ClassDecl extends ASTNode {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}	
+	}
 }

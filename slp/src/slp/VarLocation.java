@@ -1,31 +1,38 @@
 package slp;
 
-import java.util.List;
-
-/** A class for the AST root for an ic program.
+/** A class for variable reference AST node
  */
-public class Program extends ASTNode{
-	private List<ClassDecl> classes;
-	
-	/**
-	 * Constructs a new program node.
-	 * 
-	 * @param classes List of all classes declared in the program.
-	 */
-	public Program(List<ClassDecl> classes) {
-		this.classes = classes;
-	}
 
-	public List<ClassDecl> getClasses() {
-		return classes;
+public class VarLocation extends Location{
+	private String var_name;
+	private Expr location = null;			//default initialization
+	
+	/**
+	 * Constructs a new variable reference node.
+	 * 
+	 * @param name Name of variable.
+	 */
+	public VarLocation(String name){
+		this.var_name = name;
 	}
 	
 	/**
-	 * Adds a class to the program.
-	 * @param class_decl Class declaration
+	 * Constructs a new variable reference node.
+	 * 
+	 * @param name Name of variable.
+	 * @param location Location of variable.
 	 */
-	public void addClass(ClassDecl class_decl){
-		classes.add(class_decl);
+	public VarLocation(String name, Expr location){
+		this(name);
+		this.location = location;
+	}
+	
+	public String getName() {
+		return var_name;
+	}
+	
+	public Expr getLocation() {
+		return location;
 	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -48,5 +55,5 @@ public class Program extends ASTNode{
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}	
+	}
 }
