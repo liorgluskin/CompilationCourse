@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ClassContent {
+	
 	private List<Method> method_lst;
 	private List<Field> field_lst;
 	

@@ -16,14 +16,15 @@ public class ClassDecl extends ASTNode {
 	 * 
 	 * @param
 	 */
-	public ClassDecl(String name,List<Field> fields, List<Method> methods) {
+	public ClassDecl(int line,String name,List<Field> fields, List<Method> methods) {
+		super(line);
 		this.name = name;
 		this.fields = fields;
 		this.methods = methods;
 	}
 	
-	public ClassDecl(String name, String superClassName,List<Field> fields, List<Method> methods) {
-		this(name, fields, methods);
+	public ClassDecl(int line,String name, String superClassName,List<Field> fields, List<Method> methods) {
+		this(line,name, fields, methods);
 		this.superClassName = superClassName;
 	}
 	

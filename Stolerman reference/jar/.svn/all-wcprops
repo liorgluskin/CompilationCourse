@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 26
+/svn/!svn/ver/22/trunk/jar
+END
+java-cup-11a.jar
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/22/trunk/jar/java-cup-11a.jar
+END
+java-cup-11a-runtime.jar
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/22/trunk/jar/java-cup-11a-runtime.jar
+END
+JFlex.jar
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/22/trunk/jar/JFlex.jar
+END

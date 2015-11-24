@@ -31,7 +31,8 @@ public class ClassType extends Type {
 	 * @param name
 	 *            Name of data type.
 	 */
-	public ClassType(String name) {
+	public ClassType(int line,String name) {
+		super(line);
 		this.name = name;
 	}
 

@@ -22,22 +22,6 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 		root.accept(this, env);
 	}
 	
-	public Integer visit(StmtList stmts, Environment env) {
-		for (Stmt st : stmts.statements) {
-			st.accept(this, env);
-		}
-		return null;
-	}
-
-	public Integer visit(Stmt stmt, Environment env) {
-		throw new UnsupportedOperationException("Unexpected visit of Stmt!");
-	}
-
-	public Integer visit(PrintStmt stmt, Environment env) {
-		Integer printValue = stmt.expr.accept(this, env);
-		System.out.println(printValue);
-		return null;
-	}
 
 	public Integer visit(AssignStmt stmt, Environment env) {
 		Expr rhs = stmt.rhs;

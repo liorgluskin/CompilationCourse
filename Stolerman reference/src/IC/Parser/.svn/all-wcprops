@@ -1,0 +1,71 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/29/trunk/src/IC/Parser
+END
+Library.cup
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/29/trunk/src/IC/Parser/Library.cup
+END
+LexicalError.java
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/2/trunk/src/IC/Parser/LexicalError.java
+END
+Parser.java
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/2/trunk/src/IC/Parser/Parser.java
+END
+LibrarySym.java
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/29/trunk/src/IC/Parser/LibrarySym.java
+END
+Lexer.java
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/2/trunk/src/IC/Parser/Lexer.java
+END
+Token.java
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/2/trunk/src/IC/Parser/Token.java
+END
+SyntaxError.java
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/2/trunk/src/IC/Parser/SyntaxError.java
+END
+IC.cup
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/2/trunk/src/IC/Parser/IC.cup
+END
+LibraryParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/29/trunk/src/IC/Parser/LibraryParser.java
+END
+IC.lex
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/2/trunk/src/IC/Parser/IC.lex
+END
+sym.java
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/!svn/ver/2/trunk/src/IC/Parser/sym.java
+END

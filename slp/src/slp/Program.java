@@ -13,6 +13,7 @@ public class Program extends ASTNode{
 	 * @param classes List of all classes declared in the program.
 	 */
 	public Program(List<ClassDecl> classes) {
+		super(0);
 		this.classes = classes;
 	}
 

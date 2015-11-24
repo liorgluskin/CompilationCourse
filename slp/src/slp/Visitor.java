@@ -20,9 +20,6 @@ public interface Visitor {
 	public void visit(NewObject new_obj);
 	public void visit(NewArray new_arr);
 	public void visit(Length length);
-	public void visit(StmtList stmts);
-	public void visit(Stmt stmt);
-	public void visit(PrintStmt stmt);
 	public void visit(AssignStmt stmt);
 	public void visit(Expr expr);
 	public void visit(ReadIExpr expr);

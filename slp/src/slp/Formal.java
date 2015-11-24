@@ -5,6 +5,7 @@ public class Formal extends ASTNode{
 	private String name;
 	
 	public Formal(Type type, String name){
+		super(type.getLine());
 		this.type = type;
 		this.name = name;
 	}

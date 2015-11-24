@@ -1,6 +1,9 @@
 package slp;
 
 import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import java_cup.runtime.*;
 
 /** The entry point of the SLP (Straight Line Program) application.
@@ -40,8 +43,12 @@ public class Main {
 			System.out.println("Parsed " + args[0] + " successfully!");
 			StmtList root = (StmtList) parseSymbol.value;
 			
+			//get file name of file
+			Path p = Paths.get(args[0]);
+			String fileName = p.getFileName().toString();
+			
 			// Pretty-print the program to System.out
-			PrettyPrinter printer = new PrettyPrinter(root);
+			PrettyPrinter printer = new PrettyPrinter(root,fileName);
 			printer.print();
 			
 			// Interpret the program

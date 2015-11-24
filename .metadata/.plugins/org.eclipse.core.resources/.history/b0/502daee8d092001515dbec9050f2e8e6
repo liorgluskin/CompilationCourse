@@ -1,0 +1,170 @@
+package slp;
+
+/** Pretty-prints an SLP AST.
+ */
+public class PrettyPrinter implements Visitor {
+	protected final ASTNode root;
+	protected String fileName;
+
+	/** Constructs a printin visitor from an AST.
+	 * 
+	 * @param root The root of the AST.
+	 */
+	public PrettyPrinter(ASTNode root, String fileName) {
+		this.root = root;
+		this.fileName = fileName;
+	}
+
+	/** Prints the AST with the given root.
+	 */
+	public void print() {
+		root.accept(this);
+	}
+	
+	public void visit(AssignStmt stmt) {
+		stmt.varExpr.accept(this);
+		System.out.print("=");
+		stmt.rhs.accept(this);
+		System.out.print(";");
+	}
+	
+	public void visit(Expr expr) {
+		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
+	}	
+	
+	public void visit(ReadIExpr expr) {
+		System.out.print("readi()");
+	}	
+	
+	public void visit(VarExpr expr) {
+		System.out.print(expr.name);
+	}
+	
+	public void visit(NumberExpr expr) {
+		System.out.print(expr.value);
+	}
+	
+	public void visit(UnaryOpExpr expr) {
+		System.out.print(expr.op);
+		expr.operand.accept(this);
+	}
+	
+	public void visit(BinaryOpExpr expr) {
+		expr.lhs.accept(this);
+		System.out.print(expr.op);
+		expr.rhs.accept(this);
+	}
+
+	@Override
+	public void visit(Program program) {
+		System.out.println("Abstract Syntax Tree: "+fileName+"\n");
+		for(ClassDecl cls : program.getClasses()){
+			cls.accept(this);
+		}
+		
+	}
+
+	@Override
+	public void visit(ClassDecl class_decl) {
+		indent(class_decl);
+		System.out.println("Declaration of class: " + class_decl.getName());
+		if (class_decl.getSuperClassName() != null)
+			System.out.println(", subclass of " + class_decl.getSuperClassName());
+		depth += 2;
+		for (Field field : icClass.getFields())
+			output.append(field.accept(this));
+		for (Method method : icClass.getMethods())
+			output.append(method.accept(this));
+		depth -= 2;
+	}
+
+	@Override
+	public void visit(ClassMethod method) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(StaticMethod method) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(PrimitiveType primitiveType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(ClassType classType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Field field) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Formal formal) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(VarLocation var_loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(ArrLocation arr_loc) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(StaticCall static_call) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(VirtualCall virtual_call) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Literal literal) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(This t) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(NewObject new_obj) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(NewArray new_arr) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Length length) {
+		// TODO Auto-generated method stub
+		
+	}
+}

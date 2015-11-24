@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/121/trunk/src/IC/LIR
+END
+RegCounterVisitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/121/trunk/src/IC/LIR/RegCounterVisitor.java
+END
+LIRUpType.java
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/109/trunk/src/IC/LIR/LIRUpType.java
+END
+ClassLayout.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/88/trunk/src/IC/LIR/ClassLayout.java
+END
+LIRFlagEnum.java
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/84/trunk/src/IC/LIR/LIRFlagEnum.java
+END
+TranslatePropagatingVisitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/!svn/ver/120/trunk/src/IC/LIR/TranslatePropagatingVisitor.java
+END
+PropagatingVisitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/60/trunk/src/IC/LIR/PropagatingVisitor.java
+END
+OptTranslatePropagatingVisitor.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/!svn/ver/120/trunk/src/IC/LIR/OptTranslatePropagatingVisitor.java
+END

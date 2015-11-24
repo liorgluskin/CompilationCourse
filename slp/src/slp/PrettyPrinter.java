@@ -4,36 +4,22 @@ package slp;
  */
 public class PrettyPrinter implements Visitor {
 	protected final ASTNode root;
+	protected String fileName;
+	protected int depth;
 
 	/** Constructs a printin visitor from an AST.
 	 * 
 	 * @param root The root of the AST.
 	 */
-	public PrettyPrinter(ASTNode root) {
+	public PrettyPrinter(ASTNode root, String fileName) {
 		this.root = root;
+		this.fileName = fileName;
 	}
 
 	/** Prints the AST with the given root.
 	 */
 	public void print() {
 		root.accept(this);
-	}
-	
-	public void visit(StmtList stmts) {
-		for (Stmt s : stmts.statements) {
-			s.accept(this);
-			System.out.println();
-		}
-	}
-
-	public void visit(Stmt stmt) {
-		throw new UnsupportedOperationException("Unexpected visit of Stmt abstract class");
-	}
-	
-	public void visit(PrintStmt stmt) {
-		System.out.print("print(");
-		stmt.expr.accept(this);
-		System.out.print(");");
 	}
 	
 	public void visit(AssignStmt stmt) {
@@ -72,49 +58,99 @@ public class PrettyPrinter implements Visitor {
 
 	@Override
 	public void visit(Program program) {
-		// TODO Auto-generated method stub
+		System.out.println("Abstract Syntax Tree: "+fileName+"\n");
+		for(ClassDecl cls : program.getClasses()){
+			cls.accept(this);
+		}
 		
 	}
 
 	@Override
 	public void visit(ClassDecl class_decl) {
-		// TODO Auto-generated method stub
-		
+		indent(class_decl);
+		System.out.println("Declaration of class: " + class_decl.getName());
+		if (class_decl.getSuperClassName() != null)
+			System.out.println(", subclass of " + class_decl.getSuperClassName());
+		depth += 2;
+		for (Field field : class_decl.getFields())
+			field.accept(this);
+		for (Method method : class_decl.getMethods())
+			method.accept(this);
+		depth -= 2;
 	}
 
 	@Override
 	public void visit(ClassMethod method) {
-		// TODO Auto-generated method stub
+		indent(method);
+		System.out.println("Declaration of virtual method: " + method.getName());
+		depth +=2;
+		method.getType().accept(this);
+		for(Formal f : method.getFormals()){
+			f.accept(this);
+		}
+		//Add statment handling here!!!!!
+		//*******************************
+		//*********************************
+		//********************************
+		
+		depth-=2;
+		
 		
 	}
 
 	@Override
 	public void visit(StaticMethod method) {
-		// TODO Auto-generated method stub
+		indent(method);
+		System.out.println("Declaration of static method: " + method.getName());
+		depth +=2;
+		method.getType().accept(this);
+		for(Formal f : method.getFormals()){
+			f.accept(this);
+		}
+		//Add statment handling here!!!!!
+		//*******************************
+		//*********************************
+		//********************************
+		
+		depth -=2;
 		
 	}
 
 	@Override
 	public void visit(PrimitiveType primitiveType) {
-		// TODO Auto-generated method stub
+		indent(primitiveType);
+		System.out.println("Primitive data type: ");
+		if (primitiveType.getDimension() > 0)
+			System.out.println(primitiveType.getDimension() + "-dimensional array of ");
+		System.out.println(primitiveType.getName());
 		
 	}
 
 	@Override
 	public void visit(ClassType classType) {
-		// TODO Auto-generated method stub
-		
+		indent(classType);
+		System.out.println("User-defined data type: ");
+		if (classType.getDimension() > 0)
+			System.out.println(classType.getDimension() + "-dimensional array of ");
+		System.out.println(classType.getName());
 	}
 
 	@Override
 	public void visit(Field field) {
-		// TODO Auto-generated method stub
-		
+		indent(field);
+		System.out.println("Declaration of field: " + field.getName());
+		++depth;
+		field.getType().accept(this);
+		--depth;
 	}
 
 	@Override
 	public void visit(Formal formal) {
-		// TODO Auto-generated method stub
+		indent(formal);
+		System.out.println("Parameter: " + formal.getName());
+		++depth;
+		formal.getType().accept(this);
+		--depth;
 		
 	}
 

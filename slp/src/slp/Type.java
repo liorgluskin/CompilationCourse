@@ -18,7 +18,8 @@ public abstract class Type extends ASTNode{
 	 * @param line
 	 *            Line number of type declaration.
 	 */
-	protected Type() {
+	protected Type(int line) {
+		super(line);
 	}
 
 	public abstract String getName();
