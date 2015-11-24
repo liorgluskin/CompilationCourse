@@ -21,35 +21,62 @@ public class PrettyPrinter implements Visitor {
 	public void print() {
 		root.accept(this);
 	}
-	
+
+	/**Returns String with the correct Tree line format and depth
+	 * */
+	private String treeLine(ASTNode node) {
+		String line = "\n";
+		for(int i = 0; i < depth; ++i){
+			line += " ";
+		}
+		if (node != null){
+			line = node.getLineNum() + ": " + line;
+		}
+	}
+
+	///////////////Statements////////////////////
+
 	public void visit(AssignStmt stmt) {
 		stmt.varExpr.accept(this);
 		System.out.print("=");
 		stmt.rhs.accept(this);
 		System.out.print(";");
 	}
-	
+
+	public void visit(CallStmt stmt) { }
+	public void visit(ReturnStmt stmt) { }
+	public void visit(IfStmt stmt) { }
+	public void visit(WhileStmt stmt) { }
+	public void visit(BreakStmt stmt) { }
+	public void visit(ContinueStmt stmt) { }
+	public void visit(StatementsStmt stmt) { }
+	public void visit(IDStmt stmt) { }
+
+
+	//////////////////////////////////////////
+
+
 	public void visit(Expr expr) {
 		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
 	}	
-	
+
 	public void visit(ReadIExpr expr) {
 		System.out.print("readi()");
 	}	
-	
+
 	public void visit(VarExpr expr) {
 		System.out.print(expr.name);
 	}
-	
+
 	public void visit(NumberExpr expr) {
 		System.out.print(expr.value);
 	}
-	
+
 	public void visit(UnaryOpExpr expr) {
 		System.out.print(expr.op);
 		expr.operand.accept(this);
 	}
-	
+
 	public void visit(BinaryOpExpr expr) {
 		expr.lhs.accept(this);
 		System.out.print(expr.op);
@@ -62,7 +89,7 @@ public class PrettyPrinter implements Visitor {
 		for(ClassDecl cls : program.getClasses()){
 			cls.accept(this);
 		}
-		
+
 	}
 
 	@Override
@@ -92,10 +119,10 @@ public class PrettyPrinter implements Visitor {
 		//*******************************
 		//*********************************
 		//********************************
-		
+
 		depth-=2;
-		
-		
+
+
 	}
 
 	@Override
@@ -111,9 +138,9 @@ public class PrettyPrinter implements Visitor {
 		//*******************************
 		//*********************************
 		//********************************
-		
+
 		depth -=2;
-		
+
 	}
 
 	@Override
@@ -123,7 +150,7 @@ public class PrettyPrinter implements Visitor {
 		if (primitiveType.getDimension() > 0)
 			System.out.println(primitiveType.getDimension() + "-dimensional array of ");
 		System.out.println(primitiveType.getName());
-		
+
 	}
 
 	@Override
@@ -151,60 +178,60 @@ public class PrettyPrinter implements Visitor {
 		++depth;
 		formal.getType().accept(this);
 		--depth;
-		
+
 	}
 
 	@Override
 	public void visit(VarLocation var_loc) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(ArrLocation arr_loc) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(StaticCall static_call) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(VirtualCall virtual_call) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Literal literal) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(This t) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(NewObject new_obj) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(NewArray new_arr) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void visit(Length length) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
