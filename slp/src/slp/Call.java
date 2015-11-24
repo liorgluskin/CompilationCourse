@@ -15,7 +15,8 @@ public abstract class Call extends Expr{
 	 * @param method_name Name of method.
 	 * @param args List of method arguments.
 	 */
-	public Call(String method_name, List<Expr> args){
+	public Call(int line, String method_name, List<Expr> args){
+		super(line);
 		this.method_name = method_name;
 		this.args = args;
 	}

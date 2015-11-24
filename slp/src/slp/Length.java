@@ -11,7 +11,8 @@ public class Length extends Expr{
 	 * 
 	 * @param expr Array length expression.
 	 */
-	public Length(Expr expr){
+	public Length(int line, Expr expr){
+		super(line);
 		this.expr = expr;
 	}
 	

@@ -4,5 +4,9 @@ package slp;
  */
 
 public abstract class New extends Expr{
-	public New(){}
+
+	protected New(int line) {
+		super(line);
+	}
+	
 }

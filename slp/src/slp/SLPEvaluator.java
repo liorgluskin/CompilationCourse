@@ -21,31 +21,6 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 		Environment env = new Environment();
 		root.accept(this, env);
 	}
-	
-	public Integer visit(StmtList stmts, Environment env) {
-		for (Stmt st : stmts.statements) {
-			st.accept(this, env);
-		}
-		return null;
-	}
-
-	public Integer visit(Stmt stmt, Environment env) {
-		throw new UnsupportedOperationException("Unexpected visit of Stmt!");
-	}
-
-	public Integer visit(PrintStmt stmt, Environment env) {
-		Integer printValue = stmt.expr.accept(this, env);
-		System.out.println(printValue);
-		return null;
-	}
-
-	public Integer visit(AssignStmt stmt, Environment env) {
-		Expr rhs = stmt.rhs;
-		Integer expressionValue = rhs.accept(this, env);
-		VarExpr var = stmt.varExpr;
-		env.update(var, expressionValue);
-		return null;
-	}
 
 	public Integer visit(Expr expr, Environment env) {
 		throw new UnsupportedOperationException("Unexpected visit of Expr!");
@@ -74,9 +49,9 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 	}
 
 	public Integer visit(UnaryOpExpr expr, Environment env) {
-		Operator op = expr.op;
-		if (op != Operator.MINUS)
-			throw new RuntimeException("Encountered unexpected operator " + op);
+		UnOperator op = expr.op;
+		//if (op != Operator.MINUS)
+		//	throw new RuntimeException("Encountered unexpected operator " + op);
 		Integer value = expr.operand.accept(this, env);
 		return new Integer(- value.intValue());
 	}
@@ -124,30 +99,6 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 			throw new RuntimeException("Encountered unexpected operator type: " + expr.op);
 		}
 		return new Integer(result);
-	}
-
-	@Override
-	public Integer visit(Program program, Environment d) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer visit(ClassDecl class_decl, Environment d) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer visit(Field field, Environment d) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Integer visit(Formal formal, Environment d) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

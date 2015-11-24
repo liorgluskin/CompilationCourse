@@ -3,8 +3,17 @@ package slp;
 /** Pretty-prints an SLP AST.
  */
 public class PrettyPrinter implements Visitor {
+	protected int depth = 0;
 	protected final ASTNode root;
-
+	
+	private void indent(StringBuffer str_output, ASTNode node) {
+		str_output.append("\n");
+		for (int i = 0; i < depth; i++)
+			str_output.append(" ");
+		if (node != null)
+			str_output.append(node.getLine() + ": ");
+	}
+	
 	/** Constructs a printin visitor from an AST.
 	 * 
 	 * @param root The root of the AST.
@@ -17,30 +26,6 @@ public class PrettyPrinter implements Visitor {
 	 */
 	public void print() {
 		root.accept(this);
-	}
-	
-	public void visit(StmtList stmts) {
-		for (Stmt s : stmts.statements) {
-			s.accept(this);
-			System.out.println();
-		}
-	}
-
-	public void visit(Stmt stmt) {
-		throw new UnsupportedOperationException("Unexpected visit of Stmt abstract class");
-	}
-	
-	public void visit(PrintStmt stmt) {
-		System.out.print("print(");
-		stmt.expr.accept(this);
-		System.out.print(");");
-	}
-	
-	public void visit(AssignStmt stmt) {
-		stmt.varExpr.accept(this);
-		System.out.print("=");
-		stmt.rhs.accept(this);
-		System.out.print(";");
 	}
 	
 	public void visit(Expr expr) {
@@ -71,33 +56,18 @@ public class PrettyPrinter implements Visitor {
 	}
 
 	@Override
-	public void visit(Program program) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(ClassDecl class_decl) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Field field) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Formal formal) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void visit(VarLocation var_loc) {
-		// TODO Auto-generated method stub
-		
+		StringBuffer output_str = new StringBuffer();
+
+		indent(output_str, var_loc);
+		output_str.append("Reference to variable: " + var_loc.getName());
+		if (var_loc.getLocation() != null){
+			output_str.append(", in external scope");
+			++depth;
+			output_str.append(var_loc.getLocation().accept(this));
+			--depth;
+		}
+		return output_str.toString();
 	}
 
 	@Override
@@ -147,4 +117,5 @@ public class PrettyPrinter implements Visitor {
 		// TODO Auto-generated method stub
 		
 	}
+
 }

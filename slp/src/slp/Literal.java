@@ -12,7 +12,8 @@ public class Literal extends Expr{
 	 * 
 	 * @param ltype Type of literal.
 	 */
-	public Literal(LiteralType ltype){
+	public Literal(int line, LiteralType ltype){
+		super(line);
 		this.ltype = ltype;
 	}
 	
@@ -22,8 +23,8 @@ public class Literal extends Expr{
 	 * @param ltype Type of literal.
 	 * @param value Literal's value.
 	 */
-	public Literal(LiteralType ltype, Object value){
-		this(ltype);
+	public Literal(int line, LiteralType ltype, Object value){
+		this(line, ltype);
 		this.value = value;
 	}
 	

@@ -8,6 +8,7 @@ public class BinaryOpExpr extends Expr {
 	public final BinOperator op;
 	
 	public BinaryOpExpr(Expr lhs, Expr rhs, BinOperator op) {
+		super(lhs.getLine());
 		this.lhs = lhs;
 		this.rhs = rhs;
 		this.op = op;

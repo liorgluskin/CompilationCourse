@@ -66,19 +66,6 @@ terminal String		QUOTE;
 /**********************/
 /* 	 NON TERMINALS 	  */
 /**********************/
-non terminal Program program;
-non terminal List<ClassDecl> class_decl_list;
-non terminal ClassDecl class_decl;
-non terminal ClassContent class_content;
-non terminal List<Field> fields;
-non terminal Method method;
-non terminal List<String> id_list;
-non terminal Formal formal;
-non terminal List<Formal> formals;
-non terminal Type type;
-non terminal Stmt stmt;
-non terminal StmtList stmt_list;
-
 non terminal Expr expr;
 non terminal List<Expr> expr_list;
 non terminal Location location;
@@ -104,90 +91,18 @@ precedence left DOT, RP, LP, LB, RB;
 /**********************/
 /* 	DERIVATION RULES  */
 /**********************/
-/*
-program ::= class_decl_list:cdlst
-	{: RESULT = new Program(cdlst); :}
-;
-
-class_decl_list ::= 
-	{: RESULT = new ArrayList<ClassDecl>(); :}
-	| class_decl_list:cdlst class_decl:cd
-	{: cdlst.add(cd);
-	   RESULT = cdlst;
-	:}
-;
-
-classDecl ::= CLASS CLASS_ID:cid LCBR RCBR
-	{: RESULT = new ClassDecl(cid, new ArrayList<Field>(), new ArrayList<Method>()); :}
-	| CLASS CLASS_ID:cid LCBR class_content:content RCBR
-	{: RESULT = new ClassDecl(cid, content.getFieldList(), content.getMethodList()); :}
-	| CLASS CLASS_ID:cid EXTENDS CLASS_ID:scid LCBR RCBR
-	{: RESULT = new ClassDecl(cid, scid, new ArrayList<Field>(), new ArrayList<Method>()); :}
-	| CLASS CLASS_ID:cid EXTENDS CLASS_ID:scid LCBR class_content:content RCBR
-	{: RESULT = new ClassDecl(cid, scid, content.getFieldList(), content.getMethodList()); :}
-;
-
-class_content ::= fields:fs
-	{: RESULT = new ClassContent(fs); :}
-	| method:m
-	{: RESULT = new ClassContent(m); :}
-	| class_conent:content fields:fs
-	{: content.addField(fs);
-	   RESULT = content; 
-	:}
-	| class_content:content method:m
-	{: content.addMethod(m);
-	   RESULT = content;
-	:}
-;
-
-fields ::= type:t id_list:idlst SEMI
-	{: List<Field> field_list = new ArrayList<Field>();
-	   for (String id: idlst){
-	      field_list.add(new Field(t, id));
-	   }
-	   RESULT = field_list; 
-	:}
-;
-
-id_list ::= ID:id
-	{: List<String> idlst = new ArrayList<String>();
-	   idlst.add(id);
-	   RESULT = idlst; 
-	:}
-	| id_list:idlst COMMA ID:id
-	{: idlst.add(id);
-	   RESULT = idlst; 
-	:}
-;
-
-formals ::= formal:f
-	{: List<Formal> flst = new ArrayList<Formal>();
-	   flst.add(f);
-	   RESULT = flst;
-	:}
-	| formals:fs COMMA formal:f
-	{: fs.add(f);
-	   RESULT = fs;
-	:}
-;
-
-formal ::= type:t ID:id
-	{: RESULT = new Formal(t, id); :}
-;
-
 expr ::= location:l
 	{:	RESULT = l; :}
 	|	call:c
 	{:	RESULT = c; :}
 	|	THIS:t
-	{:	RESULT = new This(); :}
+	{:	RESULT = new This(tleft); :}
 	|	NEW CLASS_ID:cid LP RP
-	{:	RESULT = new NewObject(cid); :}
+	{:	RESULT = new NewObject(cidline, cid); :}
 	|	NEW type:t LB expr:e RB
-	{:	RESULT = new NewArray(t,e); :}
+	{:	RESULT = new NewArray(tleft,t,e); :}
 	|	expr:e DOT LENGTH
-	{:	RESULT = new Length(e); :}
+	{:	RESULT = new Length(eleft, e); :}
 	|	binop:b
 	{:	RESULT = b; :}
 	|	unop:u
@@ -280,62 +195,4 @@ literal ::= INTEGER:i
 	{:	RESULT = new Literal(LiteralType.FALSE); :}
 	|	NULL
 	{:	RESULT = new Literal(LiteralType.NULL); :}
-;
-*/
-stmt_list ::= stmt:s
-	{: RESULT = new StmtList(s); :}
-	| stmt_list:sl stmt:s
-	{: sl.addStmt(s); RESULT = sl; :}
-;
-
-stmt ::= ID:v ASSIGN expr:e SEMI
-	{: VarExpr ve = new VarExpr(v); RESULT = new AssignStmt(ve, e); :}
-;
-
-expr ::= expr:e1 PLUS:p expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.PLUS);
-		   System.out.println("Reduced rule e1 + e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 MINUS expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.MINUS);
-		   System.out.println("Reduced rule e1 - e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 MULTIPLY expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.MULTIPLY);
-		   System.out.println("Reduced rule e1 * e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 DIVIDE expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.DIVIDE);
-		   System.out.println("Reduced rule e1 / e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 LAND expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.LAND);
-		   System.out.println("Reduced rule e1 && e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 LOR expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.LOR);
-		   System.out.println("Reduced rule e1 || e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 LT expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.LT);
-		   System.out.println("Reduced rule e1 < e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 GT expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.GT);
-		   System.out.println("Reduced rule e1 > e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 LTE expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.LTE);
-		   System.out.println("Reduced rule e1 <= e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| expr:e1 GTE expr:e2
-		{: RESULT = new BinaryOpExpr(e1, e2, Operator.GTE);
-		   System.out.println("Reduced rule e1 >= e2 for e1=" + e1 + " and e2="+e2);
-		 :}
-		| LP expr:e RP
-		{: RESULT = e; :}
-		| NUMBER:n
-		{: RESULT = new NumberExpr(n.intValue()); :}
-		| ID:v
-		{: RESULT = new VarExpr(v); :}
 ;

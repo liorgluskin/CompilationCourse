@@ -14,6 +14,7 @@ public class ArrLocation extends Location{
 	 * @param index Numeric index in the array.
 	 */
 	public ArrLocation(Expr arr_location, Expr index){
+		super(arr_location.getLine());
 		this.arr_location = arr_location;
 		this.index = index;
 	}
