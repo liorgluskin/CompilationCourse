@@ -33,7 +33,7 @@ public abstract class ASTNode {
 	 * 
 	 * @return the line of the AST node.
 	 */
-	public int getLine() {
+	public int getLineNum() {
 		return line;
 	}
 }

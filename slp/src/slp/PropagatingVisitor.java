@@ -15,7 +15,7 @@ public interface PropagatingVisitor<DownType,UpType> {
 	public UpType visit(Length length, DownType d);
 	public UpType visit(Literal literal, DownType d);
 	public UpType visit(Expr expr, DownType d);
-	public UpType visit(VarExpr expr, DownType d);
+	public UpType visit(VarExpr vexpr, DownType d);
 	public UpType visit(UnaryOpExpr expr, DownType d);
 	public UpType visit(BinaryOpExpr expr, DownType d);
 }

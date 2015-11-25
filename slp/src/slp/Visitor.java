@@ -13,7 +13,6 @@ public interface Visitor {
 	public void visit(NewArray new_arr);
 	public void visit(Length length);
 	public void visit(Expr expr);
-	public void visit(VarExpr expr);
 	public void visit(UnaryOpExpr expr);
 	public void visit(BinaryOpExpr expr);
 }

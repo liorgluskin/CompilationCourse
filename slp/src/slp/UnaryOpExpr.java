@@ -8,7 +8,7 @@ public class UnaryOpExpr extends Expr {
 	public final Expr operand;
 	
 	public UnaryOpExpr(Expr operand, UnOperator op) {
-		super(operand.getLine());
+		super(operand.getLineNum());
 		this.operand = operand;
 		this.op = op;
 	}

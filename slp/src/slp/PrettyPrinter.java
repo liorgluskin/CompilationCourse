@@ -11,7 +11,7 @@ public class PrettyPrinter implements Visitor {
 		for (int i = 0; i < depth; i++)
 			System.out.print(" ");
 		if (node != null)
-			System.out.print(node.getLine() + ": ");
+			System.out.print(node.getLineNum() + ": ");
 	}
 	
 	/** Constructs a printin visitor from an AST.
@@ -27,14 +27,10 @@ public class PrettyPrinter implements Visitor {
 	public void print() {
 		root.accept(this);
 	}
-	
+////////////////	
 	public void visit(Expr expr) {
 		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
 	}	
-	
-	public void visit(VarExpr expr) {
-		System.out.print(expr.name);
-	}
 	
 	public void visit(UnaryOpExpr expr) {
 		System.out.print(expr.op);
@@ -63,54 +59,71 @@ public class PrettyPrinter implements Visitor {
 	public void visit(ArrLocation arr_loc) {
 		indent(arr_loc);
 		System.out.print("Reference to array");
-		depth+=2;
+		++depth;
 		arr_loc.getArrLocation().accept(this);
 		arr_loc.getIndex().accept(this);
-		depth-=2;
+		--depth;
 	}
 
 	@Override
 	public void visit(StaticCall static_call) {
 		indent(static_call);
 		System.out.print("Call to static method: " +static_call.getMethodName()+ ", in class "+ static_call.getClassName());
-		--depth;
-		
 		++depth;
+		for(Expr e: static_call.getArguments())
+			e.accept(this);
+		--depth;
 	}
 
 	@Override
 	public void visit(VirtualCall virtual_call) {
-		// TODO Auto-generated method stub
-		
+		indent(virtual_call);
+		System.out.print("Call to virtual method: " +virtual_call.getMethodName());
+		++depth;
+		if (virtual_call.getObjectReference() != null){
+			System.out.print(", in external scope");
+			virtual_call.getObjectReference().accept(this);
+		}
+		for(Expr e: virtual_call.getArguments())
+			e.accept(this);
+		--depth;
 	}
 
 	@Override
 	public void visit(Literal literal) {
-		// TODO Auto-generated method stub
-		
+		indent(literal);
+		System.out.print(literal.getType()+" literal: "+literal.getValue());
 	}
 
 	@Override
 	public void visit(This t) {
-		// TODO Auto-generated method stub
-		
+		indent(t);
+		System.out.print("Reference to 'this' instance");	
 	}
 
 	@Override
 	public void visit(NewObject new_obj) {
-		// TODO Auto-generated method stub
-		
+		indent(new_obj);
+		System.out.print("Instantiation of class: "+new_obj.getClassName());	
 	}
 
 	@Override
 	public void visit(NewArray new_arr) {
-		// TODO Auto-generated method stub
-		
+		indent(new_arr);
+		System.out.print("Array allocation");
+		++depth;
+		new_arr.getType().accept(this);
+		new_arr.getArrayLength().accept(this);
+		--depth;
 	}
 
 	@Override
 	public void visit(Length length) {
-		// TODO Auto-generated method stub
+		indent(length);
+		System.out.print("Reference to array length");
+		++depth;
+		length.getExpression().accept(this);
+		--depth;
 		
 	}
 
