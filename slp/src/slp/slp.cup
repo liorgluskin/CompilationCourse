@@ -79,7 +79,7 @@ non terminal List<Formal> formals;
 non terminal Type type;
 non terminal Call call;
 non terminal StaticCall static_call;
-non terminal VirtualCall virtual_call
+non terminal VirtualCall virtual_call;
 
 
 
@@ -87,6 +87,8 @@ non terminal VirtualCall virtual_call
 /**********************/
 /* 	   PRECEDENCE 	  */
 /**********************/
+
+
 precedence right ASSIGN;
 precedence left LOR;
 precedence left LAND;
@@ -205,6 +207,7 @@ stmt_list ::= stmt:s
 	| stmt_list:sl stmt:s
 	{: sl.addStmt(s); RESULT = sl; :}
 ;
+
 
 stmt ::= VAR:v ASSIGN expr:e SEMI
 	{: VarExpr ve = new VarExpr(v); RESULT = new AssignStmt(ve, e); :}

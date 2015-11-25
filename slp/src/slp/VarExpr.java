@@ -6,6 +6,7 @@ public class VarExpr extends Expr {
 	public final String name;
 	
 	public VarExpr(String name) {
+		super(-1);
 		this.name = name;
 	}
 

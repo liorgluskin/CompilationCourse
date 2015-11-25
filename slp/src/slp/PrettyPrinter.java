@@ -3,10 +3,11 @@ package slp;
 /** Pretty-prints an SLP AST.
  */
 public class PrettyPrinter implements Visitor {
+	protected int depth = 0;
 	protected final ASTNode root;
 	protected String fileName;
-	protected int depth;
-
+	
+	
 	/** Constructs a printin visitor from an AST.
 	 * 
 	 * @param root The root of the AST.
@@ -16,23 +17,20 @@ public class PrettyPrinter implements Visitor {
 		this.fileName = fileName;
 	}
 
+	private void indent(ASTNode node) {
+		System.out.print("\n");
+		for (int i = 0; i < depth; i++)
+			System.out.print(" ");
+		if (node != null)
+			System.out.print(node.getLineNum() + ": ");
+	}
 	/** Prints the AST with the given root.
 	 */
 	public void print() {
 		root.accept(this);
 	}
 
-	/**Returns String with the correct Tree line format and depth
-	 * */
-	private String treeLine(ASTNode node) {
-		String line = "\n";
-		for(int i = 0; i < depth; ++i){
-			line += " ";
-		}
-		if (node != null){
-			line = node.getLineNum() + ": " + line;
-		}
-	}
+
 
 	///////////////Statements////////////////////
 
@@ -56,21 +54,15 @@ public class PrettyPrinter implements Visitor {
 	//////////////////////////////////////////
 
 
-	public void visit(Expr expr) {
-		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
-	}	
-
-	public void visit(ReadIExpr expr) {
-		System.out.print("readi()");
-	}	
 
 	public void visit(VarExpr expr) {
 		System.out.print(expr.name);
 	}
-
-	public void visit(NumberExpr expr) {
-		System.out.print(expr.value);
-	}
+	
+	public void visit(Expr expr) {
+		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
+	}	
+	
 
 	public void visit(UnaryOpExpr expr) {
 		System.out.print(expr.op);
@@ -99,10 +91,9 @@ public class PrettyPrinter implements Visitor {
 		if (class_decl.getSuperClassName() != null)
 			System.out.println(", subclass of " + class_decl.getSuperClassName());
 		depth += 2;
-		for (Field field : class_decl.getFields())
-			field.accept(this);
-		for (Method method : class_decl.getMethods())
-			method.accept(this);
+		for (FieldOrMethod fieldOrMethod : class_decl.getFieldsOrMethods()){
+			fieldOrMethod.accept(this);
+		}
 		depth -= 2;
 	}
 
@@ -181,57 +172,85 @@ public class PrettyPrinter implements Visitor {
 
 	}
 
+//////////////////
 	@Override
 	public void visit(VarLocation var_loc) {
-		// TODO Auto-generated method stub
-
+		indent(var_loc);
+		System.out.print("Reference to variable: " + var_loc.getName());
+		if (var_loc.getLocation() != null){
+			System.out.print(", in external scope");
+			++depth;
+			var_loc.getLocation().accept(this);
+			--depth;
+		}
 	}
 
 	@Override
 	public void visit(ArrLocation arr_loc) {
-		// TODO Auto-generated method stub
-
+		indent(arr_loc);
+		System.out.print("Reference to array");
+		depth+=2;
+		arr_loc.getArrLocation().accept(this);
+		arr_loc.getIndex().accept(this);
+		depth-=2;
 	}
 
 	@Override
 	public void visit(StaticCall static_call) {
-		// TODO Auto-generated method stub
+		indent(static_call);
+		System.out.print("Call to static method: " +static_call.getMethodName()+ ", in class "+ static_call.getClassName());
+		--depth;
+		
+		++depth;
+	}
 
+	@Override
+	public void visit(StmtList stmts) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Stmt stmt) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void visit(VirtualCall virtual_call) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void visit(Literal literal) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void visit(This t) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void visit(NewObject new_obj) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void visit(NewArray new_arr) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void visit(Length length) {
 		// TODO Auto-generated method stub
-
+		
 	}
+
+
 }

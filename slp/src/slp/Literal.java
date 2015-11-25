@@ -1,9 +1,39 @@
 package slp;
 
+/** A class of all AST node for literals.
+ */
+
 public class Literal extends Expr{
+	private LiteralType ltype;
+	private Object value;
 	
-	public Literal(){
-		
+	/**
+	 * Constructs new literal node.
+	 * 
+	 * @param ltype Type of literal.
+	 */
+	public Literal(int line, LiteralType ltype){
+		super(line);
+		this.ltype = ltype;
+	}
+	
+	/**
+	 * Constructs new literal node.
+	 * 
+	 * @param ltype Type of literal.
+	 * @param value Literal's value.
+	 */
+	public Literal(int line, LiteralType ltype, Object value){
+		this(line, ltype);
+		this.value = value;
+	}
+	
+	public LiteralType getType(){
+		return this.ltype;
+	}
+	
+	public Object getValue(){
+		return this.value;
 	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.

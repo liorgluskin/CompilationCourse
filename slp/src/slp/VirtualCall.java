@@ -14,8 +14,8 @@ public class VirtualCall extends Call{
 	 * @param method_name Name of method.
 	 * @param args List of method arguments.
 	 */
-	public VirtualCall(String method_name, List<Expr> args) {
-		super(method_name, args);
+	public VirtualCall(int line, String method_name, List<Expr> args) {
+		super(line, method_name, args);
 	}
 	
 	/**
@@ -25,8 +25,8 @@ public class VirtualCall extends Call{
 	 * @param args List of method arguments.
 	 * @param object_ref Expression denoting an object reference.
 	 */
-	public VirtualCall(String method_name, List<Expr> args, Expr object_ref) {
-		super(method_name, args);
+	public VirtualCall(int line, String method_name, List<Expr> args, Expr object_ref) {
+		super(line, method_name, args);
 		this.object_ref = object_ref;
 	}
 	

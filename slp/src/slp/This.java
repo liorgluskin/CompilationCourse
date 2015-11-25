@@ -4,7 +4,9 @@ package slp;
  */
 
 public class This extends Expr{
-	public This(){}
+	public This(int line) {
+		super(line);
+	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
