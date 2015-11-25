@@ -1,0 +1,11 @@
+package slp;
+
+/** An AST node for while statements.
+*
+*/
+public class WhileStmt extends Stmt {
+
+ public WhileStmt(int line) {
+	super(line);
+}
+}

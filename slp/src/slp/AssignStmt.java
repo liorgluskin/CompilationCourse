@@ -9,6 +9,7 @@ public class AssignStmt extends Stmt {
 	public final Expr rhs;
 
 	public AssignStmt(VarExpr varExpr, Expr rhs) {
+		super(varExpr.getLineNum());
 		this.varExpr = varExpr;
 		this.rhs = rhs;
 	}

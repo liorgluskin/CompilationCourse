@@ -9,6 +9,7 @@ public class StmtList extends ASTNode {
 	public final List<Stmt> statements = new ArrayList<Stmt>();
 	
 	public StmtList(Stmt stmt) {
+		super(stmt.getLineNum());
 		statements.add(stmt);
 	}
 

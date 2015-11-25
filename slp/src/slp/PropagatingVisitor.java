@@ -5,6 +5,7 @@ package slp;
  * and propagates up objects of type <code>UpType</code>.
  */
 public interface PropagatingVisitor<DownType,UpType> {
+	
 	public UpType visit(Program program, DownType d);
 	public UpType visit(ClassDecl class_decl, DownType d);
 	public UpType visit(Field field, DownType d);
@@ -13,6 +14,17 @@ public interface PropagatingVisitor<DownType,UpType> {
 	public UpType visit(PrimitiveType primitiveType,DownType d);
 	public UpType visit(ClassType classType, DownType d);
 	public UpType visit(Formal formal, DownType d);
+	
+	public UpType visit(CallStmt callstmt, DownType d);
+	public UpType visit(ReturnStmt returnStmt, DownType d);
+	public UpType visit(IfStmt ifStmt, DownType d);
+	public UpType visit(WhileStmt whileStmt, DownType d);
+	public UpType visit(BreakStmt breakStmt, DownType d);
+	public UpType visit(ContinueStmt contineStmtm, DownType d);
+	public UpType visit(IDStmt idStmt, DownType d);
+	
+	
+	
 	public UpType visit(VarLocation var_loc, DownType d);
 	public UpType visit(ArrLocation arr_loc, DownType d);
 	public UpType visit(StaticCall static_call, DownType d);

@@ -1,0 +1,16 @@
+package slp;
+
+/** An AST node for a block of statements.
+*
+*/
+public class StatementsStmt extends Stmt {
+	
+	public StatementsStmt(int line) {
+		super(line);
+	}
+
+	public Object accept(PropagatingVisitor visitor, Object context) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}

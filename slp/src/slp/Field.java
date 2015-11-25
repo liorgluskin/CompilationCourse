@@ -11,7 +11,7 @@ public class Field extends ASTNode{
 	 * @param name Name of field.
 	 */
 	public Field(Type type, String name) {
-		super(type.getLine());
+		super(type.getLineNum());
 		this.type = type;
 		this.name = name;
 	}
