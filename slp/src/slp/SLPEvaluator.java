@@ -36,10 +36,6 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 		throw new UnsupportedOperationException("Unexpected visit of Expr!");
 	}
 
-	public Integer visit(VarExpr expr, Environment env) {
-		return env.get(expr);
-	}
-
 	public Integer visit(UnaryOpExpr expr, Environment env) {
 		UnOperator op = expr.op;
 		//if (op != Operator.MINUS)
@@ -245,6 +241,12 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 
 	@Override
 	public Integer visit(StmtList stmtLst, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(VarExpr vexpr, Environment d) {
 		// TODO Auto-generated method stub
 		return null;
 	}

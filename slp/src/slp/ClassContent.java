@@ -22,19 +22,18 @@ public class ClassContent {
 	/**
 	 * Returns the list of methods
 	 */
-	public List<FieldOrMethod> getListAndMethods(){
+	public List<FieldOrMethod> getFieldsAndMethods(){
 		return this.fieldOrMethodLst;
 	}
 	
-
-	
-	public void addMethod(Method method){
-		this.fieldOrMethodLst.add(method);
+	public void  addFieldOrMethod(Method m){
+		fieldOrMethodLst.add(m);
 	}
 	
-	public void addField(List<Field> fields){
-		for (Field f: fields){
-			this.fieldOrMethodLst.add(f);
+	public void addFieldOrMethod(List<Field> fields){
+		for(Field f : fields){
+			fieldOrMethodLst.add(f);
 		}
 	}
+	
 }
