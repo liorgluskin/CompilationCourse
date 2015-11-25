@@ -75,6 +75,7 @@ non terminal VirtualCall virtual_call;
 non terminal BinaryOpExpr binop;
 non terminal UnaryOpExpr unop;
 non terminal Literal literal;
+non terminal Type type;
 /**********************/
 /* 	   PRECEDENCE 	  */
 /**********************/
@@ -98,11 +99,11 @@ expr ::= location:l
 	|	THIS:t
 	{:	RESULT = new This(tleft); :}
 	|	NEW CLASS_ID:cid LP RP
-	{:	RESULT = new NewObject(cidline, cid); :}
+	{:	RESULT = new NewObject(cidleft, cid); :}
 	|	NEW type:t LB expr:e RB
-	{:	RESULT = new NewArray(tleft,t,e); :}
+	{:	RESULT = new NewArray(t,e); :}
 	|	expr:e DOT LENGTH
-	{:	RESULT = new Length(eleft, e); :}
+	{:	RESULT = new Length(e); :}
 	|	binop:b
 	{:	RESULT = b; :}
 	|	unop:u
@@ -128,27 +129,28 @@ expr_list ::= expr:e
 	{:	explst.add(e);
 		RESULT = explst;
 	:}
+;
 
 static_call ::= CLASS_ID:cid DOT ID:id LP RP
-	{:	RESULT = new StaticCall(cid, id, new ArrayList<Expr>()); :}
+	{:	RESULT = new StaticCall(cidleft, cid, id, new ArrayList<Expr>()); :}
 	|	CLASS_ID:cid DOT ID:id LP expr_list:explst RP
-	{:	RESULT = new StaticCall(cid, id, explst); :}
+	{:	RESULT = new StaticCall(cidleft, cid, id, explst); :}
 ;
 
 virtual_call ::= ID:id LP RP
-	{:	RESULT = new VirtualCall(id, new ArrayList<Expr>()); :}
+	{:	RESULT = new VirtualCall(idleft, id, new ArrayList<Expr>()); :}
 	|	expr:e DOT ID:id LP RP
-	{:	RESULT = new VirtualCall(e, id, new ArrayList<Expr>()); :}
+	{:	RESULT = new VirtualCall(idleft, id, new ArrayList<Expr>(), e); :}
 	|	ID:id LP expr_list:explst RP
-	{:	RESULT = new VirtualCall(id, explst); :}
+	{:	RESULT = new VirtualCall(idleft, id, explst); :}
 	|	expr:e DOT ID:id LP expr_list:explst RP
-	{:	RESULT = new VirtualCall(e, id, explst); :}
+	{:	RESULT = new VirtualCall(idleft, id, explst, e); :}
 ;
 
 location ::= ID:id
-	{:	RESULT = new VarLocation(id); :}
+	{:	RESULT = new VarLocation(idleft, id); :}
 	|	expr:e DOT ID:id
-	{:	RESULT = new VarLocation(id,e); :}
+	{:	RESULT = new VarLocation(idleft, id,e); :}
 	|	expr:e1 LB expr:e2 RB
 	{:	RESSULT = new ArrLocation(e1,e2); :}
 ;
@@ -185,14 +187,14 @@ unop ::= LNEG expr:e
 	{:	RESULT = new UnaryOpExpr(e, UnOperator.LNEG); :}
 ;
 
-literal ::= INTEGER:i
-	{:	RESULT = new Literal(LiteralType.INTEGER, i); :}
+literal ::= NUMBER:i
+	{:	RESULT = new Literal(ileft, LiteralType.INTEGER, i); :}
 	|	QUOTE:q
-	{:	RESULT = new Literal(LiteralType.STRING, q); :}
-	|	TRUE
-	{:	RESULT = new Literal(LiteralType.TRUE); :}
-	|	FALSE
-	{:	RESULT = new Literal(LiteralType.FALSE); :}
-	|	NULL
-	{:	RESULT = new Literal(LiteralType.NULL); :}
+	{:	RESULT = new Literal(qleft, LiteralType.STRING, q); :}
+	|	TRUE:t
+	{:	RESULT = new Literal(tleft, LiteralType.TRUE); :}
+	|	FALSE:f
+	{:	RESULT = new Literal(fleft, LiteralType.FALSE); :}
+	|	NULL:n
+	{:	RESULT = new Literal(nleft, LiteralType.NULL); :}
 ;

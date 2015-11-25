@@ -6,12 +6,12 @@ public class PrettyPrinter implements Visitor {
 	protected int depth = 0;
 	protected final ASTNode root;
 	
-	private void indent(StringBuffer str_output, ASTNode node) {
-		str_output.append("\n");
+	private void indent(ASTNode node) {
+		System.out.print("\n");
 		for (int i = 0; i < depth; i++)
-			str_output.append(" ");
+			System.out.print(" ");
 		if (node != null)
-			str_output.append(node.getLine() + ": ");
+			System.out.print(node.getLine() + ": ");
 	}
 	
 	/** Constructs a printin visitor from an AST.
@@ -32,16 +32,8 @@ public class PrettyPrinter implements Visitor {
 		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
 	}	
 	
-	public void visit(ReadIExpr expr) {
-		System.out.print("readi()");
-	}	
-	
 	public void visit(VarExpr expr) {
 		System.out.print(expr.name);
-	}
-	
-	public void visit(NumberExpr expr) {
-		System.out.print(expr.value);
 	}
 	
 	public void visit(UnaryOpExpr expr) {
@@ -54,32 +46,36 @@ public class PrettyPrinter implements Visitor {
 		System.out.print(expr.op);
 		expr.rhs.accept(this);
 	}
-
+//////////////////
 	@Override
 	public void visit(VarLocation var_loc) {
-		StringBuffer output_str = new StringBuffer();
-
-		indent(output_str, var_loc);
-		output_str.append("Reference to variable: " + var_loc.getName());
+		indent(var_loc);
+		System.out.print("Reference to variable: " + var_loc.getName());
 		if (var_loc.getLocation() != null){
-			output_str.append(", in external scope");
+			System.out.print(", in external scope");
 			++depth;
-			output_str.append(var_loc.getLocation().accept(this));
+			var_loc.getLocation().accept(this);
 			--depth;
 		}
-		return output_str.toString();
 	}
 
 	@Override
 	public void visit(ArrLocation arr_loc) {
-		// TODO Auto-generated method stub
-		
+		indent(arr_loc);
+		System.out.print("Reference to array");
+		depth+=2;
+		arr_loc.getArrLocation().accept(this);
+		arr_loc.getIndex().accept(this);
+		depth-=2;
 	}
 
 	@Override
 	public void visit(StaticCall static_call) {
-		// TODO Auto-generated method stub
+		indent(static_call);
+		System.out.print("Call to static method: " +static_call.getMethodName()+ ", in class "+ static_call.getClassName());
+		--depth;
 		
+		++depth;
 	}
 
 	@Override
