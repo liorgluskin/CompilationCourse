@@ -115,13 +115,13 @@ class_decl_list ::=
 
 
 class_decl ::= CLASS CLASS_ID:cid LCBR RCBR
-	{: RESULT = new ClassDecl(cidleft,cid, new ArrayList<Field>(), new ArrayList<Method>()); :}
+	{: RESULT = new ClassDecl(cidleft,cid)); :}
 	| CLASS CLASS_ID:cid LCBR class_content:content RCBR
 	{: RESULT = new ClassDecl(cidleft,cid, content.getFieldList(), content.getMethodList()); :}
 	| CLASS CLASS_ID:cid EXTENDS CLASS_ID:scid LCBR RCBR
-	{: RESULT = new ClassDecl(cidleft,cid, scid, new ArrayList<Field>(), new ArrayList<Method>()); :}
+	{: RESULT = new ClassDecl(cidleft,cid, scid); :}
 	| CLASS CLASS_ID:cid EXTENDS CLASS_ID:scid LCBR class_content:content RCBR
-	{: RESULT = new ClassDecl(cidleft,cid, scid, content.getFieldList(), content.getMethodList()); :}
+	{: RESULT = new ClassDecl(cidleft,cid, scid); :}
 ;
 
 class_content ::= fields:fs
@@ -129,11 +129,11 @@ class_content ::= fields:fs
 	| method:m
 	{: RESULT = new ClassContent(m); :}
 	| class_content:content fields:fs
-	{: content.addField(fs);
+	{: content.addFieldOrMethod(fs);
 	   RESULT = content; 
 	:}
 	| class_content:content method:m
-	{: content.addMethod(m);
+	{: content.addFieldOrMethod(m);
 	   RESULT = content;
 	:}
 ;

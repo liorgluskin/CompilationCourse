@@ -1,6 +1,6 @@
 package slp;
 
-public class Field extends ASTNode{
+public class Field extends FieldOrMethod{
 	private Type type;
 	private String name;
 	

@@ -4,7 +4,7 @@ import java.util.List;
 
 /** Abstract base class for method AST nodes.
  */
-public abstract class Method extends ASTNode{
+public abstract class Method extends FieldOrMethod{
 	protected boolean is_static;
 	protected Type type;
 	protected String name;

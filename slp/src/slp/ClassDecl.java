@@ -1,5 +1,6 @@
 package slp;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Class declaration AST node.
@@ -8,23 +9,33 @@ import java.util.List;
 public class ClassDecl extends ASTNode {
 	private String name;
 	private String superClassName = null;	//Default value for super class - null
-	private List<Field> fields;
-	private List<Method> methods;
+	private List<FieldOrMethod> fieldsOrMethods = null;
+	
+	public ClassDecl(int line, String name) {
+		super(line);
+		this.name = name;
+		fieldsOrMethods = new ArrayList<>();
+	}
+	public ClassDecl(int line, String name, String superClass) {
+		super(line);
+		this.name = name;
+		this.superClassName = superClass;
+		fieldsOrMethods = new ArrayList<>();
+	}
 	
 	/**
 	 * Constructs a new class declaration node.
 	 * 
 	 * @param
 	 */
-	public ClassDecl(int line,String name,List<Field> fields, List<Method> methods) {
+	public ClassDecl(int line,String name,List<FieldOrMethod> fieldsOrMethods) {
 		super(line);
 		this.name = name;
-		this.fields = fields;
-		this.methods = methods;
+		this.fieldsOrMethods = fieldsOrMethods;
 	}
 	
-	public ClassDecl(int line,String name, String superClassName,List<Field> fields, List<Method> methods) {
-		this(line,name, fields, methods);
+	public ClassDecl(int line,String name, String superClassName,List<FieldOrMethod> fieldsOrMethods) {
+		this(line,name, fieldsOrMethods);
 		this.superClassName = superClassName;
 	}
 	
@@ -36,13 +47,10 @@ public class ClassDecl extends ASTNode {
 		return superClassName;
 	}
 	
-	public List<Field> getFields() {
-		return fields;
+	public List<FieldOrMethod> getFieldsOrMethods() {
+		return fieldsOrMethods;
 	}
 	
-	public List<Method> getMethods() {
-		return methods;
-	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
