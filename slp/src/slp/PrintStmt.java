@@ -1,16 +1,14 @@
 package slp;
 
-/** An AST node for call statements.
- *
+/** An AST node for print statements.
  */
-public class CallStmt extends Stmt {
-	private Call call;
+public class PrintStmt extends Stmt {
+	public final Expr expr;
 	
-	public CallStmt(Call call) {
-		super(call.getLineNum());
-		this.call = call;
+	public PrintStmt(Expr expr) {
+		this.expr = expr;
 	}
-
+	
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */
@@ -31,11 +29,5 @@ public class CallStmt extends Stmt {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}
-	
-	/**@return call object of the statement*
-	 */
-	public Call getCall(){
-		return call;
-	}
+	}	
 }

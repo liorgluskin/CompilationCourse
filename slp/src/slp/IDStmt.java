@@ -1,12 +1,27 @@
 package slp;
 
-/** An AST node for variable definition statements.
+/** An AST node for Variable Declaration Statements.
 *
 */
 public class IDStmt extends Stmt {
 	
-	public IDStmt(int line) {
-		super(line);
+	private Type type;
+	private String name;
+	private Expr value = null;
+	
+	/**Constructor for variable declaration without value
+	 * */
+	public IDStmt(Type type, String name) {
+		super(type.getLineNum());
+		this.type = type;
+		this.name = name;
+	}
+	
+	/**Constructor for variable declaration and value assignment
+	 * */
+	public IDStmt(Type type, String name, Expr value) {
+		this(type, name);
+		this.value = value;
 	}
 
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -29,5 +44,21 @@ public class IDStmt extends Stmt {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
+	}
+	
+	public Type getType(){
+		return type;
+	}
+	
+	public String getName(){
+		return name;
+	}
+	
+	public Expr getValue(){
+		return value;
+	}
+	
+	public boolean hasValue(){
+		return (value != null);
 	}
 }

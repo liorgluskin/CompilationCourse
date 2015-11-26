@@ -218,16 +218,16 @@ stmt_list ::= stmt:s
 ;
 
 
-stmt ::= /*VAR:v ASSIGN expr:e SEMI
+stmt ::= VAR:v ASSIGN expr:e SEMI
 	{: VarExpr ve = new VarExpr(v); RESULT = new AssignStmt(ve, e); :}
-	| PRINT LP expr:e RP SEMI
-	{: RESULT = new PrintStmt(e); :}
-	|  */call:c SEMI
+	/**| PRINT LP expr:e RP SEMI
+	{: RESULT = new PrintStmt(e); :} **/
+	|  call:c SEMI
 	{: RESULT = new CallStmt(c); :}
 	| RETURN:r SEMI
-	{: RESULT = new ReturnStmt(r); :}
+	{: RESULT = new ReturnStmt(rleft); :}
 	| RETURN:r expr:e SEMI
-	{: RESULT = new ReturnStmt(r, e); :}
+	{: RESULT = new ReturnStmt(rleft, e); :}
 	| IF LP expr:e RP stmt:s
 	{: RESULT = new IfStmt(e, s); :}
 	| IF LP expr:e RP stmt:s ELSE stmt:sel
@@ -238,8 +238,8 @@ stmt ::= /*VAR:v ASSIGN expr:e SEMI
 	{: RESULT = new BreakStmt(b); :}
 	| CONTINUE:c SEMI
 	{: RESULT = new ContinueStmt(c); :}
-	| LCBR:lcb stmt_list:sl RCBR:rcb
-	{: RESULT = new StatementsStmt(lcb, sl, rcb); :}
+	| LCBR:lcb stmt_list:sl RCBR
+	{: RESULT = new StatementsStmt(lcbleft, sl); :}
 	| type:t ID:id SEMI
 	{: RESULT = new IDStmt(t, id); :}
 	| type:t ID:id ASSIGN expr:e SEMI

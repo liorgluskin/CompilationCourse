@@ -1,16 +1,17 @@
 package slp;
 
-/** An AST node for call statements.
- *
+/** An expression denoting a constant integer.
  */
-public class CallStmt extends Stmt {
-	private Call call;
+public class NumberExpr extends Expr {
+	/** The constant represented by this expression.
+	 * 
+	 */
+	public final int value;
 	
-	public CallStmt(Call call) {
-		super(call.getLineNum());
-		this.call = call;
+	public NumberExpr(int value) {
+		this.value = value;
 	}
-
+	
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */
@@ -33,9 +34,7 @@ public class CallStmt extends Stmt {
 		return visitor.visit(this, context);
 	}
 	
-	/**@return call object of the statement*
-	 */
-	public Call getCall(){
-		return call;
-	}
+	public String toString() {
+		return "" + value;
+	}	
 }
