@@ -1,19 +1,15 @@
 package slp;
 
 /** An AST node for while statements.
- *
- */
+*
+*/
 public class WhileStmt extends Stmt {
 
-	private Expr expr;
-	private Stmt stmt;
-
-	public WhileStmt(Expr expr, Stmt stmt) {
-		super(expr.getLineNum());
-		this.expr = expr;
-		this.stmt = stmt;
-	}
-
+ public WhileStmt(int line) {
+	super(line);
+	
+}
+ 
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */
@@ -21,7 +17,7 @@ public class WhileStmt extends Stmt {
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
-
+	
 	/** Accepts a propagating visitor parameterized by two types.
 	 * 
 	 * @param <DownType> The type of the object holding the context.
@@ -34,13 +30,5 @@ public class WhileStmt extends Stmt {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}
-	
-	public Expr getExpr(){
-		return expr;
-	}
-	
-	public Stmt getStmt(){
-		return stmt;
 	}
 }

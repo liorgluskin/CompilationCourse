@@ -5,8 +5,8 @@ package slp;
 */
 public class BreakStmt extends Stmt {
 
-	public BreakStmt(int lineNum) {
-		super(lineNum);
+	public BreakStmt(int line) {
+		super(line);
 	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.

@@ -4,16 +4,9 @@ package slp;
 *
 */
 public class ReturnStmt extends Stmt {
-	private Expr expr;
 	
-	
-	public ReturnStmt(int lineNum) {
-		super(lineNum);
-	}
-	
-	public ReturnStmt(int lineNum, Expr expr) {
-		super(lineNum);
-		this.expr = expr;
+	public ReturnStmt(int line) {
+		super(line);
 	}
 
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -36,10 +29,6 @@ public class ReturnStmt extends Stmt {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}
-
-	public Expr getExpr() {
-		return expr;
 	}
 
 }

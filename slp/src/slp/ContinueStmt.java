@@ -5,8 +5,8 @@ package slp;
 */
 public class ContinueStmt extends Stmt {
 
-	public ContinueStmt(int lineNum) {
-		super(lineNum);
+	public ContinueStmt(int line) {
+		super(line);
 	}
 	
 	

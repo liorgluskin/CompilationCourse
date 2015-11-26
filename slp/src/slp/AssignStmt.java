@@ -5,6 +5,7 @@ package slp;
  */
 public class AssignStmt extends Stmt {
 	public final VarExpr varExpr;
+
 	public final Expr rhs;
 
 	public AssignStmt(VarExpr varExpr, Expr rhs) {
@@ -37,15 +38,4 @@ public class AssignStmt extends Stmt {
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
 	}
-	
-	/** return the assignment Variable Expression*/
-	public VarExpr getVarExpr(){
-		return varExpr;
-	}
-	
-	/** return the Expression assigned to the variable*/
-	public Expr getRhs(){
-		return rhs;
-	}
-
 }

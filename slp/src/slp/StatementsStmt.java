@@ -5,12 +5,8 @@ package slp;
 */
 public class StatementsStmt extends Stmt {
 	
-	private StmtList statements;
-	
-	
-	public StatementsStmt(int lineNum, StmtList statements) {
-		super(lineNum);
-		this.statements = statements;
+	public StatementsStmt(int line) {
+		super(line);
 	}
 
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -33,9 +29,5 @@ public class StatementsStmt extends Stmt {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}
-	
-	public StmtList getStatements(){
-		return statements;
 	}
 }
