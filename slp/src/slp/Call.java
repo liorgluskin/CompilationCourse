@@ -2,7 +2,7 @@ package slp;
 
 import java.util.List;
 
-/** Abstract base class for AST nodes for method calls.
+/** Abstract class representing AST nodes of Method Calls.
  */
 
 public abstract class Call extends Expr{
@@ -12,18 +12,26 @@ public abstract class Call extends Expr{
 	/**
 	 * Constructs a new method call node.
 	 * 
-	 * @param method_name Name of method.
-	 * @param args List of method arguments.
+	 * @param lineNum - line number of method call.
+	 * @param method_name - name of method.
+	 * @param args - method arguments.
 	 */
-	public Call(String method_name, List<Expr> args){
+	public Call(int lineNum, String method_name, List<Expr> args){
+		super(lineNum);
 		this.method_name = method_name;
 		this.args = args;
 	}
 	
+	/**
+	 * @return method name
+	 */
 	public String getMethodName(){
 		return this.method_name;
 	}
 	
+	/**
+	 * @return method arguments
+	 */
 	public List<Expr> getArguments(){
 		return this.args;
 	}

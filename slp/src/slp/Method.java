@@ -4,7 +4,7 @@ import java.util.List;
 
 /** Abstract base class for method AST nodes.
  */
-public abstract class Method extends ASTNode{
+public abstract class Method extends FieldOrMethod{
 	protected boolean is_static;
 	protected Type type;
 	protected String name;
@@ -12,7 +12,7 @@ public abstract class Method extends ASTNode{
 	protected StmtList stmt_list;
 	
 	public Method(Type type, String name, List<Formal> formal_list, StmtList stmt_list){
-		super(type.getLine());
+		super(type.getLineNum());
 		this.type = type;
 		this.name = name;
 		this.formal_list = formal_list;

@@ -37,4 +37,6 @@ public abstract class Type extends ASTNode{
 	public void incrementDimension() {
 		++ArrayDimenstion;
 	}
+
+
 }

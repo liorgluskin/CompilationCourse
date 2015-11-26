@@ -12,7 +12,8 @@ public class VarLocation extends Location{
 	 * 
 	 * @param name Name of variable.
 	 */
-	public VarLocation(String name){
+	public VarLocation(int line, String name){
+		super(line);
 		this.var_name = name;
 	}
 	
@@ -22,8 +23,8 @@ public class VarLocation extends Location{
 	 * @param name Name of variable.
 	 * @param location Location of variable.
 	 */
-	public VarLocation(String name, Expr location){
-		this(name);
+	public VarLocation(int line, String name, Expr location){
+		this(line,name);
 		this.location = location;
 	}
 	

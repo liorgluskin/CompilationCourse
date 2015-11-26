@@ -9,6 +9,7 @@ public class StmtList extends ASTNode {
 	public final List<Stmt> statements = new ArrayList<Stmt>();
 	
 	public StmtList(Stmt stmt) {
+		super(-1);
 		statements.add(stmt);
 	}
 

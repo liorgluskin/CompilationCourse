@@ -11,7 +11,8 @@ public class NewObject extends New{
 	 * 
 	 * @param class_name Object class name.
 	 */
-	public NewObject(String class_name){
+	public NewObject(int line, String class_name){
+		super(line);
 		this.class_name = class_name;
 	}
 	

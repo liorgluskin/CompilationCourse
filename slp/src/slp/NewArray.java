@@ -14,6 +14,7 @@ public class NewArray extends New{
 	 * @param len Number of elements in the array.
 	 */
 	public NewArray(Type type, Expr len){
+		super(type.getLineNum());
 		this.type = type;
 		this.len = len;
 	}

@@ -31,36 +31,15 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 		return null;
 	}
 
+
 	public Integer visit(Expr expr, Environment env) {
 		throw new UnsupportedOperationException("Unexpected visit of Expr!");
 	}
 
-	public Integer visit(ReadIExpr expr, Environment env) {
-		int readValue;
-		try {
-			System.out.println("Enter number: ");
-			readValue = System.in.read();
-		}
-		catch (IOException e) {
-			throw new RuntimeException(e.getMessage());
-		}
-		return new Integer(readValue);
-		// return readValue; also works in Java 1.5 because of auto-boxing
-	}
-
-	public Integer visit(VarExpr expr, Environment env) {
-		return env.get(expr);
-	}
-
-	public Integer visit(NumberExpr expr, Environment env) {
-		return new Integer(expr.value);		
-		// return expr.value; also works in Java 1.5 because of auto-boxing
-	}
-
 	public Integer visit(UnaryOpExpr expr, Environment env) {
-		Operator op = expr.op;
-		if (op != Operator.MINUS)
-			throw new RuntimeException("Encountered unexpected operator " + op);
+		UnOperator op = expr.op;
+		//if (op != Operator.MINUS)
+		//	throw new RuntimeException("Encountered unexpected operator " + op);
 		Integer value = expr.operand.accept(this, env);
 		return new Integer(- value.intValue());
 	}
@@ -196,6 +175,78 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 
 	@Override
 	public Integer visit(Literal literal, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(PrimitiveType primitiveType, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ClassType classType, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(CallStmt callstmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ReturnStmt returnStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(IfStmt ifStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(WhileStmt whileStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(BreakStmt breakStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ContinueStmt contineStmtm, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(IDStmt idStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(StatementsStmt stmtStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(StmtList stmtLst, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(VarExpr vexpr, Environment d) {
 		// TODO Auto-generated method stub
 		return null;
 	}
