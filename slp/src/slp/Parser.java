@@ -1228,7 +1228,7 @@ class CUP$Parser$actions {
 		int rcbleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int rcbright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		Object rcb = (Object)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 RESULT = new StatementsStmt(lcb, sl, rcb); 
+		 RESULT = new BlockStmt(lcb, sl, rcb); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("stmt",9, ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

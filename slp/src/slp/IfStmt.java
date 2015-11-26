@@ -4,7 +4,7 @@ package slp;
  *
  */
 public class IfStmt extends Stmt {
-	boolean isIfElse = false;
+	boolean hasElse = false;
 	Expr expr;
 	Stmt stmt;
 	Stmt elseStmt;
@@ -16,7 +16,7 @@ public class IfStmt extends Stmt {
 	public IfStmt(Expr expr, Stmt stmt, Stmt elseStmt) {
 		this(expr, stmt);
 		this.elseStmt = elseStmt;
-		isIfElse = true;
+		hasElse = true;
 	}		
 
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -41,11 +41,11 @@ public class IfStmt extends Stmt {
 		return visitor.visit(this, context);
 	}
 	
-	public Expr getExpr(){
+	public Expr getCond(){
 		return expr;
 	}
 	
-	public Stmt getStmt(){
+	public Stmt getBody(){
 		return stmt;
 	}
 	
@@ -53,8 +53,8 @@ public class IfStmt extends Stmt {
 		return elseStmt;
 	}
 	
-	public boolean isIfElse(){
-		return isIfElse;
+	public boolean hasElse(){
+		return hasElse;
 	}
 
 }

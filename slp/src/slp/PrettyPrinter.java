@@ -3,12 +3,12 @@ package slp;
 /** Pretty-prints an SLP AST.
  */
 public class PrettyPrinter implements Visitor {
-	protected int depth = 0;
 	protected final ASTNode root;
-	protected String fileName;
-	
-	
-	/** Constructs a printin visitor from an AST.
+	private String fileName;
+	private int depth = 0;
+
+
+	/** Constructs a printing visitor from an AST.
 	 * 
 	 * @param root The root of the AST.
 	 */
@@ -17,13 +17,19 @@ public class PrettyPrinter implements Visitor {
 		this.fileName = fileName;
 	}
 
-	private void indent(ASTNode node) {
-		System.out.print("\n");
-		for (int i = 0; i < depth; i++)
+	/** Prints the required lineIndentation and line num for the current AST node
+	 * @param AST node 
+	 */
+	private void lineIndent(ASTNode node) {
+		System.out.println();
+		for (int i = 0; i < depth; i++){
 			System.out.print(" ");
-		if (node != null)
+		}
+		if (node != null){
 			System.out.print(node.getLineNum() + ": ");
+		}
 	}
+
 	/** Prints the AST with the given root.
 	 */
 	public void print() {
@@ -35,35 +41,113 @@ public class PrettyPrinter implements Visitor {
 
 	///////////////Statements////////////////////
 
-	public void visit(AssignStmt stmt) {
-		stmt.varExpr.accept(this);
-		System.out.print("=");
-		stmt.rhs.accept(this);
-		System.out.print(";");
+	public void visit(StmtList stmts) {
+		for (Stmt s : stmts.statements) {
+			s.accept(this);
+			System.out.println();
+		}
 	}
 
-	public void visit(CallStmt stmt) { }
-	public void visit(ReturnStmt stmt) { }
-	public void visit(IfStmt stmt) { }
-	public void visit(WhileStmt stmt) { }
-	public void visit(BreakStmt stmt) { }
-	public void visit(ContinueStmt stmt) { }
-	public void visit(StatementsStmt stmt) { }
-	public void visit(IDStmt stmt) { }
+	public void visit(Stmt stmt) {
+		throw new UnsupportedOperationException("Unexpected visit of Stmt abstract class");
+	}
+
+	public void visit(AssignStmt assignStmt) {
+		lineIndent(assignStmt);
+		System.out.print("Assignment statement");
+		depth += 2; // increase indentation for child nodes
+		assignStmt.getVarLocation().accept(this); // print assignment variable
+		assignStmt.getRhs().accept(this); // print assignment value
+		depth -= 2; // return to current node indentation
+	}
+
+	public void visit(CallStmt callStmt) {
+		lineIndent(callStmt);
+		System.out.print("Method call statement");
+		depth++;
+		callStmt.getCall().accept(this);;
+		depth--;
+	}
+
+	public void visit(ReturnStmt returnStmt) {
+		lineIndent(returnStmt);
+		System.out.print("Return statement");
+		if(returnStmt.hasExpr()){
+			System.out.print(", of expression");
+			depth++;
+			returnStmt.getExpr().accept(this);
+			depth--;
+		}
+	}
+
+	public void visit(IfStmt ifStmt) { 
+		lineIndent(ifStmt);
+		System.out.print("If statement");
+		if(ifStmt.hasElse()){
+			System.out.print(", with Else");
+		}
+		depth += 2;
+		ifStmt.getCond().accept(this);;
+		ifStmt.getBody().accept(this);
+		if(ifStmt.hasElse()){
+			ifStmt.getElseStmt().accept(this);
+		}
+		depth -= 2;
+	}
+
+	public void visit(WhileStmt whileStmt) {
+		lineIndent(whileStmt);
+		System.out.print("While statement");
+		depth += 2;
+		whileStmt.getCond().accept(this);
+		whileStmt.getBody().accept(this);
+		depth -= 2;
+	}
+
+	public void visit(BreakStmt breakStmt) { 
+		lineIndent(breakStmt);
+		System.out.print("Break statement");
+	}
+
+	public void visit(ContinueStmt continueStmt) { 
+		lineIndent(continueStmt);
+		System.out.print("Continue statement");
+	}
+
+	public void visit(BlockStmt blockStmt) { 
+		lineIndent(blockStmt);
+		System.out.print("Block of statements");
+		depth += 2;
+		for(Stmt s : blockStmt.getStatementList().getStatements()){
+			s.accept(this);
+		}
+		depth -= 2;
+	}
+
+	public void visit(IDStmt idStmt) { 
+		lineIndent(idStmt);
+		System.out.print("Declaration of local variable: "+idStmt.getName());
+		if(idStmt.hasValue()){
+			System.out.print(", with initial value");
+		}
+		depth += 2;
+		idStmt.getType().accept(this);
+		if(idStmt.hasValue()){
+			idStmt.getValue().accept(this);
+		}
+		depth -= 2;
+	}
 
 
 	//////////////////////////////////////////
 
 
 
-	public void visit(VarExpr expr) {
-		System.out.print(expr.name);
-	}
-	
+
 	public void visit(Expr expr) {
 		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
 	}	
-	
+
 
 	public void visit(UnaryOpExpr expr) {
 		System.out.print(expr.op);
@@ -76,7 +160,6 @@ public class PrettyPrinter implements Visitor {
 		expr.rhs.accept(this);
 	}
 
-	@Override
 	public void visit(Program program) {
 		System.out.println("Abstract Syntax Tree: "+fileName+"\n");
 		for(ClassDecl cls : program.getClasses()){
@@ -85,9 +168,8 @@ public class PrettyPrinter implements Visitor {
 
 	}
 
-	@Override
 	public void visit(ClassDecl class_decl) {
-		indent(class_decl);
+		lineIndent(class_decl);
 		System.out.println("Declaration of class: " + class_decl.getName());
 		if (class_decl.getSuperClassName() != null)
 			System.out.println(", subclass of " + class_decl.getSuperClassName());
@@ -98,46 +180,37 @@ public class PrettyPrinter implements Visitor {
 		depth -= 2;
 	}
 
-	@Override
 	public void visit(ClassMethod method) {
-		indent(method);
+		lineIndent(method);
 		System.out.println("Declaration of virtual method: " + method.getName());
-		depth +=2;
+		depth += 2;
 		method.getType().accept(this);
 		for(Formal f : method.getFormals()){
 			f.accept(this);
 		}
-		//Add statment handling here!!!!!
-		//*******************************
-		//*********************************
-		//********************************
-
-		depth-=2;
-
-
+		for(Stmt s : method.getStatementList().getStatements()){
+			s.accept(this);
+		}
+		depth -= 2;
 	}
 
-	@Override
 	public void visit(StaticMethod method) {
-		indent(method);
+		lineIndent(method);
 		System.out.println("Declaration of static method: " + method.getName());
-		depth +=2;
+		depth += 2;
 		method.getType().accept(this);
 		for(Formal f : method.getFormals()){
 			f.accept(this);
 		}
-		//Add statment handling here!!!!!
-		//*******************************
-		//*********************************
-		//********************************
-
-		depth -=2;
+		for(Stmt s : method.getStatementList().getStatements()){
+			s.accept(this);
+		}
+		depth -= 2;
 
 	}
 
-	@Override
 	public void visit(PrimitiveType primitiveType) {
-		indent(primitiveType);
+		lineIndent(primitiveType);
 		System.out.println("Primitive data type: ");
 		if (primitiveType.getDimension() > 0)
 			System.out.println(primitiveType.getDimension() + "-dimensional array of ");
@@ -145,129 +218,105 @@ public class PrettyPrinter implements Visitor {
 
 	}
 
-	@Override
 	public void visit(ClassType classType) {
-		indent(classType);
+		lineIndent(classType);
 		System.out.println("User-defined data type: ");
 		if (classType.getDimension() > 0)
 			System.out.println(classType.getDimension() + "-dimensional array of ");
 		System.out.println(classType.getName());
 	}
 
-	@Override
 	public void visit(Field field) {
-		indent(field);
+		lineIndent(field);
 		System.out.println("Declaration of field: " + field.getName());
-		++depth;
+		depth++;
 		field.getType().accept(this);
-		--depth;
+		depth--;
 	}
 
-	@Override
 	public void visit(Formal formal) {
-		indent(formal);
+		lineIndent(formal);
 		System.out.println("Parameter: " + formal.getName());
-		++depth;
+		depth++;
 		formal.getType().accept(this);
-		--depth;
+		depth--;
 
 	}
 
-//////////////////
-	@Override
+	//////////////////
 	public void visit(VarLocation var_loc) {
-		indent(var_loc);
+		lineIndent(var_loc);
 		System.out.print("Reference to variable: " + var_loc.getName());
 		if (var_loc.getLocation() != null){
 			System.out.print(", in external scope");
-			++depth;
+			depth++;
 			var_loc.getLocation().accept(this);
-			--depth;
+			depth--;
 		}
 	}
 
-	@Override
 	public void visit(ArrLocation arr_loc) {
-		indent(arr_loc);
+		lineIndent(arr_loc);
 		System.out.print("Reference to array");
-		++depth;
+		depth++;
 		arr_loc.getArrLocation().accept(this);
 		arr_loc.getIndex().accept(this);
-		--depth;
+		depth--;
 	}
 
-	@Override
 	public void visit(StaticCall static_call) {
-		indent(static_call);
+		lineIndent(static_call);
 		System.out.print("Call to static method: " +static_call.getMethodName()+ ", in class "+ static_call.getClassName());
-		++depth;
+		depth++;
 		for(Expr e: static_call.getArguments())
 			e.accept(this);
-		--depth;
+		depth--;
 	}
 
-	@Override
-	public void visit(StmtList stmts) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void visit(Stmt stmt) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void visit(VirtualCall virtual_call) {
-		indent(virtual_call);
+		lineIndent(virtual_call);
 		System.out.print("Call to virtual method: " +virtual_call.getMethodName());
-		++depth;
+		depth++;
 		if (virtual_call.getObjectReference() != null){
 			System.out.print(", in external scope");
 			virtual_call.getObjectReference().accept(this);
 		}
 		for(Expr e: virtual_call.getArguments())
 			e.accept(this);
-		--depth;
+		depth--;
 	}
 
-	@Override
 	public void visit(Literal literal) {
-		indent(literal);
+		lineIndent(literal);
 		System.out.print(literal.getType()+" literal: "+literal.getValue());
 	}
 
-	@Override
 	public void visit(This t) {
-		indent(t);
+		lineIndent(t);
 		System.out.print("Reference to 'this' instance");	
 	}
 
-	@Override
 	public void visit(NewObject new_obj) {
-		indent(new_obj);
+		lineIndent(new_obj);
 		System.out.print("Instantiation of class: "+new_obj.getClassName());	
 	}
 
-	@Override
 	public void visit(NewArray new_arr) {
-		indent(new_arr);
+		lineIndent(new_arr);
 		System.out.print("Array allocation");
-		++depth;
+		depth++;
 		new_arr.getType().accept(this);
 		new_arr.getArrayLength().accept(this);
-		--depth;
+		depth--;
 	}
 
-	@Override
 	public void visit(Length length) {
-		indent(length);
+		lineIndent(length);
 		System.out.print("Reference to array length");
-		++depth;
+		depth++;
 		length.getExpression().accept(this);
-		--depth;
-		
+		depth--;
+
 	}
 
 

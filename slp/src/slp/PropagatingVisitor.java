@@ -24,7 +24,7 @@ public interface PropagatingVisitor<DownType,UpType> {
 	public UpType visit(BreakStmt breakStmt, DownType d);
 	public UpType visit(ContinueStmt contineStmtm, DownType d);
 	public UpType visit(IDStmt idStmt, DownType d);
-	public UpType visit(StatementsStmt stmtStmt, DownType d);
+	public UpType visit(BlockStmt blockStmt, DownType d);
 	public UpType visit(StmtList stmtLst , DownType d);
 	
 		

@@ -5,7 +5,7 @@ package slp;
 */
 public class ReturnStmt extends Stmt {
 	private Expr expr;
-	
+	private boolean hasRetExpr = false;
 	
 	public ReturnStmt(int lineNum) {
 		super(lineNum);
@@ -14,6 +14,7 @@ public class ReturnStmt extends Stmt {
 	public ReturnStmt(int lineNum, Expr expr) {
 		super(lineNum);
 		this.expr = expr;
+		hasRetExpr = true;
 	}
 
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -40,6 +41,10 @@ public class ReturnStmt extends Stmt {
 
 	public Expr getExpr() {
 		return expr;
+	}
+	
+	public boolean hasExpr(){
+		return hasRetExpr;
 	}
 
 }

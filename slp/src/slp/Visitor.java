@@ -17,7 +17,13 @@ public interface Visitor {
 	public void visit(Stmt stmt);
 	public void visit(AssignStmt stmt);
 	public void visit(CallStmt stmt);
-
+	public void visit(ReturnStmt stmt);
+	public void visit(IfStmt stmt);
+	public void visit(WhileStmt stmt);
+	public void visit(BreakStmt stmt);
+	public void visit(ContinueStmt stmt);
+	public void visit(BlockStmt stmt);
+	public void visit(IDStmt stmt);
 
 	public void visit(VarLocation var_loc);
 	public void visit(ArrLocation arr_loc);

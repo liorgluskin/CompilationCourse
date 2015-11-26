@@ -36,11 +36,11 @@ public class WhileStmt extends Stmt {
 		return visitor.visit(this, context);
 	}
 	
-	public Expr getExpr(){
+	public Expr getCond(){
 		return expr;
 	}
 	
-	public Stmt getStmt(){
+	public Stmt getBody(){
 		return stmt;
 	}
 }

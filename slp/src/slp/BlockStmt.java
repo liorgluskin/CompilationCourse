@@ -1,24 +1,16 @@
 package slp;
 
-import java.util.List;
-import java.util.ArrayList;
-
-/** An AST node for a list of statements.
- */
-public class StmtList extends ASTNode {
-	public final List<Stmt> statements = new ArrayList<Stmt>();
+/** An AST node for a block of statements.
+*
+*/
+public class BlockStmt extends Stmt {
 	
-	public StmtList(Stmt stmt) {
-		super(-1);
-		statements.add(stmt);
-	}
-
-	/** Adds a statement to the tail of the list.
-	 * 
-	 * @param stmt A program statement.
-	 */
-	public void addStmt(Stmt stmt) {
-		statements.add(stmt);
+	private StmtList statements;
+	
+	
+	public BlockStmt(int lineNum, StmtList statements) {
+		super(lineNum);
+		this.statements = statements;
 	}
 
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -41,9 +33,11 @@ public class StmtList extends ASTNode {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}	
+	}
 	
-	public List<Stmt> getStatements(){
+	public StmtList getStatementList(){
 		return statements;
 	}
+	
+	
 }

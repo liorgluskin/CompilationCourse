@@ -218,8 +218,8 @@ stmt_list ::= stmt:s
 ;
 
 
-stmt ::= VAR:v ASSIGN expr:e SEMI
-	{: VarExpr ve = new VarExpr(v); RESULT = new AssignStmt(ve, e); :}
+stmt ::= location:l ASSIGN expr:e SEMI
+	{: VarLocation vl = new VarLocation(l); RESULT = new AssignStmt(vl, e); :}
 	/**| PRINT LP expr:e RP SEMI
 	{: RESULT = new PrintStmt(e); :} **/
 	|  call:c SEMI
