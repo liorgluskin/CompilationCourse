@@ -26,8 +26,7 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 	public Integer visit(AssignStmt stmt, Environment env) {
 		Expr rhs = stmt.rhs;
 		Integer expressionValue = rhs.accept(this, env);
-		VarExpr var = stmt.varExpr;
-		env.update(var, expressionValue);
+
 		return null;
 	}
 
@@ -37,56 +36,11 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 	}
 
 	public Integer visit(UnaryOpExpr expr, Environment env) {
-		UnOperator op = expr.op;
-		//if (op != Operator.MINUS)
-		//	throw new RuntimeException("Encountered unexpected operator " + op);
-		Integer value = expr.operand.accept(this, env);
-		return new Integer(- value.intValue());
+		return null;
 	}
 
 	public Integer visit(BinaryOpExpr expr, Environment env) {
-		Integer lhsValue = expr.lhs.accept(this, env);
-		int lhsInt = lhsValue.intValue();
-		Integer rhsValue = expr.rhs.accept(this, env);
-		int rhsInt = rhsValue.intValue();
-		int result;
-		switch (expr.op) {
-		case DIVIDE:
-			if (rhsInt == 0)
-				throw new RuntimeException("Attempt to divide by zero: " + expr);
-			result = lhsInt / rhsInt;
-			break;
-		case MINUS:
-			result = lhsInt - rhsInt;
-			break;
-		case MULTIPLY:
-			result = lhsInt * rhsInt;
-			break;
-		case PLUS:
-			result = lhsInt + rhsInt;
-			break;
-		case LT:
-			result = lhsInt < rhsInt ? 1 : 0;
-			break;
-		case GT:
-			result = lhsInt > rhsInt ? 1 : 0;
-			break;
-		case LTE:
-			result = lhsInt <= rhsInt ? 1 : 0;
-			break;
-		case GTE:
-			result = lhsInt >= rhsInt ? 1 : 0;
-			break;
-		case LAND:
-			result = (lhsInt!=0 && rhsInt!=0) ? 1 : 0;
-			break;
-		case LOR:
-			result = (lhsInt!=0 || rhsInt!=0) ? 1 : 0;
-			break;
-		default:
-			throw new RuntimeException("Encountered unexpected operator type: " + expr.op);
-		}
-		return new Integer(result);
+		return null;
 	}
 
 	@Override

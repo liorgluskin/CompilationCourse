@@ -42,7 +42,7 @@ public class PrettyPrinter implements Visitor {
 	///////////////Statements////////////////////
 
 	public void visit(StmtList stmts) {
-		for (Stmt s : stmts.statements) {
+		for (Stmt s : stmts.getStatements()) {
 			s.accept(this);
 			System.out.println();
 		}
@@ -56,7 +56,7 @@ public class PrettyPrinter implements Visitor {
 		lineIndent(assignStmt);
 		System.out.print("Assignment statement");
 		depth += 2; // increase indentation for child nodes
-		assignStmt.getVarLocation().accept(this); // print assignment variable
+		assignStmt.getLocation().accept(this); // print assignment variable
 		assignStmt.getRhs().accept(this); // print assignment value
 		depth -= 2; // return to current node indentation
 	}
@@ -150,14 +150,28 @@ public class PrettyPrinter implements Visitor {
 
 
 	public void visit(UnaryOpExpr expr) {
-		System.out.print(expr.op);
-		expr.operand.accept(this);
+		lineIndent(expr);
+		if(expr.hasMathematicalOp())
+			System.out.print("Mathematical unary operation: ");
+		else
+			System.out.print("Logical unary operation: ");
+		System.out.print(expr.getOp().toString());
+		++depth;
+		expr.getOperand().accept(this);
+		--depth;
 	}
 
 	public void visit(BinaryOpExpr expr) {
-		expr.lhs.accept(this);
-		System.out.print(expr.op);
-		expr.rhs.accept(this);
+		lineIndent(expr);
+		if(expr.hasMathematicalOp())
+			System.out.print("Mathematical binary operation: ");
+		else
+			System.out.print("Logical binary operation: ");
+		System.out.print(expr.getOp().toString());
+		depth += 2;
+		expr.getLeftOperand().accept(this);
+		expr.getRightOperand().accept(this);
+		depth -= 2;
 	}
 
 	public void visit(Program program) {
@@ -174,6 +188,7 @@ public class PrettyPrinter implements Visitor {
 		if (class_decl.getSuperClassName() != null)
 			System.out.println(", subclass of " + class_decl.getSuperClassName());
 		depth += 2;
+		
 		for (FieldOrMethod fieldOrMethod : class_decl.getFieldsOrMethods()){
 			fieldOrMethod.accept(this);
 		}

@@ -11,6 +11,8 @@ public class IfStmt extends Stmt {
 
 	public IfStmt(Expr expr, Stmt stmt) {
 		super(expr.getLineNum());
+		this.expr = expr;
+		this.stmt = stmt;
 	}
 
 	public IfStmt(Expr expr, Stmt stmt, Stmt elseStmt) {
