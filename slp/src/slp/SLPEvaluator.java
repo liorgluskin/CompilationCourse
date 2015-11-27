@@ -35,6 +35,10 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 		throw new UnsupportedOperationException("Unexpected visit of Expr!");
 	}
 
+	public Integer visit(BlockExpr expr, Environment env) {
+		return null;
+	}
+
 	public Integer visit(UnaryOpExpr expr, Environment env) {
 		return null;
 	}
@@ -43,137 +47,137 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 		return null;
 	}
 
-	public Integer visit(Program program, Environment d) {
+	public Integer visit(Program program, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(ClassDecl class_decl, Environment d) {
+	public Integer visit(ClassDecl class_decl, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(Field field, Environment d) {
+	public Integer visit(Field field, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(StaticMethod staticMethod, Environment d) {
+	public Integer visit(StaticMethod staticMethod, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(ClassMethod classMethod, Environment d) {
+	public Integer visit(ClassMethod classMethod, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(Formal formal, Environment d) {
+	public Integer visit(Formal formal, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(VarLocation var_loc, Environment d) {
+	public Integer visit(VarLocation var_loc, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(ArrLocation arr_loc, Environment d) {
+	public Integer visit(ArrLocation arr_loc, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(StaticCall static_call, Environment d) {
+	public Integer visit(StaticCall static_call, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(VirtualCall virtual_call, Environment d) {
+	public Integer visit(VirtualCall virtual_call, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(This t, Environment d) {
+	public Integer visit(This t, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(NewObject new_obj, Environment d) {
+	public Integer visit(NewObject new_obj, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(NewArray new_arr, Environment d) {
+	public Integer visit(NewArray new_arr, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(Length length, Environment d) {
+	public Integer visit(Length length, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(Literal literal, Environment d) {
+	public Integer visit(Literal literal, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(PrimitiveType primitiveType, Environment d) {
+	public Integer visit(PrimitiveType primitiveType, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(ClassType classType, Environment d) {
+	public Integer visit(ClassType classType, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(CallStmt callstmt, Environment d) {
+	public Integer visit(CallStmt callstmt, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(ReturnStmt returnStmt, Environment d) {
+	public Integer visit(ReturnStmt returnStmt, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(IfStmt ifStmt, Environment d) {
+	public Integer visit(IfStmt ifStmt, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(WhileStmt whileStmt, Environment d) {
+	public Integer visit(WhileStmt whileStmt, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(BreakStmt breakStmt, Environment d) {
+	public Integer visit(BreakStmt breakStmt, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(ContinueStmt contineStmtm, Environment d) {
+	public Integer visit(ContinueStmt contineStmtm, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(IDStmt idStmt, Environment d) {
+	public Integer visit(IDStmt idStmt, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(BlockStmt stmtStmt, Environment d) {
+	public Integer visit(BlockStmt stmtStmt, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(StmtList stmtLst, Environment d) {
+	public Integer visit(StmtList stmtLst, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Integer visit(VarExpr vexpr, Environment d) {
+	public Integer visit(VarExpr vexpr, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -94,10 +94,10 @@ public class PrettyPrinter implements Visitor {
 	public void visit(WhileStmt whileStmt) {
 		lineIndent(whileStmt);
 		System.out.print("While statement");
-		depth += 2;
+		depth+=2;
 		whileStmt.getCond().accept(this);
 		whileStmt.getBody().accept(this);
-		depth -= 2;
+		depth-=2;
 	}
 
 	public void visit(BreakStmt breakStmt) { 
@@ -141,6 +141,13 @@ public class PrettyPrinter implements Visitor {
 		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
 	}	
 
+	public void visit(BlockExpr exprBlock) {
+		lineIndent(exprBlock);
+		System.out.print("Parenthesized expression");
+		depth++;
+		exprBlock.getExpression().accept(this);
+		depth--;
+	}
 	
 	public void visit(UnaryOpExpr expr) {
 		lineIndent(expr);

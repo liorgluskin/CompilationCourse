@@ -36,6 +36,7 @@ public interface Visitor {
 	public void visit(Length length);
 	
 	public void visit(Expr expr);
+	public void visit(BlockExpr expr);
 	public void visit(UnaryOpExpr expr);
 	public void visit(BinaryOpExpr expr);
 }
