@@ -36,6 +36,11 @@ public class VarLocation extends Location{
 		return location;
 	}
 	
+	
+	public boolean hasExternalLocation(){
+		return location!=null;
+	}
+	
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */
@@ -57,4 +62,5 @@ public class VarLocation extends Location{
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
 	}
+	
 }

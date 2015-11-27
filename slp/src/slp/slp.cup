@@ -114,7 +114,7 @@ precedence left DOT, RP, LP, LB, RB;
 /**********************/
 
 program ::= class_decl_list:cdlst
-	{: System.out.println("program");RESULT = new Program(cdlst); :}
+	{: RESULT = new Program(cdlst); :}
 ;
 
 class_decl_list ::=  
@@ -128,20 +128,20 @@ class_decl_list ::=
 
 
 class_decl ::= CLASS CLASS_ID:cid LCBR RCBR
-	{: System.out.println("empy class dec");RESULT = new ClassDecl(cidleft,cid); :}
+	{: RESULT = new ClassDecl(cidleft,cid); :}
 	| CLASS CLASS_ID:cid LCBR class_content:content RCBR
-	{: System.out.println("full class dec");RESULT = new ClassDecl(cidleft,cid, content.getFieldsAndMethods()); :}
+	{: RESULT = new ClassDecl(cidleft,cid, content.getFieldsAndMethods()); :}
 	| CLASS CLASS_ID:cid EXTENDS CLASS_ID:scid LCBR RCBR
-	{:  System.out.println("extended empty class dec");RESULT = new ClassDecl(cidleft,cid, scid); :}
+	{: RESULT = new ClassDecl(cidleft,cid, scid); :}
 	| CLASS CLASS_ID:cid EXTENDS CLASS_ID:scid LCBR class_content:content RCBR
-	{: System.out.println("extended full class dec");RESULT = new ClassDecl(cidleft,cid, scid,content.getFieldsAndMethods()); :}
+	{: RESULT = new ClassDecl(cidleft,cid, scid,content.getFieldsAndMethods()); :}
 ;
 
 class_content ::= fields:fs
-	{:System.out.println("field"); RESULT = new ClassContent(fs);
+	{: RESULT = new ClassContent(fs);
 	 :}
 	| method:m
-	{: System.out.println("method");RESULT = new ClassContent(m); 
+	{: RESULT = new ClassContent(m); 
 	:}
 	| class_content:content fields:fs
 	{: content.addFieldOrMethod(fs);
@@ -174,59 +174,58 @@ id_list ::= ID:id
 ;
 
 method ::= STATIC VOID ID:id LP RP LCBR stmt_list:sl RCBR 
-	{: System.out.println("static void method");RESULT = new StaticMethod(new PrimitiveType(idleft,DataTypes.VOID), id, new ArrayList<Formal>(), sl); :}
+	{: RESULT = new StaticMethod(new PrimitiveType(idleft,DataTypes.VOID), id, new ArrayList<Formal>(), sl); :}
 	| STATIC type:t ID:id LP RP LCBR stmt_list:sl RCBR
-	{: System.out.println("static type method");RESULT = new StaticMethod(t, id, new ArrayList<Formal>(), sl); :}
+	{: RESULT = new StaticMethod(t, id, new ArrayList<Formal>(), sl); :}
 	| STATIC VOID ID:id LP formals:f RP LCBR stmt_list:sl RCBR
-	{: System.out.println("static void formls method");RESULT = new StaticMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
+	{: RESULT = new StaticMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
 	| STATIC type:t ID:id LP formals:f RP LCBR stmt_list:sl RCBR
-	{: System.out.println("static type formls method");RESULT = new StaticMethod(t, id, f, sl); :}
+	{: RESULT = new StaticMethod(t, id, f, sl); :}
 	| VOID ID:id LP RP LCBR stmt_list:sl RCBR 
-	{: System.out.println("virtual void  method");RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, new ArrayList<Formal>(), sl);:}
+	{: RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, new ArrayList<Formal>(), sl);:}
 	| type:t ID:id LP RP LCBR stmt_list:sl RCBR
-	{: System.out.println("virtual type method");RESULT = new ClassMethod(t, id, new ArrayList<Formal>(), sl); :}
+	{: RESULT = new ClassMethod(t, id, new ArrayList<Formal>(), sl); :}
 	| VOID ID:id LP formals:f RP LCBR stmt_list:sl RCBR
-	{:System.out.println("void virtual formls method"); RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
+	{:RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
 	| type:t ID:id LP formals:f RP LCBR stmt_list:sl RCBR
-	{: System.out.println("type virtual formls method");RESULT = new ClassMethod(t, id, f, sl); :}
+	{: RESULT = new ClassMethod(t, id, f, sl); :}
 	;
 
 formals ::= formal:f
-	{: System.out.println("formal");List<Formal> flst = new ArrayList<Formal>();
+	{: List<Formal> flst = new ArrayList<Formal>();
 	   flst.add(f);
 	   RESULT = flst;
 	:}
 	| formals:fs COMMA formal:f
-	{: 	System.out.println("formal list");
-		fs.add(f);
+	{: fs.add(f);
 	   RESULT = fs;
 	:}
 ;
 
 formal ::= type:t ID:id
-	{: System.out.println("formal");RESULT = new Formal(t, id); :}
+	{: RESULT = new Formal(t, id); :}
 ;
 
-type ::= INT:i {: System.out.println("int");RESULT = new PrimitiveType(ileft, DataTypes.INT);System.out.println("int2"); :}
-	| BOOLEAN:b {: System.out.println("type");RESULT = new PrimitiveType(bleft, DataTypes.BOOLEAN); :}
-	| STRING:s {: System.out.println("type");RESULT = new PrimitiveType(sleft, DataTypes.STRING); :}
-	| CLASS_ID:ci {: System.out.println("type");RESULT = new ClassType(cileft, ci); :}
-	| type:t LB RB {: System.out.println("type");t.incrementDimension(); RESULT = t; :}
+type ::= INT:i {: RESULT = new PrimitiveType(ileft, DataTypes.INT); :}
+	| BOOLEAN:b {: RESULT = new PrimitiveType(bleft, DataTypes.BOOLEAN); :}
+	| STRING:s {: RESULT = new PrimitiveType(sleft, DataTypes.STRING); :}
+	| CLASS_ID:ci {: RESULT = new ClassType(cileft, ci); :}
+	| type:t LB RB {: t.incrementDimension(); RESULT = t; :}
 
 ;
 
 
 stmt_list ::= 
-	{: System.out.println("stamtList-one stmt ");RESULT = new StmtList();System.out.println("stamtListfinished-one stmt"); :}
+	{: RESULT = new StmtList(); :}
 	| stmt_list:sl stmt:s
-	{: System.out.println("stamtlist "+ s.getLineNum());sl.addStmt(s); RESULT = sl;System.out.println("stamtListfinished " + s.getLineNum()); :}
+	{: sl.addStmt(s); RESULT = sl; :}
 ;
 
 
 stmt ::= location:l ASSIGN expr:e SEMI
 	{:  RESULT = new AssignStmt(l, e); :}
 	|  call:c SEMI
-	{:System.out.println("********"+c.getMethodName()); RESULT = new CallStmt(c);System.out.println("********"+c.getMethodName());:}
+	{: RESULT = new CallStmt(c); :}
 	| RETURN:r SEMI
 	{: RESULT = new ReturnStmt(rleft); :}
 	| RETURN:r expr:e SEMI
@@ -242,7 +241,7 @@ stmt ::= location:l ASSIGN expr:e SEMI
 	| CONTINUE:c SEMI
 	{: RESULT = new ContinueStmt(cleft); :}
 	| LCBR:lcb stmt_list:sl RCBR
-	{: System.out.println("block ");RESULT = new BlockStmt(lcbleft, sl); :}
+	{: RESULT = new BlockStmt(lcbleft, sl); :}
 	| type:t ID:id SEMI
 	{: RESULT = new IDStmt(t, id); :}
 	| type:t ID:id ASSIGN expr:e SEMI
@@ -250,7 +249,7 @@ stmt ::= location:l ASSIGN expr:e SEMI
 ;
 
 expr ::= location:l
-	{:	System.out.println("location "+l.getLineNum());RESULT = l; :}
+	{:	RESULT = l; :}
 	|	call:c
 	{:	RESULT = c; :}
 	|	THIS:t
@@ -282,9 +281,9 @@ expr_list ::= expr:e
 
 	
 call ::= static_call:scall
-	{:	System.out.println("static call"); RESULT = scall; :}
+	{:	RESULT = scall; :}
 	|	virtual_call:vcall
-	{:	System.out.println("virtual call");RESULT = vcall; :}
+	{:	RESULT = vcall; :}
 ;
 
 
@@ -299,13 +298,13 @@ virtual_call ::= ID:id LP RP
 	|	expr:e DOT ID:id LP RP
 	{:	RESULT = new VirtualCall(eleft,id,new ArrayList<Expr>(),e); :}
 	|	ID:id LP expr_list:explst RP
-	{:	System.out.println("expr"); RESULT = new VirtualCall(idleft,id, explst); :}
+	{:	RESULT = new VirtualCall(idleft,id, explst); :}
 	|	expr:e DOT ID:id LP expr_list:explst RP
 	{:	RESULT = new VirtualCall(eleft,id, explst, e); :}
 ;
 
 location ::= ID:id
-	{:	System.out.println("id "+idleft);RESULT = new VarLocation(idleft, id); :}
+	{:	RESULT = new VarLocation(idleft, id); :}
 	|	expr:e DOT ID:id
 	{:	RESULT = new VarLocation(idleft, id,e); :}
 	|	expr:e1 LB expr:e2 RB
@@ -329,7 +328,7 @@ binop ::= expr:e1 PLUS expr:e2
 	|	expr:e1 LT expr:e2
 	{:	;RESULT = new BinaryOpExpr(e1,e2,BinOperator.LT); :}
 	|	expr:e1 GT expr:e2
-	{:	System.out.println("gt");RESULT = new BinaryOpExpr(e1,e2,BinOperator.GT); :}
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.GT); :}
 	|	expr:e1 LTE expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LTE); :}
 	|	expr:e1 GTE expr:e2
