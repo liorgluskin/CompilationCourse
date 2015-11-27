@@ -117,12 +117,13 @@ program ::= class_decl_list:cdlst
 	{: RESULT = new Program(cdlst); :}
 ;
 
-class_decl_list ::=  
-	{: RESULT = new ArrayList<ClassDecl>(); :}
+class_decl_list ::=  class_decl:cd
+	{: List<ClassDecl> clst = new ArrayList<ClassDecl>(); 
+	   clst.add(cd);
+	   RESULT = clst; :}
 	| class_decl_list:cdlst class_decl:cd
 	{: cdlst.add(cd);
-	   RESULT = cdlst;
-	:}
+	   RESULT = cdlst; :}
 ;
 
 
