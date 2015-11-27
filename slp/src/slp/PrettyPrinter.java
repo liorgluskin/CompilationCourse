@@ -103,15 +103,13 @@ public class PrettyPrinter implements Visitor {
 		indent(method);
 		System.out.println("Declaration of virtual method: " + method.getName());
 		depth +=2;
-		method.getType().accept(this);
-		for(Formal f : method.getFormals()){
-			f.accept(this);
-		}
-		//Add statment handling here!!!!!
-		//*******************************
-		//*********************************
-		//********************************
 
+		method.getType().accept(this);
+		for (Formal formal : method.getFormals())
+			formal.accept(this);
+		for (Stmt statement : method.getStatements())
+			statement.accept(this);
+		
 		depth-=2;
 
 
@@ -122,14 +120,12 @@ public class PrettyPrinter implements Visitor {
 		indent(method);
 		System.out.println("Declaration of static method: " + method.getName());
 		depth +=2;
+
 		method.getType().accept(this);
-		for(Formal f : method.getFormals()){
-			f.accept(this);
-		}
-		//Add statment handling here!!!!!
-		//*******************************
-		//*********************************
-		//********************************
+		for (Formal formal : method.getFormals())
+			formal.accept(this);
+		for (Stmt statement : method.getStatements())
+			statement.accept(this);
 
 		depth -=2;
 

@@ -31,7 +31,7 @@ public abstract class Method extends FieldOrMethod{
 		return formal_list;
 	}
 
-	public StmtList getStatements() {
-		return stmt_list;
+	public List<Stmt> getStatements() {
+		return stmt_list.getStatments();
 	}
 }

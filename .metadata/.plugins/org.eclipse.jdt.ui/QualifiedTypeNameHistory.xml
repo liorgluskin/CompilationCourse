@@ -1,2 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy/>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.nio.file.Path"/>
+<fullyQualifiedTypeName name="java.nio.file.Paths"/>
+<fullyQualifiedTypeName name="slp.ClassDecl"/>
+<fullyQualifiedTypeName name="slp.CallStmt"/>
+<fullyQualifiedTypeName name="slp.ReturnStmt"/>
+<fullyQualifiedTypeName name="slp.IfStmt"/>
+<fullyQualifiedTypeName name="slp.WhileStmt"/>
+<fullyQualifiedTypeName name="slp.BreakStmt"/>
+<fullyQualifiedTypeName name="slp.IDStmt"/>
+<fullyQualifiedTypeName name="slp.ASTNode"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+<fullyQualifiedTypeName name="slp.ContinueStmt"/>
+<fullyQualifiedTypeName name="UpType"/>
+<fullyQualifiedTypeName name="slp.StatementsStmt"/>
+<fullyQualifiedTypeName name="slp.StmtList"/>
+<fullyQualifiedTypeName name="DownType"/>
+<fullyQualifiedTypeName name="slp.FieldOrMethod"/>
+<fullyQualifiedTypeName name="slp.Program"/>
+<fullyQualifiedTypeName name="com.sun.xml.internal.bind.v2.schemagen.xmlschema.List"/>
+</qualifiedTypeNameHistroy>
