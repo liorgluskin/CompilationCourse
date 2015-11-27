@@ -64,16 +64,29 @@ public class PrettyPrinter implements Visitor {
 		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
 	}	
 	
-
 	public void visit(UnaryOpExpr expr) {
-		System.out.print(expr.op);
-		expr.operand.accept(this);
+		indent(expr);
+		if(expr.hasMathematicalOp())
+			System.out.print("Mathematical unary operation: ");
+		else
+			System.out.print("Logical unary operation: ");
+		System.out.print(expr.getOp().toString());
+		++depth;
+		expr.getOperand().accept(this);
+		--depth;
 	}
 
 	public void visit(BinaryOpExpr expr) {
-		expr.lhs.accept(this);
-		System.out.print(expr.op);
-		expr.rhs.accept(this);
+		indent(expr);
+		if(expr.hasMathematicalOp())
+			System.out.print("Mathematical binary operation: ");
+		else
+			System.out.print("Logical binary operation: ");
+		System.out.print(expr.getOp().toString());
+		depth += 2;
+		expr.getLeftOperand().accept(this);
+		expr.getRightOperand().accept(this);
+		depth -= 2;
 	}
 
 	@Override

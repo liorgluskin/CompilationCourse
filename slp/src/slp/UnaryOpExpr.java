@@ -4,8 +4,8 @@ package slp;
  */
 
 public class UnaryOpExpr extends Expr {
-	public final UnOperator op;
-	public final Expr operand;
+	private UnOperator op;
+	private Expr operand;
 	
 	public UnaryOpExpr(Expr operand, UnOperator op) {
 		super(operand.getLineNum());
@@ -13,6 +13,20 @@ public class UnaryOpExpr extends Expr {
 		this.op = op;
 	}
 
+	public UnOperator getOp(){
+		return this.op;
+	}
+	
+	public Expr getOperand(){
+		return this.operand;
+	}
+	
+	public boolean hasMathematicalOp(){
+		if(this.op == UnOperator.UMINUS)
+			return true;
+		return false;
+	}
+	
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */
@@ -33,9 +47,5 @@ public class UnaryOpExpr extends Expr {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-	}
-	
-	public String toString() {
-		return op + operand.toString();
 	}
 }

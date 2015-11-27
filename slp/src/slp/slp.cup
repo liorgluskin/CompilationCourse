@@ -28,6 +28,7 @@ terminal INT;
 terminal LAND;
 terminal MULTIPLY;
 terminal LP;
+terminal UMINUS;
 
 //Lior
 terminal LB;
@@ -56,7 +57,6 @@ terminal THIS;
 terminal TRUE;
 terminal VOID;
 terminal WHILE;
- 
 /**********************/
 /* TERMINALS (TOKENS) */
 /**********************/
@@ -105,7 +105,7 @@ precedence left EQUAL,NEQUAL;
 precedence left LT,LTE,GT,GTE;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MOD;
-precedence right LNEG;
+precedence right UMINUS, LNEG;
 precedence left DOT, RP, LP, LB, RB;
 
 /**********************/
@@ -330,7 +330,9 @@ binop ::= expr:e1 PLUS expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.NEQUAL); :}
 ;
 
-unop ::= LNEG expr:e
+unop ::= UMINUS expr:e
+	{:	RESULT = UnaryOpExpr(e, UnOperator.UMINUS); :}
+	|	LNEG expr:e
 	{:	RESULT = new UnaryOpExpr(e, UnOperator.LNEG); :}
 ;
 
