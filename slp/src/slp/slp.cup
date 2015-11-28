@@ -26,7 +26,7 @@ parser code  {:
 	}
 	
 	public void syntax_error(Symbol s) {
-		System.out.print("Line " + s.left + ":"+ s.right +" Syntax error: unexpected token '" 
+		System.out.print("Line " + s.left + ":" +" Syntax error: unexpected token '" 
 				+ (String)s.value+"'");
 	}
 	
