@@ -111,6 +111,8 @@ ERROR					= [^]
 "void"				{ return symbol(sym.VOID);}
 "while"				{ return symbol(sym.WHILE);}
 
+
+
 // Tomer: Dealing with end of file
 <<EOF>> 			{ return symbol(sym.EOF);}
 
@@ -164,5 +166,6 @@ ERROR					= [^]
 
 {ERROR}				{ System.out.print(yyline+1  +": Lexical error: illegal character '" +yytext()+"'"); 
 					  System.exit(0); }
+					 
 
 }
