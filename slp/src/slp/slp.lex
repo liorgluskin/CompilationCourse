@@ -106,7 +106,7 @@ ERROR					= [^]
 "this"				{ return symbol(sym.THIS,"this");}
 "true"				{ return symbol(sym.TRUE,"true");}
 "void"				{ return symbol(sym.VOID,"void");}
-
+"while"				{ return symbol(sym.WHILE);}
 
 
 // Tomer: Dealing with end of file

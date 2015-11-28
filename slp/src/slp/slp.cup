@@ -26,13 +26,8 @@ parser code  {:
 	}
 	
 	public void syntax_error(Symbol s) {
-		System.out.print("Line " + s.left +" Syntax error: unexpected token '" 
+		System.out.print("Line " + s.left + ":"+ s.right +" Syntax error: unexpected token '" 
 				+ (String)s.value+"'");
-	
-		for (Integer expected_token : expected_token_ids()){
-			System.out.print(" expected_tokens: ");
-			System.out.print("'"+symString.getStringOfSymbol(expected_token)+"' ");	
-		}
 	}
 	
 	public void unrecovered_syntax_error(Symbol cur_token){
@@ -147,7 +142,7 @@ precedence left LT,LTE,GT,GTE;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MOD;
 precedence right UMINUS, LNEG;
-precedence left DOT, RP, LP, LB, RB;
+precedence left LB, RB, LP, RP, DOT;
 
 /**********************/
 /* 	DERIVATION RULES  */
@@ -380,8 +375,8 @@ binop ::= expr:e1 PLUS expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.NEQUAL); :}
 ;
 
-unop ::= UMINUS expr:e
-	{:	RESULT = new UnaryOpExpr(e, UnOperator.UMINUS); :}
+unop ::= MINUS expr:e
+	{:	RESULT = new UnaryOpExpr(e, UnOperator.UMINUS); :} %prec UMINUS
 	|	LNEG expr:e
 	{:	RESULT = new UnaryOpExpr(e, UnOperator.LNEG); :}
 ;

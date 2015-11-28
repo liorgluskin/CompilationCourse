@@ -2,7 +2,8 @@
 <classpath>
 	<classpathentry excluding="**/*.cup|**/*.lex" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/CompilationCourse/java-cup-11b-runtime.jar"/>
 	<classpathentry kind="var" path="CUP_RUNTIME_JAR"/>
+	<classpathentry kind="lib" path="D:/D/compilation_git/java-cup-11b-runtime.jar"/>
+	<classpathentry kind="lib" path="D:/D/compilation_git/java-cup-11b.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
