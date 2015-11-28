@@ -5,6 +5,34 @@ import java.util.List;
 import java.util.ArrayList;
 
 
+parser code  {:
+	private Lexer lexer;
+	
+	public Parser(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	}
+	
+	public void syntax_error(Symbol s) {
+		System.out.println("Line " + s.left +" Syntax error: unexpected token '" 
+				+ (String)s.value+"'");
+	
+		for (Integer expected_token : expected_token_ids()){
+			System.out.println(expected_token + " ");	
+		}
+	}
+	
+	public void unrecovered_syntax_error(Symbol cur_token){
+		System.exit(1);
+	}
+	
+:}
+
+scan with {:
+	return lexer.next_token();
+	:}
+
+
 /**********************/
 /* TERMINALS (TOKENS) */
 /**********************/
