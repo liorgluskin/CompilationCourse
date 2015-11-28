@@ -13,12 +13,25 @@ parser code  {:
 		this.lexer = lexer;
 	}
 	
+	public void report_error(String message, Object info){
+		StringBuffer m = new StringBuffer("Error");
+		if(info instanceof Symbol){
+			Symbol s = (Symbol)info;
+			if(s.left >= 0){
+				m.append(" in line " + s.left);
+			}
+		}
+		m.append(" "+ message);
+		System.err.println(m);
+	}
+	
 	public void syntax_error(Symbol s) {
-		System.out.println("Line " + s.left +" Syntax error: unexpected token '" 
+		System.out.print("Line " + s.left +" Syntax error: unexpected token '" 
 				+ (String)s.value+"'");
 	
 		for (Integer expected_token : expected_token_ids()){
-			System.out.println(expected_token + " ");	
+			System.out.print(" expected_tokens: ");
+			System.out.print("'"+symString.getStringOfSymbol(expected_token)+"' ");	
 		}
 	}
 	

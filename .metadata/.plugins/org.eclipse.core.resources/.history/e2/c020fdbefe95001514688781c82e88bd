@@ -1,0 +1,76 @@
+package slp;
+
+public class symString implements sym {
+
+	public static String getStringOfSymbol(int symId){
+		switch (symId){
+			case DIVIDE :{
+				return "/";
+			}
+			case LCBR : {
+				return  "}";
+			}
+			case COMMA: {
+				return ",";
+			}
+			case SEMI: {
+				return ";";
+			}
+			case PLUS: {
+				return "+";
+			}
+			case MULTIPLY: {
+				return "*";
+			}
+			case LP: {
+				return "(";
+			}
+			case RP: {
+				return ")";			
+			}
+			case ASSIGN: {
+				return "=";
+			}
+			
+			case EQUAL: {
+				return "==";
+			} 
+			case GT : {
+				return ">";
+			}
+			case GTE: {
+				return ">=";
+			}
+			case LB: {
+				return "[";
+			}
+			case LENGTH:{
+				return "length";
+			}
+			case NEW: {
+				return "new";
+			}
+			case LNEG:{
+				return "!";
+			}
+			case LOR:{
+				return "||";
+			}
+			case LAND :{
+				return "&&";
+			}
+			case LT:{
+				return "<";
+			}
+			case LTE:{
+				return "<=";
+			}
+			MINUS,"-"
+			MOD,"%"
+			NEQUAL,"!="
+
+		
+		
+		}
+	}
+}

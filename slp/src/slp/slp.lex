@@ -98,12 +98,9 @@ ERROR					= [^]
 //Tomer 
 
 "null"				{ return symbol(sym.NULL,"null");}
-"+"					{ return symbol(sym.PLUS,"+");}
 "]"					{ return symbol(sym.RB,"]");}
 "}"					{ return symbol(sym.RCBR,"}");}
 "return"			{ return symbol(sym.RETURN,"return");}
-")"					{ return symbol(sym.RP,")");}
-";"					{ return symbol(sym.SEMI,";");}
 "static"			{ return symbol(sym.STATIC,"static");}
 "string"			{ return symbol(sym.STRING,"string");}
 "this"				{ return symbol(sym.THIS,"this");}

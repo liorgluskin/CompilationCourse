@@ -1,0 +1,24 @@
+package slp;
+
+public class symString implements sym {
+
+	public static String getStringOfSymbol(int symId){
+		switch (symId){
+			case DIVIDE :{
+				return "/";
+			}
+			case LCBR : {
+				return  "}";
+			}
+			case COMMA: {
+				return ",";
+			}
+			case SEMI: {
+				return ";";
+				
+			}
+		
+		
+		}
+	}
+}

@@ -1,0 +1,5 @@
+package slp;
+
+public class symString implements sym {
+
+}
