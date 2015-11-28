@@ -110,7 +110,7 @@ ERROR					= [^]
 
 
 // Tomer: Dealing with end of file
-<<EOF>> 			{ return symbol(sym.EOF);}
+<<EOF>> 			{ return symbol(sym.EOF, "end of file");}
 
 {INTEGER}			{
 						Integer num = 0;
