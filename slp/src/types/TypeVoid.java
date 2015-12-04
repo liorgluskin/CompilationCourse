@@ -1,5 +1,7 @@
 package types;
 
-public class TypeVoid {
-
+public class TypeVoid extends Type {
+	public TypeVoid(){
+		super("void");
+	}
 }

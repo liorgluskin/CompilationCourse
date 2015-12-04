@@ -1,0 +1,169 @@
+package types;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import semantic.SemanticError;
+import slp.ClassDecl;
+import slp;
+
+/**
+ * Main class to hold the type table for the input program
+ *
+ */
+public class TypeTable {
+    private static Map<String,TypeClass> uniqueTypeClasss = new HashMap<String,TypeClass>();
+    private static Map<Type,TypeArray> uniqueTypeArrays = new HashMap<Type,TypeArray>();
+    private static Map<String,TypeMethod> uniqueTypeMethods = new HashMap<String,TypeMethod>();
+    private static Map<String,Type> uniquePrimitiveTypes = new HashMap<String,Type>();
+    
+    public static Map<String, Type> getUniquePrimitiveTypes() {
+		return uniquePrimitiveTypes;
+	}
+
+	protected static int idCounter = 0;
+    private static String icFileName = null;
+    
+    /**
+     * initialize the type table
+     */
+    public static void initTypeTable(String icFileName){
+    	uniquePrimitiveTypes.put("int", new TypeInt());
+    	uniquePrimitiveTypes.put("boolean", new TypeBoolean());
+    	uniquePrimitiveTypes.put("null", new TypeNull());
+    	uniquePrimitiveTypes.put("string", new TypeString());
+    	uniquePrimitiveTypes.put("void", new TypeVoid());
+    	TypeTable.icFileName = icFileName;
+    }
+    
+    /**
+     * getter for the ic program file name
+     */
+    public static String getFileName(){
+    	return icFileName;
+    }
+
+    /**
+     *  Returns unique array type object
+     * 
+     */
+    public static TypeArray TypeArray(Type elemType) {
+       if (uniqueTypeArrays.containsKey(elemType)) {
+          // array type object already created – return it
+          return uniqueTypeArrays.get(elemType);
+       }
+       else {
+          // object doesn't exist – create and return it
+          TypeArray arrt = new TypeArray(elemType);
+          uniqueTypeArrays.put(elemType,arrt);
+          return arrt;
+       }
+    }
+    
+    /**
+     * Adds a new TypeClass entry to TypeTable. If the class is already defined
+     * or extends a class that was not previously defined, throws SemanticError. 
+     * @param c
+     * @throws SemanticError
+     */
+    public static void addTypeClass(ClassDecl c) throws SemanticError{
+    	if (uniqueTypeClasss.containsKey(c.getName())){ 
+    		throw new SemanticError("class already defined",c.getLineNum(),c.getName());
+    	}
+    	if (c.getSuperClassName() == null) {
+    		if (!uniqueTypeClasss.containsKey(c.getSuperClassName()))
+    			throw new SemanticError("super-class is undefined",c.getLineNum(),c.getSuperClassName());
+    	}
+    	
+    	TypeClass ct = new TypeClass(c);
+    	uniqueTypeClasss.put(c.getName(),ct);
+    }
+    
+    /** 
+     * Returns unique class type object
+     */
+    public static TypeClass getTypeClass(String name) throws SemanticError{
+    	TypeClass ct = uniqueTypeClasss.get(name);
+    	if (ct == null) throw new SemanticError("class is undefined",name);
+    	else return ct;
+    }
+    
+    public static TypeMethod TypeMethod(String name,Type returnType, List<Type> paramTypes){
+    	TypeMethod mt = new TypeMethod(name,returnType,paramTypes);
+    	String key = mt.toString();
+    	
+    	TypeMethod mt2 = uniqueTypeMethods.get(key);
+    	if (mt2 == null) {
+    		uniqueTypeMethods.put(key, mt);
+    		return mt;
+    	} else return mt2;
+    	
+    }
+    
+    /**
+     * A getter that gets a String and returns the type
+     */
+    public static Type getType(String typeName) throws SemanticError{
+    	Type t;
+    	
+    	// case primitive type
+    	t = uniquePrimitiveTypes.get(typeName);
+    	if (t != null) return t;
+    	// case array type
+    	if (typeName.endsWith("[]")) return TypeArray(getType(typeName.substring(0, typeName.length()-2)));
+    	// case class type
+    	else return getTypeClass(typeName);
+    }
+    
+    /**
+     * returns string representation for the TypeTable fitting the "-dump-symtab" IC.Compiler flag
+     * @return
+     */
+    public static String staticToString(){
+    	String str = "Type Table: "+icFileName+"\n";
+    	
+    	// construct string representation for primitive types
+    	Iterator<Type> uniquePrimitiveTypesIter = uniquePrimitiveTypes.values().iterator();
+    	String primitiveTypesStr = "";
+    	while (uniquePrimitiveTypesIter.hasNext()){
+    		Type t = uniquePrimitiveTypesIter.next();
+    		primitiveTypesStr += "\t"+t.getTypeID()+": Primitive type: "+t.getName()+"\n";
+    	}
+    	
+    	// construct string representation for class types
+    	Iterator<TypeClass> uniqueTypeClasssIter = uniqueTypeClasss.values().iterator();
+    	String TypeClasssStr = "";
+    	while (uniqueTypeClasssIter.hasNext()){
+    		TypeClass ct = uniqueTypeClasssIter.next();
+    		TypeClasssStr += "\t"+ct.getTypeID()+": Class: "+ct.toString()+"\n";
+    	}
+    	
+    	// construct string representation for array types
+    	Iterator<TypeArray> uniqueTypeArraysIter = uniqueTypeArrays.values().iterator();
+    	String TypeArraysStr = "";
+    	while (uniqueTypeArraysIter.hasNext()){
+    		TypeArray at = uniqueTypeArraysIter.next();
+    		TypeArraysStr += "\t"+at.getTypeID()+": Array type: "+at.toString()+"\n";
+    	}
+    	
+    	// construct string representation for method types
+    	String TypeMethodsStr = "";
+    	for (TypeMethod mt: uniqueTypeMethods.values()){
+    		TypeMethodsStr += "\t"+mt.getTypeID()+": Method type: "+mt.toString()+"\n";
+    	}
+    	
+    	str += primitiveTypesStr+TypeClasssStr+TypeArraysStr+TypeMethodsStr;
+    	return str;
+    }
+    
+    /**
+     * Checks whether the name is of a primitive type (except for null or string).
+     * @param name - type name.
+     * @return true if type is primitive, false otherwise.
+     */
+    public static boolean isPrimitive(String name){
+    	return ((name == "int") || (name == "boolean") || (name == "void"));
+    }
+    
+}

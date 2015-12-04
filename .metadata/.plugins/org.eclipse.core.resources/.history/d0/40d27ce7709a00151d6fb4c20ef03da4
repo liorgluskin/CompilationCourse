@@ -1,0 +1,15 @@
+package types;
+
+public class TypeArray extends Type{
+	private Type elemType;
+	
+	public ArrayType(Type elemtype){
+		super(elemType);
+	}
+}
+
+	@Override
+	public boolean extendsType(Type t) {
+		// TODO Auto-generated method stub
+		return false;
+	}

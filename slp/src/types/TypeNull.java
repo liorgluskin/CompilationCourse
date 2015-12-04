@@ -1,5 +1,7 @@
 package types;
 
-public class TypeNull {
-
+public class TypeNull extends Type {
+	public TypeNull(){
+		super("null");
+	}
 }

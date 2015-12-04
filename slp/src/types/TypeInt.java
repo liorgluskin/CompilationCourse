@@ -1,5 +1,8 @@
 package types;
 
-public class TypeInt {
+public class TypeInt extends Type {
+	public TypeInt(){
+		super("int");
+	}
 
 }

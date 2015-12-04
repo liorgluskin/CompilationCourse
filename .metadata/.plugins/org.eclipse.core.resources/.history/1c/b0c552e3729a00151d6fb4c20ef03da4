@@ -1,0 +1,15 @@
+package types;
+
+import slp.ClassDecl;
+
+public class TypeClass {
+	private String superClass;
+	private ClassDecl classNode;
+	
+	public TypeClass(ClassDecl classNode){
+		super(classNode.getName());
+		this.superClass = classNode.getSuperClassName();
+		this.classNode = classNode;
+		
+	}
+}

@@ -36,7 +36,7 @@ parser code  {:
 				System.out.print("  ");	
 			}
 			int symbol = (Integer)expected_token;
-			System.out.print(symString.getStringOfSymbol(symbol));
+			System.out.print("'"+symString.getStringOfSymbol(symbol)+"'");
 			first_token = false;
 		}
 	}

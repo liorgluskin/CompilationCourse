@@ -1,0 +1,6 @@
+package types;
+
+public class TypeString xtends Type {
+	public TypeString(){
+		super("string");
+	}

@@ -1,0 +1,7 @@
+package types;
+
+public class TypeArray extends Type
+	private Type elemType;
+	
+	public ArrayType(Type elem)
+}

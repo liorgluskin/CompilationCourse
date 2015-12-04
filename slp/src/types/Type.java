@@ -28,5 +28,10 @@ public abstract class Type {
 	/**
 	 * Returns if current type is equal to, or extends the Type t
 	 */
-	public abstract boolean extendsType(Type t);
+	public boolean extendsType(Type t) {
+		if(t == this){
+			return true;
+		}
+		return false;
+	}
 }

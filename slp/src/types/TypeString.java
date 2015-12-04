@@ -1,5 +1,7 @@
 package types;
 
-public class TypeString {
-
+public class TypeString extends Type {
+	public TypeString(){
+		super("string");
+	}
 }
