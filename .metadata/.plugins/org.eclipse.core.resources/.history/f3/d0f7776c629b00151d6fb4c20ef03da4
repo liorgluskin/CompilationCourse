@@ -1,0 +1,12 @@
+package symbolTableHandler;
+
+public class GlobalSymbolTable extends SymbolTable {
+
+	public GlobalSymbolTable() {
+		super(null);
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+}

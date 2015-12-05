@@ -1,0 +1,11 @@
+package symbolTableHandler;
+
+public class GlobalSymbolTable extends SymbolTable {
+
+	public GlobalSymbolTable() {
+		super(null);
+	}
+	
+	
+
+}

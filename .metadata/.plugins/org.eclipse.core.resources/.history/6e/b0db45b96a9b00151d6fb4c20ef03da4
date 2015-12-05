@@ -1,0 +1,17 @@
+package symbolTableHandler;
+import semantic.SemanticError;
+import slp.*;
+import types.*;
+
+public class ClassSymbol extends Symbol {
+	private ClassDecl classdecl;
+	private ClassType type;
+
+	public ClassSymbol(ClassDecl classdecl) throws SemanticError{
+		super(classdecl.getName(), classdecl.getLineNum());
+		TypeTable.addClass(classdecl);
+		
+		
+	}
+
+}

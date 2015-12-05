@@ -13,8 +13,8 @@ public class TypeMethod extends Type {
 	private Type returnType;
 	
 	
-	public TypeMethod(String name, Type returnType, List<Type> paramTypes){
-		super(name);
+	public TypeMethod( Type returnType, List<Type> paramTypes){
+		super(null);
 		this.returnType = returnType;
 		this.paramTypes = paramTypes;
 	}

@@ -1,0 +1,49 @@
+package symbolTableHandler;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import semantic.SemanticError;
+import types.*;
+
+public class ClassSymbolTable extends SymbolTable{
+
+	
+	private Map<String,MethodSymbol> methodsSymbols = new HashMap<>();
+	private Map<String,FieldSymbol> fieldsSymbol = new HashMap<String,FieldSymbol>();
+	private Map<String,ClassSymbolTable> kidsClassSymbolTables = new HashMap<String,ClassSymbolTable>();
+	private Map<String,MethodSymbolTable> methodSymbolTables = new HashMap<String,MethodSymbolTable>();
+	
+	private ClassSymbol symbol;
+	private boolean isExtends;
+	
+	
+	
+	public ClassSymbolTable(ClassSymbolTable parent, ClassSymbol symbol) {
+		super(parent);
+		this.symbol = symbol;
+		isExtends = true;		
+	}
+	
+	public ClassSymbolTable(GlobalSymbolTable parent,ClassSymbol symbol){
+		super(parent);
+		this.symbol = symbol;
+		isExtends = false;
+	}
+	
+	public MethodSymbol getMethodSymbol(String name) throws SemanticError{
+		MethodSymbol ms = methodsSymbols.get(name);
+		if (ms == null){
+			if(isExtends){
+				ms =((ClassSymbolTable) parent).getMethodSymbol(name);				
+			}else throw new SemanticError("method does not exist in "+this.symbol.getName()+": name");			
+		}
+		return ms;		
+	}
+	
+	public void addMethodSymbol(String name, Type returnType, List<Type> paramTypes, boolean isStatic){
+		this.methodEntries.put(name, new MethodSymbol(name,returnType,paramTypes, isStatic));
+	
+	
+
+}

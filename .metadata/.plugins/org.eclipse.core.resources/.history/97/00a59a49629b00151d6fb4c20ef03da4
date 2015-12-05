@@ -1,0 +1,18 @@
+package symbolTableHandler;
+
+public class SymbolTable {
+	protected SymbolTable parent;
+	
+	/**
+	 * constructor for generic SymbolTable 
+	 * @param parent
+	 */
+	public SymbolTable(SymbolTable parent){
+		this.parent = parent;
+		// update depth if not global
+		if (parent != null){
+			this.depth = parent.getDepth()+1;
+		} else this.depth = -1; // this is global
+	}
+	
+}

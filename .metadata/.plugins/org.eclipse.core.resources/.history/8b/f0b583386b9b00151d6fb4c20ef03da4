@@ -1,0 +1,10 @@
+package symbolTableHandler;
+
+public class ClassSymbolTable extends SymbolTable{
+
+	public ClassSymbolTable(SymbolTable parent) {
+		super(parent);
+		
+	}
+
+}

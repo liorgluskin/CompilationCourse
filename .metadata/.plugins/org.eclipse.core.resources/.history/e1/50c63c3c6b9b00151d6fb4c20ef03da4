@@ -1,0 +1,13 @@
+package symbolTableHandler;
+
+public class ClassSymbolTable extends SymbolTable{
+
+	
+	private Map<String,MethodSymbol> methods = new HashMap<>();
+	
+	public ClassSymbolTable(SymbolTable parent) {
+		super(parent);
+		
+	}
+
+}

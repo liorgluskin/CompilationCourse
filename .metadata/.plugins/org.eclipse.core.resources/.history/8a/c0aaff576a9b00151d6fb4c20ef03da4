@@ -1,0 +1,12 @@
+package symbolTableHandler;
+import slp.*;
+
+public class ClassSymbol extends Symbol {
+	private ClassDecl classdecl;
+
+	public ClassSymbol(ClassDecl classdecl) {
+		super(classdecl.getName(), classdecl.getLineNum());
+		
+	}
+
+}

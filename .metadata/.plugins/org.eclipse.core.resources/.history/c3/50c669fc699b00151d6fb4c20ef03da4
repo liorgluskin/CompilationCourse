@@ -1,0 +1,23 @@
+package symbolTableHandler;
+import types.*;
+
+public abstract class Symbol {
+	protected String name;
+	protected Type type;
+	protected int linel
+	
+	public Symbol(String name,line){
+		this.name = name;
+	}
+	
+	/**
+	 * getter for the Symbol name
+	 */
+	public String getName(){
+		return this.name;
+	}
+	
+	
+
+}
+

@@ -1,0 +1,10 @@
+package symbolTableHandler;
+
+public class ClassSymbol extends Symbol {
+
+	public ClassSymbol(String name, int line) {
+		super(name, line);
+		// TODO Auto-generated constructor stub
+	}
+
+}

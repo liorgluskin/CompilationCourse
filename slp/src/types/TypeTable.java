@@ -89,8 +89,8 @@ public class TypeTable {
     	else return ct;
     }
     
-    public static TypeMethod typeMethod(String name,Type returnType, List<Type> paramTypes){
-    	TypeMethod mt = new TypeMethod(name,returnType,paramTypes);
+    public static TypeMethod typeMethod(Type returnType, List<Type> paramTypes){
+    	TypeMethod mt = new TypeMethod(returnType,paramTypes);
     	String key = mt.toString();
     	
     	TypeMethod mt2 = programMethods.get(key);

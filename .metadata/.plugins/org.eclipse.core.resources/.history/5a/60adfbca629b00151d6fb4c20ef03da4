@@ -1,0 +1,15 @@
+package symbolTableHandler;
+
+import Map;
+import HashMap;
+
+public class GlobalSymbolTable extends SymbolTable {
+	private Map<String,ClassSymbolTable> kids = new Ha 
+
+	public GlobalSymbolTable() {
+		super(null);
+	}
+	
+	
+
+}
