@@ -1,0 +1,12 @@
+package semantic;
+
+import types.TypeTable;
+
+public class SemanticEvaluator {
+	private Boolean hasMain;
+
+	
+	public SemanticEvaluator(){
+		TypeTable.initTypeTable();
+	}
+}

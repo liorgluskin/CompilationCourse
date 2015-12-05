@@ -17,32 +17,23 @@ public class TypeTable {
     private static Map<Type,TypeArray> programArrays = new HashMap<Type,TypeArray>();
     private static Map<String,TypeMethod> programMethods = new HashMap<String,TypeMethod>();
     private static Map<String,Type> programPrimitives = new HashMap<String,Type>();
+    protected static int idCounter = 0;
     
     public static Map<String, Type> getProgramPrimitives() {
 		return programPrimitives;
 	}
 
-	protected static int idCounter = 0;
-    private static String icFileName = null;
-    
     /**
      * initialize the type table
      */
-    public static void initTypeTable(String icFileName){
+    public static void initTypeTable(){
     	programPrimitives.put("int", new TypeInt());
     	programPrimitives.put("boolean", new TypeBoolean());
     	programPrimitives.put("null", new TypeNull());
     	programPrimitives.put("string", new TypeString());
     	programPrimitives.put("void", new TypeVoid());
-    	TypeTable.icFileName = icFileName;
     }
     
-    /**
-     * getter for the ic program file name
-     */
-    public static String getFileName(){
-    	return icFileName;
-    }
 
     /**
      *  Returns unique array type object
@@ -121,7 +112,7 @@ public class TypeTable {
      * @return
      */
     public static String staticToString(){
-    	String str = "Type Table: "+icFileName+"\n";
+    	String str = "";
     	
     	// construct string representation for primitive types
     	Iterator<Type> programPrimitivesIter = programPrimitives.values().iterator();

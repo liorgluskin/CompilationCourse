@@ -36,6 +36,10 @@ public class GlobalSymbolTable extends SymbolTable {
 		return null;
 	}
 	
+	public void addClassSymbolTable(ClassSymbolTable cst){
+		kids.put(cst.getSymbol().getName(), cst);
+	}
+	
 	
 	
 
