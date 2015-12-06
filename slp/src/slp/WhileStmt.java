@@ -5,6 +5,7 @@ package slp;
  */
 public class WhileStmt extends Stmt {
 
+<<<<<<< HEAD
 	private Expr expr;
 	private Stmt stmt;
 
@@ -14,6 +15,13 @@ public class WhileStmt extends Stmt {
 		this.stmt = stmt;
 	}
 
+=======
+ public WhileStmt(int line) {
+	super(line);
+	
+}
+ 
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */
@@ -21,7 +29,11 @@ public class WhileStmt extends Stmt {
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	/** Accepts a propagating visitor parameterized by two types.
 	 * 
 	 * @param <DownType> The type of the object holding the context.
@@ -34,6 +46,7 @@ public class WhileStmt extends Stmt {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
+<<<<<<< HEAD
 	}
 	
 	public Expr getCond(){
@@ -42,5 +55,7 @@ public class WhileStmt extends Stmt {
 	
 	public Stmt getBody(){
 		return stmt;
+=======
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	}
 }

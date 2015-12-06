@@ -3,12 +3,20 @@ package slp;
 /** Pretty-prints an SLP AST.
  */
 public class PrettyPrinter implements Visitor {
+	protected int depth = 0;
 	protected final ASTNode root;
+<<<<<<< HEAD
 	private String fileName;
 	private int depth = 0;
 
 
 	/** Constructs a printing visitor from an AST.
+=======
+	protected String fileName;
+	
+	
+	/** Constructs a printin visitor from an AST.
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	 * 
 	 * @param root The root of the AST.
 	 */
@@ -17,6 +25,7 @@ public class PrettyPrinter implements Visitor {
 		this.fileName = fileName;
 	}
 
+<<<<<<< HEAD
 	/** Prints the required lineIndentation and line num for the current AST node
 	 * @param AST node 
 	 */
@@ -30,6 +39,15 @@ public class PrettyPrinter implements Visitor {
 		}
 	}
 
+=======
+	private void indent(ASTNode node) {
+		System.out.print("\n");
+		for (int i = 0; i < depth; i++)
+			System.out.print(" ");
+		if (node != null)
+			System.out.print(node.getLineNum() + ": ");
+	}
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	/** Prints the AST with the given root.
 	 */
 	public void print() {
@@ -37,12 +55,16 @@ public class PrettyPrinter implements Visitor {
 	}
 
 
+<<<<<<< HEAD
 	public void visit(StmtList stmts) {
 		for (Stmt s : stmts.getStatements()) {
 			s.accept(this);
 			System.out.println();
 		}
 	}
+=======
+
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 
 	public void visit(Stmt stmt) {
 		throw new UnsupportedOperationException("Unexpected visit of Stmt abstract class");
@@ -100,6 +122,7 @@ public class PrettyPrinter implements Visitor {
 		depth-=2;
 	}
 
+<<<<<<< HEAD
 	public void visit(BreakStmt breakStmt) { 
 		lineIndent(breakStmt);
 		System.out.print("Break statement");
@@ -109,6 +132,8 @@ public class PrettyPrinter implements Visitor {
 		lineIndent(continueStmt);
 		System.out.print("Continue statement");
 	}
+=======
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 
 	public void visit(BlockStmt blockStmt) { 
 		lineIndent(blockStmt);
@@ -119,6 +144,7 @@ public class PrettyPrinter implements Visitor {
 		}
 		depth-=2;
 	}
+<<<<<<< HEAD
 
 	public void visit(IDStmt idStmt) { 
 		lineIndent(idStmt);
@@ -135,6 +161,13 @@ public class PrettyPrinter implements Visitor {
 		}
 		depth--;
 	}
+=======
+	
+	public void visit(Expr expr) {
+		throw new UnsupportedOperationException("Unexpected visit of Expr abstract class");
+	}	
+	
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 
 
 	public void visit(Expr expr) {
@@ -187,6 +220,7 @@ public class PrettyPrinter implements Visitor {
 	}
 
 	public void visit(ClassDecl class_decl) {
+<<<<<<< HEAD
 		lineIndent(class_decl);
 		System.out.print("Declaration of class: " + class_decl.getName());
 		if (class_decl.getSuperClassName() != null){
@@ -210,10 +244,36 @@ public class PrettyPrinter implements Visitor {
 		for(Stmt s : method.getStatementList().getStatements()){
 			s.accept(this);
 		}
+=======
+		indent(class_decl);
+		System.out.println("Declaration of class: " + class_decl.getName());
+		if (class_decl.getSuperClassName() != null)
+			System.out.println(", subclass of " + class_decl.getSuperClassName());
+		depth += 2;
+		for (FieldOrMethod fieldOrMethod : class_decl.getFieldsOrMethods()){
+			fieldOrMethod.accept(this);
+		}
+		depth -= 2;
+	}
+
+	@Override
+	public void visit(ClassMethod method) {
+		indent(method);
+		System.out.println("Declaration of virtual method: " + method.getName());
+		depth +=2;
+
+		method.getType().accept(this);
+		for (Formal formal : method.getFormals())
+			formal.accept(this);
+		for (Stmt statement : method.getStatements())
+			statement.accept(this);
+		
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 		depth-=2;
 	}
 
 	public void visit(StaticMethod method) {
+<<<<<<< HEAD
 		lineIndent(method);
 		System.out.print("Declaration of static method: " + method.getName());
 		depth+=2;
@@ -225,6 +285,20 @@ public class PrettyPrinter implements Visitor {
 			s.accept(this);
 		}
 		depth-=2;
+=======
+		indent(method);
+		System.out.println("Declaration of static method: " + method.getName());
+		depth +=2;
+
+		method.getType().accept(this);
+		for (Formal formal : method.getFormals())
+			formal.accept(this);
+		for (Stmt statement : method.getStatements())
+			statement.accept(this);
+
+		depth -=2;
+
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	}
 
 	public void visit(PrimitiveType primitiveType) {
@@ -261,6 +335,7 @@ public class PrettyPrinter implements Visitor {
 		depth--;
 	}
 
+<<<<<<< HEAD
 	public void visit(VarLocation var_loc) {
 		lineIndent(var_loc);
 		System.out.print("Reference to variable: " + var_loc.getName());
@@ -269,19 +344,41 @@ public class PrettyPrinter implements Visitor {
 			depth++;
 			var_loc.getLocation().accept(this);
 			depth--;
+=======
+//////////////////
+	@Override
+	public void visit(VarLocation var_loc) {
+		indent(var_loc);
+		System.out.print("Reference to variable: " + var_loc.getName());
+		if (var_loc.getLocation() != null){
+			System.out.print(", in external scope");
+			++depth;
+			var_loc.getLocation().accept(this);
+			--depth;
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 		}
 	}
 
 	public void visit(ArrLocation arr_loc) {
+<<<<<<< HEAD
 		lineIndent(arr_loc);
 		System.out.print("Reference to array");
 		depth+=2;
 		arr_loc.getArrLocation().accept(this);
 		arr_loc.getIndex().accept(this);
 		depth-=2;
+=======
+		indent(arr_loc);
+		System.out.print("Reference to array");
+		++depth;
+		arr_loc.getArrLocation().accept(this);
+		arr_loc.getIndex().accept(this);
+		--depth;
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	}
 
 	public void visit(StaticCall static_call) {
+<<<<<<< HEAD
 		lineIndent(static_call);
 		System.out.print("Call to static method: "+static_call.getMethodName()+", in class "+static_call.getClassName());
 		depth+=2;
@@ -295,41 +392,97 @@ public class PrettyPrinter implements Visitor {
 		lineIndent(virtual_call);
 		System.out.print("Call to virtual method: "+virtual_call.getMethodName());
 		depth+=2;
+=======
+		indent(static_call);
+		System.out.print("Call to static method: " +static_call.getMethodName()+ ", in class "+ static_call.getClassName());
+		++depth;
+		for(Expr e: static_call.getArguments())
+			e.accept(this);
+		--depth;
+	}
+
+	@Override
+	public void visit(StmtList stmts) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(Stmt stmt) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(VirtualCall virtual_call) {
+		indent(virtual_call);
+		System.out.print("Call to virtual method: " +virtual_call.getMethodName());
+		++depth;
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 		if (virtual_call.getObjectReference() != null){
 			System.out.print(", in external scope");
 			virtual_call.getObjectReference().accept(this);
 		}
+<<<<<<< HEAD
 		for(Expr e: virtual_call.getArguments()){
 			e.accept(this);
 		}
 		depth-=2;
+=======
+		for(Expr e: virtual_call.getArguments())
+			e.accept(this);
+		--depth;
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	}
 
 	public void visit(Literal literal) {
+<<<<<<< HEAD
 		lineIndent(literal);
 		System.out.print(literal.getType().getDesc()+" literal: "+literal.getValue());
+=======
+		indent(literal);
+		System.out.print(literal.getType()+" literal: "+literal.getValue());
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	}
 
 	public void visit(This t) {
+<<<<<<< HEAD
 		lineIndent(t);
+=======
+		indent(t);
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 		System.out.print("Reference to 'this' instance");	
 	}
 
 	public void visit(NewObject new_obj) {
+<<<<<<< HEAD
 		lineIndent(new_obj);
+=======
+		indent(new_obj);
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 		System.out.print("Instantiation of class: "+new_obj.getClassName());	
 	}
 
 	public void visit(NewArray new_arr) {
+<<<<<<< HEAD
 		lineIndent(new_arr);
 		System.out.print("Array allocation");
 		depth+=2;
 		new_arr.getType().accept(this);
 		new_arr.getArrayLength().accept(this);
 		depth-=2;
+=======
+		indent(new_arr);
+		System.out.print("Array allocation");
+		++depth;
+		new_arr.getType().accept(this);
+		new_arr.getArrayLength().accept(this);
+		--depth;
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	}
 
 	public void visit(Length length) {
+<<<<<<< HEAD
 		lineIndent(length);
 		System.out.print("Reference to array length");
 		depth++;
@@ -337,4 +490,15 @@ public class PrettyPrinter implements Visitor {
 		depth--;
 	}
 
+=======
+		indent(length);
+		System.out.print("Reference to array length");
+		++depth;
+		length.getExpression().accept(this);
+		--depth;
+		
+	}
+
+
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 }

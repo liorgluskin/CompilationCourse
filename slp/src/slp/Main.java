@@ -46,7 +46,11 @@ public class Main {
 			Symbol parseSymbol = parser.parse();
 			System.out.println("Parsed " + args[0] + " successfully!");
 			Program root = (Program) parseSymbol.value;
+<<<<<<< HEAD
 
+=======
+			
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 			//get file name of file
 			Path p = Paths.get(args[0]);
 			String fileName = p.getFileName().toString();

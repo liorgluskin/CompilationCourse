@@ -3,9 +3,15 @@ package slp;
 /** An AST node for binary expressions.
  */
 public class BinaryOpExpr extends Expr {
+<<<<<<< HEAD
 	private Expr lhs;
 	private Expr rhs;
 	private BinOperator op;
+=======
+	public final Expr lhs;
+	public final Expr rhs;
+	public final BinOperator op;
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	
 	public BinaryOpExpr(Expr lhs, Expr rhs, BinOperator op) {
 		super(lhs.getLineNum());

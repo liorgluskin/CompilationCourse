@@ -18,6 +18,15 @@ public abstract class ASTNode {
 		this.lineNum = lineNum;
 	}
 
+	/**
+	 * Constructor
+	 * 
+	 * @param lineNum 
+	 */
+	protected ASTNode(int lineNum) {
+		this.lineNum = lineNum;
+	}
+
 	/** Returns the code's line number where the node has appeared.
 	 */
 	public int getLineNum() {
@@ -41,6 +50,7 @@ public abstract class ASTNode {
 			PropagatingVisitor<DownType, UpType> visitor, DownType context);
 
 
+<<<<<<< HEAD
 	public void setEnclosingScope(SymbolTable scope){
 		this.scope = scope;
 	}
@@ -48,4 +58,7 @@ public abstract class ASTNode {
 	public SymbolTable getEnclosingScope(){
 		return scope;
 	}
+=======
+	
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 }

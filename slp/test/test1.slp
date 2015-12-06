@@ -28,7 +28,11 @@ class Quicksort {
         if (i >= j) break;
 
         tmp = a[i];
+<<<<<<< HEAD
         a[i] = a[j];
+=======
+        a[i]/* = a[j];
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
         a[j] = tmp;
         i = i+1;
         j = j-1;
@@ -48,7 +52,11 @@ class Quicksort {
     void initArray() {
     int i = 0;
     while(i < a.length) {
+<<<<<<< HEAD
         a[i] =  Library.random(a.length*2);
+=======
+        a[i] =  Library.r***&*7*andom(a.length*/2/);
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
         i = i+1;
     }
     }

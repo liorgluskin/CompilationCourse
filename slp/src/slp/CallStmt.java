@@ -4,11 +4,18 @@ package slp;
  *
  */
 public class CallStmt extends Stmt {
+<<<<<<< HEAD
 	private Call call;
 	
 	public CallStmt(Call call) {
 		super(call.getLineNum());
 		this.call = call;
+=======
+	
+	
+	public CallStmt(int lineNum) {
+		super(lineNum);
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	}
 
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -32,10 +39,13 @@ public class CallStmt extends Stmt {
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
 	}
+<<<<<<< HEAD
 	
 	/**@return call object of the statement*
 	 */
 	public Call getCall(){
 		return call;
 	}
+=======
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 }

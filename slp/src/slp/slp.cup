@@ -234,7 +234,11 @@ method ::= STATIC VOID ID:id LP RP LCBR stmt_list:sl RCBR
 	| type:t ID:id LP RP LCBR stmt_list:sl RCBR
 	{: RESULT = new ClassMethod(t, id, new ArrayList<Formal>(), sl); :}
 	| VOID ID:id LP formals:f RP LCBR stmt_list:sl RCBR
+<<<<<<< HEAD
 	{:RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
+=======
+	{: RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	| type:t ID:id LP formals:f RP LCBR stmt_list:sl RCBR
 	{: RESULT = new ClassMethod(t, id, f, sl); :}
 	;
@@ -270,9 +274,17 @@ stmt_list ::=
 ;
 
 
+<<<<<<< HEAD
 stmt ::= location:l ASSIGN expr:e SEMI
 	{:  RESULT = new AssignStmt(l, e); :}
 	|  call:c SEMI
+=======
+stmt ::= /*VAR:v ASSIGN expr:e SEMI
+	{: VarExpr ve = new VarExpr(v); RESULT = new AssignStmt(ve, e); :}
+	| PRINT LP expr:e RP SEMI
+	{: RESULT = new PrintStmt(e); :}
+	|  */call:c SEMI
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	{: RESULT = new CallStmt(c); :}
 	| RETURN:r SEMI
 	{: RESULT = new ReturnStmt(rleft); :}
@@ -327,6 +339,7 @@ expr_list ::= expr:e
 		RESULT = el; :}
 ;
 
+
 	
 call ::= static_call:scall
 	{:	RESULT = scall; :}
@@ -374,7 +387,11 @@ binop ::= expr:e1 PLUS expr:e2
 	|	expr:e1 LOR expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LOR); :}
 	|	expr:e1 LT expr:e2
+<<<<<<< HEAD
 	{:	;RESULT = new BinaryOpExpr(e1,e2,BinOperator.LT); :}
+=======
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LT); :}
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	|	expr:e1 GT expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.GT); :}
 	|	expr:e1 LTE expr:e2
@@ -387,9 +404,13 @@ binop ::= expr:e1 PLUS expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.NEQUAL); :}
 ;
 
+<<<<<<< HEAD
 unop ::= MINUS expr:e
 	{:	RESULT = new UnaryOpExpr(e, UnOperator.UMINUS); :} %prec UMINUS
 	|	LNEG expr:e
+=======
+unop ::= LNEG expr:e
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	{:	RESULT = new UnaryOpExpr(e, UnOperator.LNEG); :}
 ;
 

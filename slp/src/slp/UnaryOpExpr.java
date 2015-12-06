@@ -4,8 +4,13 @@ package slp;
  */
 
 public class UnaryOpExpr extends Expr {
+<<<<<<< HEAD
 	private UnOperator op;
 	private Expr operand;
+=======
+	public final UnOperator op;
+	public final Expr operand;
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	
 	public UnaryOpExpr(Expr operand, UnOperator op) {
 		super(operand.getLineNum());

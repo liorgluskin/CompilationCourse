@@ -2,12 +2,17 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
+<<<<<<< HEAD
 		<item value="&quot;;}" key="selection"/>
+=======
+		<item value="CUP$Parser$top" key="selection"/>
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+<<<<<<< HEAD
 			<item value="&quot;"/>
 			<item value="case "/>
 			<item value="$"/>
@@ -23,13 +28,33 @@
 			<item value="return &quot;"/>
 			<item value="case "/>
 			<item value=":{"/>
+=======
+			<item value="CUP$Parser$top"/>
+			<item value="VarLoc"/>
+			<item value="RESSULT"/>
+			<item value=" ASSIGN"/>
+			<item value=" "/>
+			<item value="EQ"/>
+			<item value="EQUAL"/>
+			<item value="VAR"/>
+		</list>
+		<list key="replacehistory">
+			<item value="RP"/>
+			<item value="formals"/>
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="257" key="DIALOG_WIDTH"/>
 		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+<<<<<<< HEAD
 		<item value="379" key="DIALOG_HEIGHT"/>
 		<item value="766" key="DIALOG_X_ORIGIN"/>
 		<item value="155" key="DIALOG_Y_ORIGIN"/>
+=======
+		<item value="380" key="DIALOG_HEIGHT"/>
+		<item value="962" key="DIALOG_X_ORIGIN"/>
+		<item value="226" key="DIALOG_Y_ORIGIN"/>
+>>>>>>> efe3ea8bd6df4e0ec5842b895e3593fa3bf62763
 	</section>
 </section>
