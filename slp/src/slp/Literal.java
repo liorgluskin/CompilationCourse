@@ -15,7 +15,10 @@ public class Literal extends Expr{
 	public Literal(int line, LiteralType ltype){
 		super(line);
 		this.ltype = ltype;
+<<<<<<< HEAD
 		this.value = ltype.getValue(); // Literal is: INTEGER, STRING or boolean
+=======
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	}
 	
 	/**

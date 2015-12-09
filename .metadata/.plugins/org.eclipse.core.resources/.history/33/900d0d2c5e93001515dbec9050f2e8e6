@@ -1,0 +1,7 @@
+package slp;
+
+abstract class FieldOrMethod extends ASTNode{
+	
+	
+
+}

@@ -25,6 +25,10 @@ public interface Visitor {
 	public void visit(BlockStmt stmt);
 	public void visit(IDStmt stmt);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	public void visit(VarLocation var_loc);
 	public void visit(ArrLocation arr_loc);
 	public void visit(StaticCall static_call);
@@ -36,7 +40,10 @@ public interface Visitor {
 	public void visit(Length length);
 	
 	public void visit(Expr expr);
+<<<<<<< HEAD
 	public void visit(BlockExpr expr);
+=======
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	public void visit(UnaryOpExpr expr);
 	public void visit(BinaryOpExpr expr);
 }

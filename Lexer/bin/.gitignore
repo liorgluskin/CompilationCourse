@@ -1,3 +1,22 @@
+<<<<<<< HEAD
 /_declaration_opt, package_declaration/
 /jflex/
 /sym.class
+=======
+/CUP$LexParseCup$actions.class
+/CUP$ParserCup$actions.class
+/CUP$YcalcCup$actions.class
+/LexParseCup.class
+/LexParseSym.class
+/Lexer.class
+/Main.class
+/ParserCup.class
+/ParserSym.class
+/YcalcCup.class
+/YcalcSym.class
+/_declaration_opt, package_declaration/
+/jflex/
+/sym.class
+/CUP$MY_CUP$actions.class
+/MY_CUP.class
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5

@@ -103,7 +103,6 @@ terminal THIS;
 terminal TRUE;
 terminal VOID;
 terminal WHILE;
- 
 /**********************/
 /* TERMINALS (TOKENS) */
 /**********************/
@@ -153,8 +152,12 @@ precedence left LT,LTE,GT,GTE;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MOD;
 precedence right UMINUS, LNEG;
+<<<<<<< HEAD
 precedence left LB, RB, LP, RP, DOT;
 precedence left IF, ELSE;
+=======
+precedence left DOT, RP, LP, LB, RB;
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 
 /**********************/
 /* 	DERIVATION RULES  */
@@ -172,8 +175,6 @@ class_decl_list ::=  class_decl:cd
 	{: cdlst.add(cd);
 	   RESULT = cdlst; :}
 ;
-
-
 
 class_decl ::= CLASS CLASS_ID:cid LCBR RCBR
 	{: RESULT = new ClassDecl(cidleft,cid); :}
@@ -234,7 +235,11 @@ method ::= STATIC VOID ID:id LP RP LCBR stmt_list:sl RCBR
 	| type:t ID:id LP RP LCBR stmt_list:sl RCBR
 	{: RESULT = new ClassMethod(t, id, new ArrayList<Formal>(), sl); :}
 	| VOID ID:id LP formals:f RP LCBR stmt_list:sl RCBR
+<<<<<<< HEAD
 	{:RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
+=======
+	{: RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	| type:t ID:id LP formals:f RP LCBR stmt_list:sl RCBR
 	{: RESULT = new ClassMethod(t, id, f, sl); :}
 	;
@@ -270,9 +275,17 @@ stmt_list ::=
 ;
 
 
+<<<<<<< HEAD
 stmt ::= location:l ASSIGN expr:e SEMI
 	{:  RESULT = new AssignStmt(l, e); :}
 	|  call:c SEMI
+=======
+stmt ::= /*VAR:v ASSIGN expr:e SEMI
+	{: VarExpr ve = new VarExpr(v); RESULT = new AssignStmt(ve, e); :}
+	| PRINT LP expr:e RP SEMI
+	{: RESULT = new PrintStmt(e); :}
+	|  */call:c SEMI
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	{: RESULT = new CallStmt(c); :}
 	| RETURN:r SEMI
 	{: RESULT = new ReturnStmt(rleft); :}
@@ -327,6 +340,7 @@ expr_list ::= expr:e
 		RESULT = el; :}
 ;
 
+
 	
 call ::= static_call:scall
 	{:	RESULT = scall; :}
@@ -374,7 +388,11 @@ binop ::= expr:e1 PLUS expr:e2
 	|	expr:e1 LOR expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LOR); :}
 	|	expr:e1 LT expr:e2
+<<<<<<< HEAD
 	{:	;RESULT = new BinaryOpExpr(e1,e2,BinOperator.LT); :}
+=======
+	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LT); :}
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	|	expr:e1 GT expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.GT); :}
 	|	expr:e1 LTE expr:e2
@@ -387,8 +405,13 @@ binop ::= expr:e1 PLUS expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.NEQUAL); :}
 ;
 
+<<<<<<< HEAD
 unop ::= MINUS expr:e
 	{:	RESULT = new UnaryOpExpr(e, UnOperator.UMINUS); :} %prec UMINUS
+=======
+unop ::= UMINUS expr:e
+	{:	RESULT = UnaryOpExpr(e, UnOperator.UMINUS); :}
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	|	LNEG expr:e
 	{:	RESULT = new UnaryOpExpr(e, UnOperator.LNEG); :}
 ;

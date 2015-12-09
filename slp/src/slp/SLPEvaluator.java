@@ -35,6 +35,7 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 		throw new UnsupportedOperationException("Unexpected visit of Expr!");
 	}
 
+<<<<<<< HEAD
 	public Integer visit(BlockExpr expr, Environment env) {
 		return null;
 	}
@@ -50,6 +51,14 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 	public Integer visit(Program program, Environment env) {
 		// TODO Auto-generated method stub
 		return null;
+=======
+	public Integer visit(UnaryOpExpr expr, Environment env) {
+		UnOperator op = expr.op;
+		//if (op != Operator.MINUS)
+		//	throw new RuntimeException("Encountered unexpected operator " + op);
+		Integer value = expr.operand.accept(this, env);
+		return new Integer(- value.intValue());
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	}
 
 	public Integer visit(ClassDecl class_decl, Environment env) {
@@ -178,6 +187,78 @@ public class SLPEvaluator implements PropagatingVisitor<Environment, Integer> {
 	}
 
 	public Integer visit(VarExpr vexpr, Environment env) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(PrimitiveType primitiveType, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ClassType classType, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(CallStmt callstmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ReturnStmt returnStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(IfStmt ifStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(WhileStmt whileStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(BreakStmt breakStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(ContinueStmt contineStmtm, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(IDStmt idStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(StatementsStmt stmtStmt, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(StmtList stmtLst, Environment d) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Integer visit(VarExpr vexpr, Environment d) {
 		// TODO Auto-generated method stub
 		return null;
 	}

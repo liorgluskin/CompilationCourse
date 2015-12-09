@@ -7,9 +7,15 @@ public class AssignStmt extends Stmt {
 	public final Location location;
 	public final Expr rhs;
 
+<<<<<<< HEAD
 	public AssignStmt(Location location, Expr rhs) {
 		super(location.getLineNum());
 		this.location = location;
+=======
+	public AssignStmt(VarExpr varExpr, Expr rhs) {
+		super(varExpr.getLineNum());
+		this.varExpr = varExpr;
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 		this.rhs = rhs;
 	}
 

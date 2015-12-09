@@ -24,7 +24,11 @@ public interface PropagatingVisitor<DownType,UpType> {
 	public UpType visit(BreakStmt breakStmt, DownType d);
 	public UpType visit(ContinueStmt contineStmtm, DownType d);
 	public UpType visit(IDStmt idStmt, DownType d);
+<<<<<<< HEAD
 	public UpType visit(BlockStmt blockStmt, DownType d);
+=======
+	public UpType visit(StatementsStmt stmtStmt, DownType d);
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	public UpType visit(StmtList stmtLst , DownType d);
 	
 		
@@ -40,7 +44,10 @@ public interface PropagatingVisitor<DownType,UpType> {
 
 
 	public UpType visit(Expr expr, DownType d);
+<<<<<<< HEAD
 	public UpType visit(BlockExpr expr, DownType d);
+=======
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	public UpType visit(VarExpr vexpr, DownType d);
 	public UpType visit(UnaryOpExpr expr, DownType d);
 	public UpType visit(BinaryOpExpr expr, DownType d);

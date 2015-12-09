@@ -15,4 +15,8 @@ public enum UnOperator {
 		default: throw new RuntimeException("Unexpted value: " + this.name());
 		}
 	}
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5

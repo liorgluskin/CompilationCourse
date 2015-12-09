@@ -14,13 +14,21 @@ public class ClassDecl extends ASTNode {
 	public ClassDecl(int line, String name) {
 		super(line);
 		this.name = name;
+<<<<<<< HEAD
 		fieldsOrMethods = new ArrayList<FieldOrMethod>();
+=======
+		fieldsOrMethods = new ArrayList<>();
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	}
 	public ClassDecl(int line, String name, String superClass) {
 		super(line);
 		this.name = name;
 		this.superClassName = superClass;
+<<<<<<< HEAD
 		fieldsOrMethods = new ArrayList<FieldOrMethod>();
+=======
+		fieldsOrMethods = new ArrayList<>();
+>>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	}
 	
 	/**
