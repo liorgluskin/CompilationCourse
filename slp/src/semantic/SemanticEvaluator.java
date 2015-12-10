@@ -1,13 +1,17 @@
 package semantic;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import slp.*;
 import symbolTableHandler.*;
 import types.TypeTable;
 
 public class SemanticEvaluator implements Visitor{
 	private Boolean hasMain = false;
-	private GlobalSymbolTable global;
+	private Boolean isLibraryClassVisiting = false;
+	private GlobalSymbolTable global = null;
 
 	
 	public SemanticEvaluator(){
@@ -18,11 +22,86 @@ public class SemanticEvaluator implements Visitor{
 		program.accept(this);
 		return global;
 	}
+	
+	//should be done before starting visit.
+	//visit should 'visit' this class too and add to 
+	private void addStaticLibraryClass(Program program){
+		//creating all methods
+		List<FieldOrMethod> methodsLst = new ArrayList<>();
+		
+		//println added
+		List<Formal> printlnFormals = new ArrayList<>(); 
+		printlnFormals.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"println",printlnFormals,new StmtList()));
+		
+		//print added
+		List<Formal> printFormals = new ArrayList<>(); 
+		printFormals.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"print",printFormals,new StmtList()));
+		
+		//printi added
+		List<Formal> printiFormals = new ArrayList<>(); 
+		printiFormals.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"printi",printiFormals,new StmtList()));
+		
+		//readi
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"readi",new ArrayList<Formal>(),new StmtList()));
+		
+		//readln
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"readln",new ArrayList<Formal>(),new StmtList()));
+		
+		//eof
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.BOOLEAN),"eof",new ArrayList<Formal>(),new StmtList()));
+		
+		//stoi
+		List<Formal> stoi = new ArrayList<>(); 
+		stoi.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
+		stoi.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "n"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"stoi",stoi,new StmtList()));
+		
+		//itos
+		List<Formal> itos = new ArrayList<>(); 
+		itos.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"itos",itos,new StmtList()));
+		
+		
+		//stoa
+		List<Formal> stoa = new ArrayList<>(); 
+		itos.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
+		PrimitiveType t = new PrimitiveType(-1, DataTypes.INT);
+		t.incrementDimension();
+		methodsLst.add(new StaticMethod(t,"stoa",stoa,new StmtList()));
+		
+		//atos
+		List<Formal> atos = new ArrayList<>();
+		PrimitiveType t_atos = new PrimitiveType(-1, DataTypes.INT);
+		t.incrementDimension();
+		atos.add(new Formal(t, "a"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"atos",atos,new StmtList()));
+		
+		//random
+		List<Formal> random = new ArrayList<>();
+		random.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"random",random,new StmtList()));
+		
+		//random
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"time",new ArrayList<Formal>(),new StmtList()));
+		
+		//exit
+		List<Formal> exit = new ArrayList<>();
+		exit.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"exit",exit,new StmtList()));
+		
+		//declaring class
+		ClassDecl libraryClass = new ClassDecl(-2, "Library",methodsLst);
+		program.addClass(libraryClass);
+	}
 
 
 	@Override
 	public void visit(Program program){
 		global = new GlobalSymbolTable();
+		addStaticLibraryClass(program);
 		// add classes to global and updates the type table
 		for (ClassDecl c: program.getClasses()){
 			try{
@@ -52,6 +131,9 @@ public class SemanticEvaluator implements Visitor{
 
 	@Override
 	public void visit(ClassDecl class_decl) {
+		if(class_decl.getName() == "Library"){
+			isLibraryClassVisiting = true;
+		}
 		
 		//create symbol table for class 
 		ClassSymbolTable cst;		
@@ -76,6 +158,10 @@ public class SemanticEvaluator implements Visitor{
 		
 		
 		//fields and methods check
+		
+		
+		//reset LibraryClassVisit
+		isLibraryClassVisiting = false;
 	}
 
 

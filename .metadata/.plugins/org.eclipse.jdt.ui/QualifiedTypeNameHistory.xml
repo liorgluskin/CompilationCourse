@@ -11,7 +11,7 @@
 <fullyQualifiedTypeName name="types.TypeTable"/>
 <fullyQualifiedTypeName name="slp.Visitor"/>
 <fullyQualifiedTypeName name="symbolTableHandler.SymbolTable"/>
-<fullyQualifiedTypeName name="symbolTableHandler.GlobalSymbolTable"/>
 <fullyQualifiedTypeName name="symbolTableHandler.ClassSymbolTable"/>
 <fullyQualifiedTypeName name="com.sun.org.apache.bcel.internal.classfile.FieldOrMethod"/>
+<fullyQualifiedTypeName name="symbolTableHandler.GlobalSymbolTable"/>
 </qualifiedTypeNameHistroy>
