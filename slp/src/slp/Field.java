@@ -6,9 +6,8 @@ public class Field extends FieldOrMethod{
 	
 	/**
 	 * Constructs a new field node.
-	 * 
-	 * @param type Data type of field
-	 * @param name Name of field.
+	 * @param type - field's data type
+	 * @param name - field's name
 	 */
 	public Field(Type type, String name) {
 		super(type.getLineNum());

@@ -27,19 +27,13 @@ public class StaticMethod extends Method {
 		}
 
 	/**
-	 * Constructs a new static method node.
-	 * 
-	 * @param type
-	 *            Data type returned by method.
-	 * @param name
-	 *            Name of method.
-	 * @param formals
-	 *            List of method parameters.
-	 * @param statements
-	 *            List of method's statements.
+	 * Constructs new Static Method AST node
+	 * @param type - method's return type
+	 * @param name - method name
+	 * @param formals - method parameters
+	 * @param statements - method's statements
 	 */
-	public StaticMethod(Type type, String name, List<Formal> formals,
-			StmtList statements) {
+	public StaticMethod(Type type, String name, List<Formal> formals, StmtList statements){
 		super(type, name, formals, statements);
 		this.is_static = true;
 	}

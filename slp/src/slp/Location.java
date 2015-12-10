@@ -4,8 +4,8 @@ package slp;
  */
 public abstract class Location extends Expr{
 	
-	protected Location(int line) {
-		super(line);
+	protected Location(int lineNum) {
+		super(lineNum);
 	}
 	
 }

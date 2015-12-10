@@ -7,9 +7,8 @@ public class Length extends Expr{
 	private Expr expr;
 	
 	/**
-	 * Constructs an array length expression. 
-	 * 
-	 * @param expr Array length expression.
+	 * Constructs an array length expression
+	 * @param expr - array length expression
 	 */
 	public Length(Expr expr){
 		super(expr.getLineNum());

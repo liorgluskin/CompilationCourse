@@ -33,7 +33,7 @@ public class CallStmt extends Stmt {
 		return visitor.visit(this, context);
 	}
 	
-	/**@return call object of the statement*
+	/**@return a call object of the statement
 	 */
 	public Call getCall(){
 		return call;

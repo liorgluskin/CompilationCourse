@@ -15,13 +15,13 @@ public class Literal extends Expr{
 	public Literal(int line, LiteralType ltype){
 		super(line);
 		this.ltype = ltype;
+		this.value = ltype.getValue(); // Literal is: INTEGER, STRING or boolean
 	}
 	
 	/**
 	 * Constructs new literal node.
-	 * 
-	 * @param ltype Type of literal.
-	 * @param value Literal's value.
+	 * @param ltype - literal's type
+	 * @param value - literal's value
 	 */
 	public Literal(int line, LiteralType ltype, Object value){
 		this(line, ltype);

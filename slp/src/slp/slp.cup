@@ -5,6 +5,52 @@ import java.util.List;
 import java.util.ArrayList;
 
 
+parser code  {:
+	private Lexer lexer;
+	
+	public Parser(Lexer lexer) {
+		super(lexer);
+		this.lexer = lexer;
+	}
+	
+	public void report_error(String message, Object info){
+		StringBuffer m = new StringBuffer("Error");
+		if(info instanceof Symbol){
+			Symbol s = (Symbol)info;
+			if(s.left >= 0){
+				m.append(" in line " + s.left);
+			}
+		}
+		m.append(" "+ message);
+		System.err.println(m);
+	}
+	
+	public void syntax_error(Symbol s) {
+		System.out.print("Syntax error at line " + s.left + ":" +" unexpected token '" 
+				+ (String)s.value+"'"+ "  expected:  ");
+				
+		List expectedLst =  expected_token_ids();
+		boolean first_token = true;
+		for(Object expected_token : expectedLst){
+			if(expectedLst.size() > 1 && !first_token){ // for 'or token' prints
+				System.out.print("  ");	
+			}
+			int symbol = (Integer)expected_token;
+			System.out.print("'"+symString.getStringOfSymbol(symbol)+"'");
+			first_token = false;
+		}
+	}
+	
+	public void unrecovered_syntax_error(Symbol cur_token){
+		System.exit(1);
+	}
+	
+:}
+
+scan with {:
+	return lexer.next_token();
+	:}
+
 
 /**********************/
 /* TERMINALS (TOKENS) */
@@ -28,6 +74,7 @@ terminal INT;
 terminal LAND;
 terminal MULTIPLY;
 terminal LP;
+terminal UMINUS;
 
 //Lior
 terminal LB;
@@ -105,8 +152,9 @@ precedence left EQUAL,NEQUAL;
 precedence left LT,LTE,GT,GTE;
 precedence left PLUS, MINUS;
 precedence left MULTIPLY, DIVIDE, MOD;
-precedence right LNEG;
-precedence left DOT, RP, LP, LB, RB;
+precedence right UMINUS, LNEG;
+precedence left LB, RB, LP, RP, DOT;
+precedence left IF, ELSE;
 
 /**********************/
 /* 	DERIVATION RULES  */
@@ -116,11 +164,13 @@ program ::= class_decl_list:cdlst
 	{: RESULT = new Program(cdlst); :}
 ;
 
-class_decl_list ::=  
+class_decl_list ::=  class_decl:cd
+	{: List<ClassDecl> clst = new ArrayList<ClassDecl>(); 
+	   clst.add(cd);
+	   RESULT = clst; :}
 	| class_decl_list:cdlst class_decl:cd
 	{: cdlst.add(cd);
-	   RESULT = cdlst;
-	:}
+	   RESULT = cdlst; :}
 ;
 
 
@@ -136,9 +186,11 @@ class_decl ::= CLASS CLASS_ID:cid LCBR RCBR
 ;
 
 class_content ::= fields:fs
-	{: RESULT = new ClassContent(fs); :}
+	{: RESULT = new ClassContent(fs);
+	 :}
 	| method:m
-	{: RESULT = new ClassContent(m); :}
+	{: RESULT = new ClassContent(m); 
+	:}
 	| class_content:content fields:fs
 	{: content.addFieldOrMethod(fs);
 	   RESULT = content; 
@@ -182,7 +234,7 @@ method ::= STATIC VOID ID:id LP RP LCBR stmt_list:sl RCBR
 	| type:t ID:id LP RP LCBR stmt_list:sl RCBR
 	{: RESULT = new ClassMethod(t, id, new ArrayList<Formal>(), sl); :}
 	| VOID ID:id LP formals:f RP LCBR stmt_list:sl RCBR
-	{: RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
+	{:RESULT = new ClassMethod(new PrimitiveType(idleft,DataTypes.VOID), id, f, sl); :}
 	| type:t ID:id LP formals:f RP LCBR stmt_list:sl RCBR
 	{: RESULT = new ClassMethod(t, id, f, sl); :}
 	;
@@ -211,17 +263,15 @@ type ::= INT:i {: RESULT = new PrimitiveType(ileft, DataTypes.INT); :}
 ;
 
 
-stmt_list ::= stmt:s
-	{: RESULT = new StmtList(s); :}
+stmt_list ::= 
+	{: RESULT = new StmtList(); :}
 	| stmt_list:sl stmt:s
 	{: sl.addStmt(s); RESULT = sl; :}
 ;
 
 
 stmt ::= location:l ASSIGN expr:e SEMI
-	{: VarLocation vl = new VarLocation(l); RESULT = new AssignStmt(vl, e); :}
-	/**| PRINT LP expr:e RP SEMI
-	{: RESULT = new PrintStmt(e); :} **/
+	{:  RESULT = new AssignStmt(l, e); :}
 	|  call:c SEMI
 	{: RESULT = new CallStmt(c); :}
 	| RETURN:r SEMI
@@ -235,11 +285,11 @@ stmt ::= location:l ASSIGN expr:e SEMI
 	| WHILE LP expr:e RP stmt:s
 	{: RESULT = new WhileStmt(e, s); :}
 	| BREAK:b SEMI
-	{: RESULT = new BreakStmt(b); :}
+	{: RESULT = new BreakStmt(bleft); :}
 	| CONTINUE:c SEMI
-	{: RESULT = new ContinueStmt(c); :}
+	{: RESULT = new ContinueStmt(cleft); :}
 	| LCBR:lcb stmt_list:sl RCBR
-	{: RESULT = new StatementsStmt(lcbleft, sl); :}
+	{: RESULT = new BlockStmt(lcbleft, sl); :}
 	| type:t ID:id SEMI
 	{: RESULT = new IDStmt(t, id); :}
 	| type:t ID:id ASSIGN expr:e SEMI
@@ -268,7 +318,14 @@ expr ::= location:l
 	{:	RESULT = e; :}
 ;
 
-
+expr_list ::= expr:e 
+	{:	List<Expr> l = new ArrayList<Expr>();
+		l.add(e);
+		RESULT = l; :}
+	|	expr_list:el COMMA expr:e
+	{:	el.add(e);
+		RESULT = el; :}
+;
 
 	
 call ::= static_call:scall
@@ -279,19 +336,19 @@ call ::= static_call:scall
 
 
 static_call ::= CLASS_ID:cid DOT ID:id LP RP
-	{:	RESULT = new StaticCall(cid, id, new ArrayList<Expr>()); :}
+	{:	RESULT = new StaticCall(cidleft,cid, id, new ArrayList<Expr>()); :}
 	|	CLASS_ID:cid DOT ID:id LP expr_list:explst RP
-	{:	RESULT = new StaticCall(cid, id, explst); :}
+	{:	RESULT = new StaticCall(cidleft,cid, id, explst); :}
 ;
 
 virtual_call ::= ID:id LP RP
-	{:	RESULT = new VirtualCall(id, new ArrayList<Expr>()); :}
+	{:	RESULT = new VirtualCall(idleft,id, new ArrayList<Expr>()); :}
 	|	expr:e DOT ID:id LP RP
-	{:	RESULT = new VirtualCall(e, id, new ArrayList<Expr>()); :}
+	{:	RESULT = new VirtualCall(eleft,id,new ArrayList<Expr>(),e); :}
 	|	ID:id LP expr_list:explst RP
-	{:	RESULT = new VirtualCall(id, explst); :}
+	{:	RESULT = new VirtualCall(idleft,id, explst); :}
 	|	expr:e DOT ID:id LP expr_list:explst RP
-	{:	RESULT = new VirtualCall(e, id, explst); :}
+	{:	RESULT = new VirtualCall(eleft,id, explst, e); :}
 ;
 
 location ::= ID:id
@@ -317,7 +374,7 @@ binop ::= expr:e1 PLUS expr:e2
 	|	expr:e1 LOR expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LOR); :}
 	|	expr:e1 LT expr:e2
-	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.LT); :}
+	{:	;RESULT = new BinaryOpExpr(e1,e2,BinOperator.LT); :}
 	|	expr:e1 GT expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.GT); :}
 	|	expr:e1 LTE expr:e2
@@ -330,7 +387,9 @@ binop ::= expr:e1 PLUS expr:e2
 	{:	RESULT = new BinaryOpExpr(e1,e2,BinOperator.NEQUAL); :}
 ;
 
-unop ::= LNEG expr:e
+unop ::= MINUS expr:e
+	{:	RESULT = new UnaryOpExpr(e, UnOperator.UMINUS); :} %prec UMINUS
+	|	LNEG expr:e
 	{:	RESULT = new UnaryOpExpr(e, UnOperator.LNEG); :}
 ;
 

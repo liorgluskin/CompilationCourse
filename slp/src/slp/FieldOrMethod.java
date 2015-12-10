@@ -1,9 +1,9 @@
 package slp;
 
-abstract class FieldOrMethod extends ASTNode{
+public abstract class FieldOrMethod extends ASTNode{
 	
-	public FieldOrMethod(int line) {
-		super(line);
+	public FieldOrMethod(int lineNum) {
+		super(lineNum);
 	}
 
 }

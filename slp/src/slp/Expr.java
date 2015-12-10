@@ -5,8 +5,8 @@ package slp;
 
 public abstract class Expr extends ASTNode {
 	
-	protected Expr(int line) {
-		super(line);
+	protected Expr(int lineNum) {
+		super(lineNum);
 	}
 	
 }

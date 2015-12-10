@@ -9,19 +9,19 @@ public enum BinOperator {
 	 */
 	public String toString() {
 		switch (this) {
-		case PLUS: return "+";
-		case MINUS: return "-";
-		case MULTIPLY: return "*";
-		case DIVIDE: return "/";
-		case MOD: return "%";
-		case LAND: return "&&";
-		case LOR: return "||";
-		case LT: return "<";
-		case GT: return ">";
-		case LTE: return "<=";
-		case GTE: return ">=";
-		case EQUAL: return "==";
-		case NEQUAL: return "!=";
+		case PLUS: return "addition";
+		case MINUS: return "subtraction";
+		case MULTIPLY: return "multiplication";
+		case DIVIDE: return "division";
+		case MOD: return "modulo";
+		case LAND: return "logical and";
+		case LOR: return "logical or";
+		case LT: return "less than";
+		case GT: return "greater than";
+		case LTE: return "less than or equal to";
+		case GTE: return "greater than or equal to";
+		case EQUAL: return "equality";
+		case NEQUAL: return "inequality";
 		default: throw new RuntimeException("Unexpted value: " + this.name());
 		}
 	}

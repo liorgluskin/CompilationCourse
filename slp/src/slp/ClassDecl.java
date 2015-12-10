@@ -11,31 +11,29 @@ public class ClassDecl extends ASTNode {
 	private String superClassName = null;	//Default value for super class - null
 	private List<FieldOrMethod> fieldsOrMethods = null;
 	
-	public ClassDecl(int line, String name) {
-		super(line);
+	public ClassDecl(int lineNum, String name) {
+		super(lineNum);
 		this.name = name;
-		fieldsOrMethods = new ArrayList<>();
+		fieldsOrMethods = new ArrayList<FieldOrMethod>();
 	}
-	public ClassDecl(int line, String name, String superClass) {
-		super(line);
+	public ClassDecl(int lineNum, String name, String superClass) {
+		super(lineNum);
 		this.name = name;
 		this.superClassName = superClass;
-		fieldsOrMethods = new ArrayList<>();
+		fieldsOrMethods = new ArrayList<FieldOrMethod>();
 	}
 	
 	/**
-	 * Constructs a new class declaration node.
-	 * 
-	 * @param
+	 * Constructs a new class declaration node
 	 */
-	public ClassDecl(int line,String name,List<FieldOrMethod> fieldsOrMethods) {
-		super(line);
+	public ClassDecl(int lineNum, String name,List<FieldOrMethod> fieldsOrMethods) {
+		super(lineNum);
 		this.name = name;
 		this.fieldsOrMethods = fieldsOrMethods;
 	}
 	
-	public ClassDecl(int line,String name, String superClassName,List<FieldOrMethod> fieldsOrMethods) {
-		this(line,name, fieldsOrMethods);
+	public ClassDecl(int lineNum, String name, String superClassName,List<FieldOrMethod> fieldsOrMethods) {
+		this(lineNum,name, fieldsOrMethods);
 		this.superClassName = superClassName;
 	}
 	

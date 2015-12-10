@@ -4,13 +4,14 @@ package slp;
  */
 
 public enum UnOperator {
-	LNEG;
+	UMINUS, LNEG;
 	
 	/** Prints the operator in the same way it appears in the program.
 	 */
 	public String toString() {
 		switch (this) {
-		case LNEG: return "!";
+		case UMINUS: return "unary minus";
+		case LNEG: return "logical negation";
 		default: throw new RuntimeException("Unexpted value: " + this.name());
 		}
 	}

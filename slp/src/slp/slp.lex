@@ -52,67 +52,65 @@ ERROR					= [^]
 
 <YYINITIAL> {
 
-"."					{ return symbol(sym.DOT);}
-","					{ return symbol(sym.COMMA);}
-";"					{ return symbol(sym.SEMI);}
-"+"					{ return symbol(sym.PLUS);}
-"*"					{ return symbol(sym.MULTIPLY);}
-"/"					{ return symbol(sym.DIVIDE);}
-"("					{ return symbol(sym.LP);}
-")"					{ return symbol(sym.RP);}
-"="					{ return symbol(sym.ASSIGN);}
-"=="				{ return symbol(sym.EQUAL);}
-">"					{ return symbol(sym.GT);}
-">="				{ return symbol(sym.GTE);}
+"."					{ return symbol(sym.DOT,".");}
+","					{ return symbol(sym.COMMA,",");}
+";"					{ return symbol(sym.SEMI,";");}
+"+"					{ return symbol(sym.PLUS,"+");}
+"*"					{ return symbol(sym.MULTIPLY,"*");}
+"/"					{ return symbol(sym.DIVIDE,"/");}
+"("					{ return symbol(sym.LP,"(");}
+")"					{ return symbol(sym.RP,")");}
+"="					{ return symbol(sym.ASSIGN,"=");}
+"=="				{ return symbol(sym.EQUAL,"==");}
+">"					{ return symbol(sym.GT,">");}
+">="				{ return symbol(sym.GTE,">=");}
 
 
 //Lior
 
-"["					{ return symbol(sym.LB);}
-"{"					{ return symbol(sym.LCBR);}
-"length"			{ return symbol(sym.LENGTH);}
-"new"				{ return symbol(sym.NEW);}
-"!"					{ return symbol(sym.LNEG);}
-"||"				{ return symbol(sym.LOR);}
-"&&"				{ return symbol(sym.LAND);}
-"<"					{ return symbol(sym.LT);}
-"<="				{ return symbol(sym.LTE);}
-"-"					{ return symbol(sym.MINUS);}
-"%"					{ return symbol(sym.MOD);}
-"!="				{ return symbol(sym.NEQUAL);}
+"["					{ return symbol(sym.LB,"[");}
+"{"					{ return symbol(sym.LCBR,"{");}
+"length"			{ return symbol(sym.LENGTH,"length");}
+"new"				{ return symbol(sym.NEW,"new");}
+"!"					{ return symbol(sym.LNEG,"!");}
+"||"				{ return symbol(sym.LOR,"||");}
+"&&"				{ return symbol(sym.LAND,"&&");}
+"<"					{ return symbol(sym.LT,"<");}
+"<="				{ return symbol(sym.LTE,"<=");}
+"-"					{ return symbol(sym.MINUS,"-");}
+"%"					{ return symbol(sym.MOD,"%");}
+"!="				{ return symbol(sym.NEQUAL,"!=");}
 
 
 //Keren
 
-"boolean"			{ return symbol(sym.BOOLEAN);}
-"break"				{ return symbol(sym.BREAK);}
-"class"				{ return symbol(sym.CLASS);}
-"continue"			{ return symbol(sym.CONTINUE);}
-"extends"			{ return symbol(sym.EXTENDS);}
-"else"				{ return symbol(sym.ELSE);}
-"false"				{ return symbol(sym.FALSE);}
-"if"				{ return symbol(sym.IF);}
-"int"				{ return symbol(sym.INT);}
+"boolean"			{ return symbol(sym.BOOLEAN,"boolean");}
+"break"				{ return symbol(sym.BREAK,"break");}
+"class"				{ return symbol(sym.CLASS,"class");}
+"continue"			{ return symbol(sym.CONTINUE,"continue");}
+"extends"			{ return symbol(sym.EXTENDS,"extends");}
+"else"				{ return symbol(sym.ELSE,"else");}
+"false"				{ return symbol(sym.FALSE,"false");}
+"if"				{ return symbol(sym.IF,"if");}
+"int"				{ return symbol(sym.INT,"int");}
 
 
 //Tomer 
 
-"null"				{ return symbol(sym.NULL);}
-"+"					{ return symbol(sym.PLUS);}
-"]"					{ return symbol(sym.RB);}
-"}"					{ return symbol(sym.RCBR);}
-"return"			{ return symbol(sym.RETURN);}
-")"					{ return symbol(sym.RP);}
-";"					{ return symbol(sym.SEMI);}
-"static"			{ return symbol(sym.STATIC);}
-"string"			{ return symbol(sym.STRING);}
-"this"				{ return symbol(sym.THIS);}
-"true"				{ return symbol(sym.TRUE);}
-"void"				{ return symbol(sym.VOID);}
+"null"				{ return symbol(sym.NULL,"null");}
+"]"					{ return symbol(sym.RB,"]");}
+"}"					{ return symbol(sym.RCBR,"}");}
+"return"			{ return symbol(sym.RETURN,"return");}
+"static"			{ return symbol(sym.STATIC,"static");}
+"string"			{ return symbol(sym.STRING,"string");}
+"this"				{ return symbol(sym.THIS,"this");}
+"true"				{ return symbol(sym.TRUE,"true");}
+"void"				{ return symbol(sym.VOID,"void");}
 "while"				{ return symbol(sym.WHILE);}
 
+
 // Tomer: Dealing with end of file
-<<EOF>> 			{ return symbol(sym.EOF);}
+<<EOF>> 			{ return symbol(sym.EOF, "end of file");}
 
 {INTEGER}			{
 						Integer num = 0;
@@ -164,5 +162,6 @@ ERROR					= [^]
 
 {ERROR}				{ System.out.print(yyline+1  +": Lexical error: illegal character '" +yytext()+"'"); 
 					  System.exit(0); }
+					 
 
 }

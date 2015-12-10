@@ -1,10 +1,13 @@
 package slp;
 
+import symbolTableHandler.SymbolTable;
+
 /** The base class of all AST nodes in this package.
  */
 public abstract class ASTNode {
 
 	private int lineNum;
+	private SymbolTable scope;
 
 	/**
 	 * Constructor
@@ -38,5 +41,11 @@ public abstract class ASTNode {
 			PropagatingVisitor<DownType, UpType> visitor, DownType context);
 
 
+	public void setEnclosingScope(SymbolTable scope){
+		this.scope = scope;
+	}
 	
+	public SymbolTable getEnclosingScope(){
+		return scope;
+	}
 }

@@ -21,16 +21,9 @@ public class PrimitiveType extends Type {
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
 	}
-	/**
-	 * Constructs a new primitive data type node.
-	 * 
-	 * @param line
-	 *            Line number of type declaration.
-	 * @param type
-	 *            Specific primitive data type.
-	 */
-	public PrimitiveType(int line, DataTypes type) {
-		super(line);
+
+	public PrimitiveType(int lineNum, DataTypes type) {
+		super(lineNum);
 		this.type = type;
 	}
 

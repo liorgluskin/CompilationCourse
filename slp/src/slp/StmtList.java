@@ -12,6 +12,10 @@ public class StmtList extends ASTNode {
 		super(-1);
 		statements.add(stmt);
 	}
+	
+	public StmtList(){
+		super(-1);
+	}
 
 	/** Adds a statement to the tail of the list.
 	 * 

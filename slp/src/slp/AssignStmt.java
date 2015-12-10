@@ -4,12 +4,12 @@ package slp;
  * An AST node for assignment statements.
  */
 public class AssignStmt extends Stmt {
-	public final VarLocation varLocation;
+	public final Location location;
 	public final Expr rhs;
 
-	public AssignStmt(VarLocation varLocation, Expr rhs) {
-		super(varLocation.getLineNum());
-		this.varLocation = varLocation;
+	public AssignStmt(Location location, Expr rhs) {
+		super(location.getLineNum());
+		this.location = location;
 		this.rhs = rhs;
 	}
 
@@ -39,8 +39,8 @@ public class AssignStmt extends Stmt {
 	}
 	
 	/** return the assignment Variable Expression*/
-	public VarLocation getVarLocation(){
-		return varLocation;
+	public Location getLocation(){
+		return location;
 	}
 	
 	/** return the Expression assigned to the variable*/
