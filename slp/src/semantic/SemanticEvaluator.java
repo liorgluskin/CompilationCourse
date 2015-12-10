@@ -9,7 +9,7 @@ import types.Type;
 import types.TypeMethod;
 import types.TypeTable;
 
-public class SemanticEvaluator implements slp.Visitor{
+public class SemanticEvaluator implements Visitor{
 	private boolean hasMain = false;
 	
 	/**

@@ -5,7 +5,6 @@ package slp;
 */
 public class IDStmt extends Stmt {
 	
-<<<<<<< HEAD
 	private Type type;
 	private String name;
 	private Expr value = null;
@@ -23,10 +22,7 @@ public class IDStmt extends Stmt {
 	public IDStmt(Type type, String name, Expr value) {
 		this(type, name);
 		this.value = value;
-=======
-	public IDStmt(int line) {
-		super(line);
->>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
+
 	}
 
 	/** Accepts a visitor object as part of the visitor pattern.
@@ -49,7 +45,6 @@ public class IDStmt extends Stmt {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-<<<<<<< HEAD
 	}
 	
 	public Type getType(){
@@ -66,7 +61,6 @@ public class IDStmt extends Stmt {
 	
 	public boolean hasValue(){
 		return (value != null);
-=======
->>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
+
 	}
 }

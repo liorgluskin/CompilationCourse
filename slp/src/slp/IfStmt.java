@@ -9,7 +9,7 @@ public class IfStmt extends Stmt {
 	Stmt stmt;
 	Stmt elseStmt;
 
-<<<<<<< HEAD
+
 	public IfStmt(Expr expr, Stmt stmt) {
 		super(expr.getLineNum());
 		this.expr = expr;
@@ -22,11 +22,7 @@ public class IfStmt extends Stmt {
 		hasElse = true;
 	}		
 
-=======
-	public IfStmt(int line) {
-		super(line);
-	}		
->>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
+
 	/** Accepts a visitor object as part of the visitor pattern.
 	 * @param visitor A visitor.
 	 */
@@ -34,11 +30,6 @@ public class IfStmt extends Stmt {
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
-<<<<<<< HEAD
-
-=======
-	
->>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	/** Accepts a propagating visitor parameterized by two types.
 	 * 
 	 * @param <DownType> The type of the object holding the context.
@@ -51,7 +42,7 @@ public class IfStmt extends Stmt {
 	public <DownType, UpType> UpType accept(
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
-<<<<<<< HEAD
+
 	}
 	
 	public Expr getCond(){
@@ -68,8 +59,7 @@ public class IfStmt extends Stmt {
 	
 	public boolean hasElse(){
 		return hasElse;
-=======
->>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
+
 	}
 
 }

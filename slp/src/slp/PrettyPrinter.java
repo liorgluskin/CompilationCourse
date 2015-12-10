@@ -5,18 +5,11 @@ package slp;
 public class PrettyPrinter implements Visitor {
 	protected int depth = 0;
 	protected final ASTNode root;
-<<<<<<< HEAD
 	private String fileName;
 	private int depth = 0;
 
 
 	/** Constructs a printing visitor from an AST.
-=======
-	protected String fileName;
-	
-	
-	/** Constructs a printin visitor from an AST.
->>>>>>> 3d37c2531b055cf777b4254699a6233211364fe5
 	 * 
 	 * @param root The root of the AST.
 	 */
