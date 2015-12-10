@@ -1,3 +1,0 @@
-class Quicksort {
-   int i;int j;int k
-}

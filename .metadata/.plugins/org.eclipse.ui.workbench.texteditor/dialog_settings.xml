@@ -2,27 +2,30 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="&quot;;}" key="selection"/>
+		<item value="programPrimitives" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="&quot;"/>
-			<item value="case "/>
-			<item value="$"/>
-			<item value=","/>
-			<item value="Divide"/>
-			<item value="39"/>
-			<item value="36"/>
-			<item value="syntax"/>
+			<item value="uniquePrimitiveTypes"/>
+			<item value="uniqueTypeArrays"/>
+			<item value="uniqueTypeMethods"/>
+			<item value="uniqueTypeClasss"/>
+			<item value="getLine"/>
+			<item value="VoidType"/>
+			<item value="StringType"/>
+			<item value="MethodType"/>
 		</list>
 		<list key="replacehistory">
-			<item value="&quot;;}"/>
-			<item value="&quot;}"/>
-			<item value="return &quot;"/>
-			<item value="case "/>
-			<item value=":{"/>
+			<item value="programPrimitives"/>
+			<item value="programArrays"/>
+			<item value="programMethods"/>
+			<item value="programClasses"/>
+			<item value="getLineNum"/>
+			<item value="TypeVoid"/>
+			<item value="TypeString"/>
+			<item value="TypeMethod"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
