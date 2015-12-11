@@ -12,7 +12,7 @@ public class SemanticEvaluator implements Visitor{
 	private Boolean hasMain = false;
 	private Boolean isLibraryClassVisiting = false;
 	
-	private GlobalSymbolTable global = null;
+	private GlobalSymbolTable globaSymlTable = null;
 	
 	public SemanticEvaluator(){
 		TypeTable.initTypeTable();
@@ -20,7 +20,7 @@ public class SemanticEvaluator implements Visitor{
 	
 	public GlobalSymbolTable getSymbolTable(Program program){
 		program.accept(this);
-		return global;
+		return globaSymlTable;
 	}
 	
 	/**
@@ -126,12 +126,12 @@ public class SemanticEvaluator implements Visitor{
 	}
 
 	public void visit(Program program){
-		global = new GlobalSymbolTable();
+		globaSymlTable = new GlobalSymbolTable();
 		addStaticLibraryClass(program);
 		//Add classes to global and updates the type table
 		for (ClassDecl c: program.getClasses()){
 			try{
-				global.addClass(c);
+				globaSymlTable.addClass(c);
 			} 
 			catch (SemanticError se){
 				//Class is previously defined or super class is not defined
@@ -142,7 +142,7 @@ public class SemanticEvaluator implements Visitor{
 		}
 		
 		for (ClassDecl c: program.getClasses()){
-			c.setScope(global);
+			c.setScope(globaSymlTable);
 			c.accept(this);
 		}
 
@@ -161,14 +161,14 @@ public class SemanticEvaluator implements Visitor{
 		//Create symbol table for class 
 		ClassSymbolTable cst;		
 		if (class_decl.getSuperClassName() != null) {
-			ClassSymbolTable scst = global.getClassSymbolTable(class_decl.getSuperClassName());
-			cst = new ClassSymbolTable( scst, global.getClass(class_decl.getName()) );
+			ClassSymbolTable scst = globaSymlTable.getClassSymbolTable(class_decl.getSuperClassName());
+			cst = new ClassSymbolTable( scst, globaSymlTable.getClass(class_decl.getName()) );
 			scst.addClassSymbolTable(cst);
 			
 		} 
 		else { // no superclass
-			cst = new ClassSymbolTable(global,global.getClass(class_decl.getName()));
-			global.addClassSymbolTable(cst);
+			cst = new ClassSymbolTable(globaSymlTable,globaSymlTable.getClass(class_decl.getName()));
+			globaSymlTable.addClassSymbolTable(cst);
 		}
 
 		//create symbol table for methods 
