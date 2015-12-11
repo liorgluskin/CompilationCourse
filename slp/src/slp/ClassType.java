@@ -23,16 +23,8 @@ public class ClassType extends Type {
 		return visitor.visit(this, context);
 	}
 
-	/**
-	 * Constructs a new user-defined data type node.
-	 * 
-	 * @param line
-	 *            Line number of type declaration.
-	 * @param name
-	 *            Name of data type.
-	 */
-	public ClassType(int line,String name) {
-		super(line);
+	public ClassType(int lineNum ,String name) {
+		super(lineNum);
 		this.name = name;
 	}
 
