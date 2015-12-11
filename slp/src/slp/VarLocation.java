@@ -5,26 +5,24 @@ package slp;
 
 public class VarLocation extends Location{
 	private String var_name;
-	private Expr location = null;			//default initialization
+	private Expr location = null; //default initialization
 	
 	/**
 	 * Constructs a new variable reference node.
-	 * 
-	 * @param name Name of variable.
+	 * @param name - variable name
 	 */
-	public VarLocation(int line, String name){
-		super(line);
+	public VarLocation(int lineNum, String name){
+		super(lineNum);
 		this.var_name = name;
 	}
 	
 	/**
 	 * Constructs a new variable reference node.
-	 * 
-	 * @param name Name of variable.
-	 * @param location Location of variable.
+	 * @param name - variable name
+	 * @param location - variable location
 	 */
-	public VarLocation(int line, String name, Expr location){
-		this(line,name);
+	public VarLocation(int lineNum, String name, Expr location){
+		this(lineNum,name);
 		this.location = location;
 	}
 	
@@ -42,7 +40,6 @@ public class VarLocation extends Location{
 	}
 	
 	/** Accepts a visitor object as part of the visitor pattern.
-	 * @param visitor A visitor.
 	 */
 	@Override
 	public void accept(Visitor visitor) {
