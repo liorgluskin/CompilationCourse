@@ -9,14 +9,13 @@ public class StaticCall extends Call{
 	private String class_name;
 	
 	/**
-	 * Constructs a new static method call node.
-	 * 
-	 * @param method_name Name of method.
-	 * @param args List of method arguments.
-	 * @param class_name Class name.
+	 * Constructs a new static method call AST node
+	 * @param method_name - method's name
+	 * @param args - method's arguments
+	 * @param class_name - name of method's class
 	 */
-	public StaticCall(int line, String class_name, String method_name, List<Expr> args){
-		super(line, method_name,args);
+	public StaticCall(int lineNum, String class_name, String method_name, List<Expr> args){
+		super(lineNum, method_name,args);
 		this.class_name = class_name;
 	}
 	
