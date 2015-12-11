@@ -10,8 +10,8 @@ public class NewArray extends New{
 	/**
 	 * Constructs a new node for a new array.
 	 * 
-	 * @param type Array type.
-	 * @param len Number of elements in the array.
+	 * @param type - array's type
+	 * @param len  - the array's length
 	 */
 	public NewArray(Type type, Expr len){
 		super(type.getLineNum());
