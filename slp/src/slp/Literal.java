@@ -20,9 +20,8 @@ public class Literal extends Expr{
 	
 	/**
 	 * Constructs new literal node.
-	 * 
-	 * @param ltype Type of literal.
-	 * @param value Literal's value.
+	 * @param ltype - literal's type
+	 * @param value - literal's value
 	 */
 	public Literal(int line, LiteralType ltype, Object value){
 		this(line, ltype);
