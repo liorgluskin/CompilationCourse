@@ -55,7 +55,7 @@ import types.TypeTable;
  * */
 public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
-	private SymbolTable globalTable;
+	private SymbolTable globaSymlTable;
 	private boolean inLoopScope = false;
 	private boolean inStaticMethod = false;
 
@@ -63,8 +63,8 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	/** Constructor for evaluator of all type checks in program
 	 * @param symbol-table of the program global scope
 	 */
-	public TypeEvaluator(SymbolTable globalTable){
-		this.globalTable = globalTable;
+	public TypeEvaluator(SymbolTable globaSymlTable){
+		this.globaSymlTable = globaSymlTable;
 	}
 
 
@@ -216,7 +216,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	public Object visit(ReturnStmt stmt, Object o) {
 		types.Type returnType = null;
 		types.Type enclosingMethodType = null;
-		
+
 		// get type of return statement, if followed by expression
 		if(stmt.hasExpr()){
 			returnType = (types.Type) stmt.getValue.accept(this, o);
@@ -225,11 +225,11 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		else{
 			returnType = types.TypeTable.getType("void");
 		}
-		
+
 		// get enclosing method type
 		///////////////////////////////edit to correct
 		enclosingMethodType = ( (BlockSymbolTable)stmt.getEnclosingScope() ).getVarSymbolRec("_ret").getType();
-		
+
 		// check if subtype of method type
 		if(!returnType.extendsType(enclosingMethodType)){
 			SemanticError error = new SemanticError("Invalid return statement, incossistent with enclosing method type", 
@@ -237,7 +237,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			System.out.println(error);
 			System.exit(1);
 		}
-		
+
 		return returnType;
 	}
 
@@ -392,7 +392,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			///////////////////////
 			// get the class symbol table - if class exists 
 			////// handle when class not found in sym table!
-			symbolTableHandler.ClassSymbolTable classSymTable = globalTable.getClassSymbolTableRec(locationType.getName());
+			symbolTableHandler.ClassSymbolTable classSymTable = globaSymlTable.getClassSymbolTableRec(locationType.getName());
 			// get the class field - if exists
 			////// handle when field not found in class table!
 			symbolTableHandler.FieldSymbol fieldSymbol = classSymTable.getFieldSymbol(var_loc.getName());
@@ -436,7 +436,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		return arrType;
 	}
 
-	
+
 	/**
 	 * Type checks for an Static Call expression:
 	 * validate static method's enclosing class exists
@@ -446,34 +446,34 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * @return the called method return-type
 	 */
 	public Object visit(StaticCall static_call, Object o) {
-	
+
 		// validate static method's enclosing class exists
 		symbolTableHandler.ClassSymbolTable classSymTable = null;
-		classSymTable = globalTable.getClassSymbolTableRec(static_call.getClassName());
-		
+		classSymTable = globaSymlTable.getClassSymbolTableRec(static_call.getClassName());
+
 		// validate called method is defined in enclosing class, as static method
-		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbolRec(static_call.getName());
+		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbolRec(static_call.getMethodName());
 		if (!methodSym.isStatic()){
 			SemanticError error = new SemanticError("Invalid static method call, method is not static",
-						static_call.getLineNum());
-				System.out.println(error);
-				System.exit(1);
+					static_call.getLineNum());
+			System.out.println(error);
+			System.exit(1);
 		}
-		
+
 		// validate call parameters are subtypes of the method's formals types
 		// get call parameters
 		callParameters = call.getArguments();
 		// get call method formals
 		methodFormalsTypes = ( (types.TypeMethod) methodSym.getType()).getParamTypes();
-		
+
 		// wrong number of arguments in call
 		if(callParameters.length() != methodFormalsTypes.length()){
 			SemanticError error = new SemanticError("Invalid static method call, method called with wrong number of arguments",
-						static_call.getLineNum());
+					static_call.getLineNum());
 			System.out.println(error);
 			System.exit(1);
 		}
-		
+
 		// if correct num of parameters passed to call
 		// validate each parameter type corresponds to formal type in method declaration
 		types.Type callParamType = null;
@@ -488,14 +488,89 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				System.exit(1);
 			}	
 		}
-		
+
 		// the call returns the method return-type
 		return ((types.MethodType) methodSym.getType()).getReturnType();
 	}
 
 
+	/**
+	 * Type checks for an Virtual Call expression:
+	 * validate virtual method's enclosing class exists
+	 * validate called method is defined in enclosing class, as class method
+	 * validate virtual method is not called from a static method
+	 * validate call parameters are subtypes of the method's formals types
+	 * 
+	 * @return the called method return-type
+	 */
 	public Object visit(VirtualCall virtual_call, Object o) {
-		// TODO Auto-generated method stub
+
+		// virtual call of an instance: obj.call()
+		if(virtual_call.getObjectReference() != null){
+			// get instance type
+			types.Type objType = (types.Type) virtual_call.getObjectReference().accept(this, o);
+			////////////////////////////////
+			symbolTableHandler.ClassSymbolTable objClassTable = globaSymlTable.getClassSymbolTableRec(objType.getName());
+			// instance class undefined
+			if(objClassTable == null){
+				SemanticError error = new SemanticError("Invalid virutal method call, instance class undefined",
+						virtual_call.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+		}
+		// virtual call without object instance
+		else{
+			// validate call is not from static method body
+			if(inStaticMethod){
+				SemanticError error = new SemanticError("Invalid virutal method call, non-refernce call from a static method",
+						virtual_call.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+		}
+		
+		// validate method is defined as virtual in enclosing class
+		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbolRec(virtual_call.getMethodName());
+		if (methodSym.isStatic()){
+			SemanticError error = new SemanticError("Invalid virtual method call, method is not virtual",
+					virtual_call.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+
+		
+		// validate call parameters are subtypes of the method's formals types
+		// get call parameters
+		callParameters = call.getArguments();
+		// get call method formals
+		methodFormalsTypes = ( (types.TypeMethod) methodSym.getType()).getParamTypes();
+
+		// wrong number of arguments in call
+		if(callParameters.length() != methodFormalsTypes.length()){
+			SemanticError error = new SemanticError("Invalid virtual method call, method called with wrong number of arguments",
+					virtual_call.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+
+		// if correct num of parameters passed to call
+		// validate each parameter type corresponds to formal type in method declaration
+		types.Type callParamType = null;
+		for(int i = 0 ; i < callParameters.length(); i++){
+			// get current call parameter type
+			callParamType = (types.Type) (callParameters.get(i)).accept(this, o); 
+			// validate paramter type is not subtype of method formal
+			if( !callParamType.extendsType(methodFormalsTypes(i)) ){
+				SemanticError error = new SemanticError("Invalid virtual method call, passed wrong argument type",
+						virtual_call.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}	
+		}
+
+		// the call returns the method return-type
+		return ((types.TypeMethod) methodSym.getType()).getReturnType();
 	}
 
 
