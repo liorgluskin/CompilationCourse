@@ -10,7 +10,7 @@ public class Program extends ASTNode{
 	/**
 	 * Constructs a new program node.
 	 * 
-	 * @param classes List of all classes declared in the program.
+	 * @param classes - list of the program classes
 	 */
 	public Program(List<ClassDecl> classes) {
 		super(0);
@@ -23,7 +23,7 @@ public class Program extends ASTNode{
 	
 	/**
 	 * Adds a class to the program.
-	 * @param class_decl Class declaration
+	 * @param class_decl - class 
 	 */
 	public void addClass(ClassDecl class_decl){
 		classes.add(class_decl);
