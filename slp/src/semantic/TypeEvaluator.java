@@ -210,11 +210,35 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 	/**
 	 * Type checks for Return statement:
-	 * validate the return expr type is a subtype of the method's return type
+	 * validate the return expr type is a subtype of enclosing method type
+	 * @return the return statement type
 	 */
 	public Object visit(ReturnStmt stmt, Object o) {
-
-		////////////////////////////////////////////////////////////////
+		types.Type returnType = null;
+		types.Type enclosingMethodType = null;
+		
+		// get type of return statement, if followed by expression
+		if(stmt.hasExpr()){
+			returnType = (types.Type) stmt.getValue.accept(this, o);
+		}
+		// return type is void
+		else{
+			returnType = types.TypeTable.getType("void");
+		}
+		
+		// get enclosing method type
+		///////////////////////////////edit to correct
+		enclosingMethodType = ( (BlockSymbolTable)stmt.getEnclosingScope() ).getVarSymbolRec("_ret").getType();
+		
+		// check if subtype of method type
+		if(!returnType.extendsType(enclosingMethodType)){
+			SemanticError error = new SemanticError("Invalid return statement, incossistent with enclosing method type", 
+					stmt.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+		
+		return returnType;
 	}
 
 
@@ -412,10 +436,61 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		return arrType;
 	}
 
-
+	
+	/**
+	 * Type checks for an Static Call expression:
+	 * validate static method's enclosing class exists
+	 * validate called method is defined in enclosing class, as static method
+	 * validate call parameters are subtypes of the method's formals types
+	 * 
+	 * @return the called method return-type
+	 */
 	public Object visit(StaticCall static_call, Object o) {
-		// TODO Auto-generated method stub
-
+	
+		// validate static method's enclosing class exists
+		symbolTableHandler.ClassSymbolTable classSymTable = null;
+		classSymTable = globalTable.getClassSymbolTableRec(static_call.getClassName());
+		
+		// validate called method is defined in enclosing class, as static method
+		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbolRec(static_call.getName());
+		if (!methodSym.isStatic()){
+			SemanticError error = new SemanticError("Invalid static method call, method is not static",
+						static_call.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+		}
+		
+		// validate call parameters are subtypes of the method's formals types
+		// get call parameters
+		callParameters = call.getArguments();
+		// get call method formals
+		methodFormalsTypes = ( (types.TypeMethod) methodSym.getType()).getParamTypes();
+		
+		// wrong number of arguments in call
+		if(callParameters.length() != methodFormalsTypes.length()){
+			SemanticError error = new SemanticError("Invalid static method call, method called with wrong number of arguments",
+						static_call.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+		
+		// if correct num of parameters passed to call
+		// validate each parameter type corresponds to formal type in method declaration
+		types.Type callParamType = null;
+		for(int i = 0 ; i < callParameters.length(); i++){
+			// get current call parameter type
+			callParamType = (types.Type) (callParameters.get(i)).accept(this, o); 
+			// validate paramter type is not subtype of method formal
+			if( !callParamType.extendsType(methodFormalsTypes(i)) ){
+				SemanticError error = new SemanticError("Invalid static method call, passed wrong argument type",
+						static_call.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}	
+		}
+		
+		// the call returns the method return-type
+		return ((types.MethodType) methodSym.getType()).getReturnType();
 	}
 
 
