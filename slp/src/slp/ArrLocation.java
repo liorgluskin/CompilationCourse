@@ -6,7 +6,7 @@ package slp;
 public class ArrLocation extends Location{
 	private Expr arr_location;
 	private Expr index;
-	
+	  
 	/**
 	 * Constructs a new array reference node.
 	 * 
