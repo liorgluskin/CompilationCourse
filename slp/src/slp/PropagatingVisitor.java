@@ -43,7 +43,6 @@ public interface PropagatingVisitor<DownType,UpType> {
 
 	public UpType visit(Expr expr, DownType d);
 	public UpType visit(BlockExpr expr, DownType d);
-	public UpType visit(VarExpr vexpr, DownType d);
 	public UpType visit(UnaryOpExpr expr, DownType d);
 	public UpType visit(BinaryOpExpr expr, DownType d);
 }

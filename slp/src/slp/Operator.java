@@ -3,7 +3,7 @@ package slp;
 /** An enumeration containing all the operation types in the SLP language.
  */
 public enum Operator {
-	MINUS, PLUS, MULT, DIV, LT, GT, LE, GE, LAND, LOR;
+	MINUS, PLUS, MULT, DIV, LT, GT, LE, GE, LAND, LOR, EQUAL, NEQUAL;
 	
 	/** Prints the operator in the same way it appears in the program.
 	 */
@@ -19,6 +19,8 @@ public enum Operator {
 		case GE: return ">=";
 		case LAND: return "&&";
 		case LOR: return "||";
+		case EQUAL: return "==";
+		case NEQUAL: return "!=";
 		default: throw new RuntimeException("Unexpted value: " + this.name());
 		}
 	}

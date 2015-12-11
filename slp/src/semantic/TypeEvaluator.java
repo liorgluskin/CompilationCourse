@@ -1,7 +1,10 @@
 package semantic;
 
+import java.util.function.BinaryOperator;
+
 import slp.ArrLocation;
 import slp.AssignStmt;
+import slp.BinOperator;
 import slp.BinaryOpExpr;
 import slp.BlockExpr;
 import slp.BlockStmt;
@@ -23,6 +26,7 @@ import slp.LiteralType;
 import slp.Method;
 import slp.NewArray;
 import slp.NewObject;
+import slp.Operator;
 import slp.PrimitiveType;
 import slp.Program;
 import slp.PropagatingVisitor;
@@ -33,6 +37,7 @@ import slp.Stmt;
 import slp.StmtList;
 import slp.This;
 import slp.UnaryOpExpr;
+import slp.VarExpr;
 import slp.VarLocation;
 import slp.VirtualCall;
 import slp.Visitor;
@@ -40,6 +45,7 @@ import slp.WhileStmt;
 import symbolTableHandler.SymbolTable;
 import types.Type;
 import types.TypeArray;
+import types.TypeTable;
 
 /**
  * Class creates an evaluator that traverses the program,
@@ -51,6 +57,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 	private SymbolTable globalTable;
 	private boolean inLoopScope = false;
+	private boolean inStaticMethod = false;
 
 
 	/** Constructor for evaluator of all type checks in program
@@ -109,29 +116,37 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		return visitMethod(method, o);	
 	}
 
-	/** Type Evaluator for Primitive Type */
+	/** Type Evaluator for Primitive Type
+	 * @return true
+	 *  */
 	public Object visit(PrimitiveType primitiveType, Object o) {
 		return true; // no type comparisons for primitives
 	}
 
-	/** Type Evaluator for Class Type */
+	/** Type Evaluator for Class Type 
+	 * @return true
+	 * */
 	public Object visit(ClassType classType, Object o) {
 		return true; // no type comparisons for user defined data-type
 	}
 
-	/** Type Evaluator for Field */
+	/** Type Evaluator for Field 
+	 * @return true
+	 * */
 	public Object visit(Field field, Object o) {
 		return true; // no type comparisons
 	}
 
-	/** Type Evaluator for Formal */
+	/** Type Evaluator for Formal 
+	 * @return true
+	 * */
 	public Object visit(Formal formal, Object o) {
 		return true; // no type comparisons
 	}
 
 
 	/** Type Evaluator for a list of statements
-	 * @return true
+	 * @return true if successful
 	 */
 	public Object visit(StmtList stmts, Object o) {
 		// iterate over all statements in the list
@@ -149,6 +164,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	/**
 	 * Type checks for Assignment statement:
 	 * validate location and rhs are compatible
+	 * @return true if successful
 	 */
 	public Object visit(AssignStmt stmt, Object o){
 		SemanticError error;
@@ -185,6 +201,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	/**
 	 * Type checks for Call statement:
 	 * type-checks validity of the call
+	 * @return call return type
 	 */
 	public Object visit(CallStmt stmt, Object o) {
 		return stmt.accept(this, o);
@@ -206,6 +223,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * validate the if condition
 	 * validate the if expression is of type boolean
 	 * validate the body, and else statements
+	 * @return true if successful
 	 */
 	public Object visit(IfStmt stmt, Object o) {
 		// validate condition and get its type
@@ -237,6 +255,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * validate the while condition
 	 * validate the while expression is of type boolean
 	 * validate the body of the while loop
+	 * @return true if successful
 	 */
 	public Object visit(WhileStmt stmt, Object o) {
 		// validate condition and get its type
@@ -263,6 +282,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	/**
 	 * Type checks for Break statement:
 	 * validate break is used only within a loop scope
+	 * @return true if successful
 	 */
 	public Object visit(BreakStmt stmt, Object o) {
 		if(!inLoopScope){
@@ -278,6 +298,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	/**
 	 * Type checks for Continue statement:
 	 * validate break is used only within a loop scope
+	 * @return true if successful
 	 */
 	public Object visit(ContinueStmt stmt, Object o) {
 		if(!inLoopScope){
@@ -290,26 +311,105 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	}
 
 
+	/**
+	 * Type checks for a Block statement:
+	 * validate every statement in the block statement list
+	 * @return true if successful
+	 */
 	public Object visit(BlockStmt stmt, Object o) {
-		// TODO Auto-generated method stub
+		for(Stmt s : stmt.getStatementList().getStatements()){
+			s.accept(this, o);
+		}
+		return true;
 	}
 
 
+	/**
+	 * Type checks for a Variable Definition statement:
+	 * If variable has been assigned a value, 
+	 * validate assigned value is a subtype of the variable type
+	 * @return true if successful
+	 */
 	public Object visit(IDStmt stmt, Object o) {
-		// TODO Auto-generated method stub
 
+		// variable has been assigned with value
+		if(stmt.hasValue()){
+			// get variable's type
+			/////////////
+			types.Type varType = ((BlockSymbolTable) stmt.getEnclosingScope()).getVarSymbol(stmt.getName()).getType();
+			/////////////
+			// get value's type
+			types.Type valueType = (types.Type) stmt.getValue().accept(this, o);
+
+			// check value type extends or is equal to variable type
+			if(!valueType.extendsType(varType)){
+				SemanticError error  = new SemanticError("Variable defined with incompatible value",
+						stmt.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+		}
+		return true;
 	}
 
-
+	/**
+	 * Type checks for a Variable Location expression:
+	 * validate the location itself
+	 * @return the variable-location type
+	 */
 	public Object visit(VarLocation var_loc, Object o) {
-		// TODO Auto-generated method stub
 
+		// check if variable is a class field
+		if(var_loc.hasExternalLocation()){
+			// get the type of the field's class
+			types.Type locationType = (types.Type) var_loc.getLocation().accept(this, o);
+
+			// Verify the class contains a field with var_loc's name
+			///////////////////////
+			// get the class symbol table - if class exists 
+			////// handle when class not found in sym table!
+			symbolTableHandler.ClassSymbolTable classSymTable = globalTable.getClassSymbolTableRec(locationType.getName());
+			// get the class field - if exists
+			////// handle when field not found in class table!
+			symbolTableHandler.FieldSymbol fieldSymbol = classSymTable.getFieldSymbol(var_loc.getName());
+			return fieldSymbol.getType(); // return the field's type
+		}
+		// local variable location
+		else{
+			// get the local variable's type from the scope type-table
+			types.Type varType = ((BlockSymbolTable) var_loc.getEnclosingScope()).getVarSymbol(var_loc.getName()).getType();
+			return varType;
+		}
 	}
 
 
+	/**
+	 * Type checks for an Array Location expression:
+	 * validate the array type exists
+	 * validate the index type is int
+	 * @return the array type
+	 */
 	public Object visit(ArrLocation arr_loc, Object o) {
-		// TODO Auto-generated method stub
+		// get the type of the array elements
+		// validates type is defined
+		types.Type arrType = (types.Type) arr_loc.getArrLocation().accept(this, o);
 
+		// get the type of the array location index
+		types.Type indexType = (types.Type) arr_loc.getIndex().accept(this, o);
+		// validate index type is int
+		try {
+			if(!indexType.extendsType(TypeTable.getType("int"))){
+				SemanticError error = new SemanticError("Array location invalid, index not of type int",
+						arr_loc.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+		} catch (SemanticError e) {
+			// in case type table does not contain type "int"
+			e.printStackTrace();
+		}
+
+		return arrType;
 	}
 
 
@@ -326,7 +426,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 	/**
 	 * Type checks for Literal:
-	 * returns the literal's type
+	 * @returns the literal type
 	 */
 	public Object visit(Literal literal, Object o) {
 		LiteralType literalType = literal.getType();
@@ -346,21 +446,83 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	}
 
 
+	/**
+	 * Type checks for 'This' expression:
+	 * validate 'this' not referenced in a static method 
+	 * 
+	 * @return type 'this' refers to
+	 */
 	public Object visit(This t, Object o) {
-		// TODO Auto-generated method stub
-
+		if(inStaticMethod){
+			SemanticError error = new SemanticError("Invalid expression, 'this' inside static method", 
+					t.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+		///////////////////////////////////////
+		types.Type thisType = ((BlockSymbolTable) t.getEnclosingScope()).getEnclosingClassSymbolTable().getMySymbol().getType();
+		return thisType;
 	}
 
 
+	/**
+	 * Type checks for a New Object:
+	 * validate the object type exists
+	 * 
+	 * @return the object type
+	 */
 	public Object visit(NewObject new_obj, Object o) {
-		// TODO Auto-generated method stub
-
+		types.Type objectType = types.TypeTable.getClassType(new_obj.getName());
+		if(objectType == null){
+			SemanticError error = new SemanticError("Invalid new Object(), object type undefined", 
+					new_obj.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+		return objectType;
 	}
 
-
+	//////////// no void arrays allowed!!!!
+	/**
+	 * Type checks for a New Array expression:
+	 * validate array type is not void
+	 * validate array type exists
+	 * validate array length expression is of type in
+	 * 
+	 * @return the array type
+	 */
 	public Object visit(NewArray new_arr, Object o) {
-		// TODO Auto-generated method stub
 
+		// get array type - if exists
+		types.Type arrType = null;
+		try {
+			arrType = TypeTable.getType(new_arr.getType().getFullName());
+		} catch (SemanticError e) {
+			// if array type does not exist
+			e.printStackTrace();
+		}
+		if(arrType == null){
+			SemanticError error = new SemanticError("Invalid new Array, array type invalid", 
+					new_arr.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+
+		// get type of array length
+		types.Type lenType = (types.Type) new_arr.getArrayLength().accept(this, 0);
+		try {
+			if(!lenType.extendsType(TypeTable.getType("int"))){
+				SemanticError error = new SemanticError("Array definiton invalid, length not of type int",
+						new_arr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+		} catch (SemanticError e) {
+			// if Type table does not contain type "int"
+			e.printStackTrace();
+		}
+
+		return arrType;
 	}
 
 
@@ -374,7 +536,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		types.Type exprType = (types.Type) length.getExpression().accept(this,o);
 
 		if(!(exprType instanceof types.TypeArray)){
-			SemanticError error = new SemanticError("Expression length was applied to is not an array", 
+			SemanticError error = new SemanticError("The expression length was applied to, is not an array", 
 					length.getLineNum());
 			System.out.println(error);
 			System.exit(1);
@@ -388,27 +550,169 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	}
 
 
+	/** Type Evaluator for abstract class Expr
+	 *  @return true
+	 */
 	public Object visit(Expr expr, Object o) {
-		// TODO Auto-generated method stub
-
+		return true;
 	}
 
 
+	/** Type Evaluator for a block of Expressions
+	 *  @return the expressions evaluation result 
+	 */
 	public Object visit(BlockExpr expr, Object o) {
 		// check the block's expressions
 		return expr.getExpression().accept(this, o);
 	}
 
 
+	/**
+	 * Type checks for Unary Operation expression:
+	 * validate operator parameter is of the correct type
+	 * 
+	 * @return int - if mathematical op
+	 * @return boolean - if logical op
+	 */
 	public Object visit(UnaryOpExpr expr, Object o) {
-		// TODO Auto-generated method stub
+		String expectedParamType = null;
 
+		// get expression's parameter type
+		types.Type paramType = (types.Type) expr.getOperand().accept(this, o);
+
+		// Mathematical unary operation
+		if(expr.hasMathematicalOp()){
+			// parameter type must be int
+			expectedParamType = "int";
+		}
+		// Logical unary operation
+		else{
+			// parameter type must be boolean
+			expectedParamType = "boolean";
+		}
+		// validate parameter is of the correct type
+		try {
+			if(!paramType.extendsType(types.TypeTable.getType(expectedParamType))){
+				SemanticError error = new SemanticError("Invalid unary operation, operand not of type "+expectedParamType, 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+		} catch (SemanticError e) {
+			// if type-table does not contain "int" or "boolean"
+			e.printStackTrace();
+		}
+		return paramType;
 	}
 
 
+	/**
+	 * Type checks for Binary Operation expression:
+	 * arithmetic operators, operands must be integers
+	 * relational comparison operators, operands must be integers
+	 * equality comparisons operators, operands must have the same type
+	 * conditional operators, operands must be booleans
+	 * 
+	 * @return int - if mathematical op
+	 * @return boolean - if logical op
+	 */
 	public Object visit(BinaryOpExpr expr, Object o) {
-		// TODO Auto-generated method stub
 
+		// get expression's parameters types
+		types.Type leftParamType = (types.Type) expr.getLeftOperand().accept(this, o);
+		types.Type rightParamType = (types.Type) expr.getRightOperand().accept(this, o);
+
+		BinOperator operator = expr.getOp();
+
+		// equality comparisons - operands must have the same type
+		if(expr.getOp() == BinOperator.EQUAL || expr.getOp() == BinOperator.NEQUAL){
+			boolean validExprTypes = false;
+
+			// check if left operand type is subtype of right
+			validExprTypes = validExprTypes || leftParamType.extendsType(rightParamType);
+			// check if right operand type is subtype of left
+			validExprTypes = validExprTypes || rightParamType.extendsType(leftParamType);
+
+			// if operand types are unrelated, expression is invalid
+			if(!validExprTypes){
+				SemanticError error = new SemanticError("Invalid binary operation, operands are of different types", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+		}
+
+		// conditional operators - operands must be booleans
+		else if(expr.getOp() == BinOperator.LAND || expr.getOp() == BinOperator.LOR){
+			// check if left operand of type boolean
+			try {
+				if(!leftParamType.extendsType(types.TypeTable.getType("boolean"))){
+					SemanticError error = new SemanticError("Invalid binary operation, left operand not of type boolean", 
+							expr.getLineNum());
+					System.out.println(error);
+					System.exit(1);
+				}
+			} catch (SemanticError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// check if right operand of type int
+			try {
+				if(!rightParamType.extendsType(types.TypeTable.getType("boolean"))){
+					SemanticError error = new SemanticError("Invalid binary operation, right operand not of type boolean", 
+							expr.getLineNum());
+					System.out.println(error);
+					System.exit(1);
+				}
+			} catch (SemanticError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		// arithmetic or relational operators - operands must be integers
+		else if(expr.getOp() == BinOperator.PLUS || 
+				expr.getOp() == BinOperator.MINUS ||
+				expr.getOp() == BinOperator.MULTIPLY ||
+				expr.getOp() == BinOperator.DIVIDE ||
+				expr.getOp() == BinOperator.MOD ||
+				expr.getOp() == BinOperator.LT ||
+				expr.getOp() == BinOperator.GT ||
+				expr.getOp() == BinOperator.LTE ||
+				expr.getOp() == BinOperator.GTE	){
+
+			// check if left operand of type int
+			try {
+				if(!leftParamType.extendsType(types.TypeTable.getType("int"))){
+					SemanticError error = new SemanticError("Invalid binary operation, left operand not of type int", 
+							expr.getLineNum());
+					System.out.println(error);
+					System.exit(1);
+				}
+			} catch (SemanticError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// check if right operand of type int
+			try {
+				if(!rightParamType.extendsType(types.TypeTable.getType("int"))){
+					SemanticError error = new SemanticError("Invalid binary operation, right operand not of type int", 
+							expr.getLineNum());
+					System.out.println(error);
+					System.exit(1);
+				}
+			} catch (SemanticError e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		// all checks are valid return the higher type of the operands
+		if(leftParamType.extendsType(rightParamType)){
+			return rightParamType;
+		}
+		return leftParamType;
 	}
+
 
 }
