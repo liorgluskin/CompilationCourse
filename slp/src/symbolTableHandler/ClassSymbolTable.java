@@ -16,54 +16,50 @@ public class ClassSymbolTable extends SymbolTable{
 	private Map<String,MethodSymbolTable> methodSymbolTables = new HashMap<String,MethodSymbolTable>();
 	
 	private ClassSymbol symbol;
-	private boolean isExtends;
-	
-	
+	private boolean is_extends;
 	
 	public ClassSymbolTable(ClassSymbolTable parent, ClassSymbol symbol) {
 		super(parent);
 		this.symbol = symbol;
-		isExtends = true;		
+		is_extends = true;		
 	}
 	
 	public ClassSymbolTable(GlobalSymbolTable parent,ClassSymbol symbol){
 		super(parent);
 		this.symbol = symbol;
-		isExtends = false;
+		is_extends = false;
 	}
 	
-	public MethodSymbol getMethodSymbol(String name) throws SemanticError{
+	public MethodSymbol getMethodSymbol(String name){
 		MethodSymbol ms = methodsSymbols.get(name);
 		if (ms == null){
-			if(isExtends){
+			if(is_extends){
 				ms =((ClassSymbolTable) parent).getMethodSymbol(name);				
-			}else throw new SemanticError("method does not exist in "+this.symbol.getName()+": name");			
+			}else return null;			
 		}
 		return ms;		
 	}
 	
-	public void addMethodSymbol(String name, Type returnType, List<Type> paramTypes, boolean isStatic){
-		this.methodsSymbols.put(name, new MethodSymbol(name,returnType,paramTypes, isStatic));
+
+	
+	public void addMethodSymbol(MethodSymbol ms){
+		this.methodsSymbols.put(ms.getName(), ms);
 	}
 	
-	public void addMethodSymbol(String name, MethodSymbol ms){
-		this.methodsSymbols.put(name, ms);
-	}
-	
-	public FieldSymbol getFieldSymbol(String name) throws SemanticError{
+	public FieldSymbol getFieldSymbol(String name){
 		FieldSymbol fs = fieldsSymbols.get(name);
 		if (fs == null) {
-			if (isExtends){
+			if (is_extends){
 				fs = ((ClassSymbolTable) parent).getFieldSymbol(name);
 			} else {
-				throw new SemanticError("name cannot be resolved:" +name);
+				return null;
 			}
 		}
 		return fs;
 	}
 	
-	public void addFieldSymbol(String name, String typeName) throws SemanticError{
-		this.fieldsSymbols.put(name,new FieldSymbol(name,typeName));
+	public void addFieldSymbol(String name, String type_name) throws SemanticError{
+		this.fieldsSymbols.put(name,new FieldSymbol(name, type_name));
 	}
 	
 	/**

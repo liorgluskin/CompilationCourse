@@ -14,6 +14,7 @@ public class Length extends Expr{
 	public Length(Expr expr){
 		super(expr.getLineNum());
 		this.expr = expr;
+		
 	}
 	
 	public Expr getExpression(){

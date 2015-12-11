@@ -1,11 +1,22 @@
 package symbolTableHandler;
 
-public class SymbolTable {
-	protected SymbolTable parent;
+/**
+ * Abstract class for all symbol tables
+ *
+ */
+
+public abstract class SymbolTable {
+protected SymbolTable parent = null;
 	
 	/**
-	 * constructor for generic SymbolTable 
+	 * Constructs a SymbolTable - global scope.
+	 */
+	public SymbolTable(){}
+	
+	/**
+	 * Constructs a SymbolTable. 
 	 * @param parent
+	 * 				parent scope of the current symbol table
 	 */
 	public SymbolTable(SymbolTable parent){
 		this.parent = parent;

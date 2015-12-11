@@ -41,11 +41,11 @@ public abstract class ASTNode {
 			PropagatingVisitor<DownType, UpType> visitor, DownType context);
 
 
-	public void setEnclosingScope(SymbolTable scope){
+	public void setScope(SymbolTable scope){
 		this.scope = scope;
 	}
 	
-	public SymbolTable getEnclosingScope(){
+	public SymbolTable getScope(){
 		return scope;
 	}
 }

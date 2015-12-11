@@ -1,21 +1,31 @@
 package symbolTableHandler;
 import types.*;
 
+/**
+ * Abstract class for a symbol table entry.
+ *
+ */
+
 public abstract class Symbol {
-	protected String name;
+	protected String sym_name;
 	protected Type type;
 	protected int line;
 	
-	public Symbol(String name,int line){
-		this.name = name;
+	/**
+	 * A Symbol constructor.
+	 * 
+	 */	
+	public Symbol(String sym_name, int line){
+		this.sym_name = sym_name;
 		this.line = line;
 	}
 	
-	/**
-	 * getter for the Symbol name
-	 */
 	public String getName(){
-		return this.name;
+		return this.sym_name;
+	}
+	
+	public Type getType(){
+		return this.type;
 	}
 	
 	

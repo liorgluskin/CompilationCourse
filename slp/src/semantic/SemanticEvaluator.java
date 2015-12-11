@@ -2,16 +2,29 @@ package semantic;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import slp.*;
 import symbolTableHandler.*;
-import types.TypeTable;
+import types.*;
+import types.Type;
 
 public class SemanticEvaluator implements Visitor{
 	private Boolean hasMain = false;
 	private Boolean isLibraryClassVisiting = false;
+	
 	private GlobalSymbolTable global = null;
+	private SymbolTable currentSymbolTable;
+	
+	private  SymbolTable getCurrentSymbolTable(){
+		return currentSymbolTable;
+	}
+	
+	private void setCurrentSymbolTable(SymbolTable symT){
+		currentSymbolTable = symT;
+	}
+	
 
 	
 	public SemanticEvaluator(){
@@ -22,6 +35,30 @@ public class SemanticEvaluator implements Visitor{
 		program.accept(this);
 		return global;
 	}
+	
+	
+	/**
+	 * Checks whether the given method is the main method.
+	 */
+	private static boolean isMain(Method method){
+		//main must be static
+		if (method instanceof StaticMethod) return false;						
+		if (method.getName().compareTo("main") != 0) return false;
+		
+		//return type must be void
+		if (!(method.getType() instanceof PrimitiveType) ||
+				method.getType().getName().compareTo("void") != 0) return false;
+		
+		//no parameters or too many
+		if (method.getFormals().size() != 1) return false; 
+		
+		//parameter is not of type string[]
+		slp.Type param_type = method.getFormals().get(0).getType();
+		if (param_type.getFullName().compareTo("String[]") != 0) return false;
+		
+		return true;
+	}
+	
 	
 	//should be done before starting visit.
 	//visit should 'visit' this class too and add to 
@@ -94,7 +131,10 @@ public class SemanticEvaluator implements Visitor{
 		
 		//declaring class
 		ClassDecl libraryClass = new ClassDecl(-2, "Library",methodsLst);
-		program.addClass(libraryClass);
+		List<ClassDecl> classes = program.getClasses();
+		Collections.reverse(classes);
+		classes.add(libraryClass);
+		Collections.reverse(classes);
 	}
 
 
@@ -116,8 +156,9 @@ public class SemanticEvaluator implements Visitor{
 		
 		// recursive class symbol tables build
 		for (ClassDecl c: program.getClasses()){
+			
 			// set enclosing scope
-			c.setEnclosingScope(global);
+			c.setScope(global);
 			c.accept(this);
 		}
 		
@@ -141,236 +182,472 @@ public class SemanticEvaluator implements Visitor{
 			ClassSymbolTable  scst = global.getClassSymbolTable(class_decl.getSuperClassName());
 			cst = new ClassSymbolTable( scst, global.getClass(class_decl.getName()) );
 			scst.addClassSymbolTable(cst);
+			
 		} else { // no superclass
 			cst = new ClassSymbolTable(global,global.getClass(class_decl.getName()));
-			global.addClassSymbolTable(cst);;
+			global.addClassSymbolTable(cst);
+			
 		}
-		
+
 		
 		
 		//create symbol table for methods 
 		for( FieldOrMethod fom: class_decl.getFieldsOrMethods()){
-			fom.setEnclosingScope(cst);
+			fom.setScope(cst);
+			if(fom instanceof Field){
+				Field f = (Field) fom;
+				
+				//check if type is already defined
+				if(cst.getFieldSymbol(f.getName()) != null){
+					System.out.println(new SemanticError(f.getName() +" field is allready defined.",f.getLineNum()));
+					System.exit(-1);
+				}
+				
+				//check if there a method with the same name
+				if(cst.getMethodSymbol(f.getName()) != null){
+					System.out.println(new SemanticError(f.getName() +" field is allready defined as method", f.getLineNum()));
+					System.exit(-1);
+				}
+				
+				try{
+					cst.addFieldSymbol(f.getName(), f.getType().getFullName());						
+				}catch(SemanticError ex){
+					//Class type Error -> if Field class type is not defined
+					System.out.println(new SemanticError(ex.getMessage(),f.getLineNum()));
+					System.exit(-1);
+				}									
+			} else{
+				//method instatnce
+				//check if type is already defined
+				Method m = (Method) fom;
+				
+				//check if there isn't field with the same name declared before.
+				if(cst.getFieldSymbol(m.getName()) != null){
+					System.out.println(new SemanticError(m.getName() +" method is allready defined as field.",m.getLineNum()));
+					System.exit(-1);
+				}
+				
+				//check if method is main
+				if(isMain(m)){
+					if(hasMain)
+						System.out.println(new SemanticError(m.getName() + "main is allready defined.", m.getLineNum()));
+					else
+						hasMain = true;
+				}
+				
+				MethodSymbol upperMethodSymbol = cst.getMethodSymbol(m.getName());
+				MethodSymbol currentMethodSymbol = null;
+				try{
+					currentMethodSymbol = new MethodSymbol(m);
+				}catch(SemanticError se){
+					//this checked within typeChecker
+					//should never get here at this point
+					System.out.println(new SemanticError(m.getName() + "method type is undefined",m.getLineNum()));
+					System.exit(-1);
+				}
+				
+				//a method with the same name exists
+				//now we want to check if it is an override 
+				if(upperMethodSymbol != null){
+					if(!currentMethodSymbol.getType().extendsType(upperMethodSymbol.getType())){
+						//method is not override- its overload and its not legal
+						System.out.println(new SemanticError(m.getName() + "method is allready defined.",m.getLineNum()));
+						System.exit(-1);
+					}
+				}
+				
+				//method is legal here
+				cst.addMethodSymbol(currentMethodSymbol);
+				
+			}
 			
+			//method or field passed semantic check so we can continue here
+			fom.accept(this);			
 		}
 		
-		
-		
-		
-		//fields and methods check
 		
 		
 		//reset LibraryClassVisit
 		isLibraryClassVisiting = false;
 	}
 
-
-	@Override
+	/**
+	 * Creates a symbol table for a method scope (all types).
+	 * 
+	 */
+	private void methodVisit(Method method){
+		//create symbol table for method scope
+		MethodSymbolTable method_scope = new MethodSymbolTable(method.getName(),(ClassSymbolTable)method.getScope());
+		
+		method.getType().setScope(method_scope);
+		if(!isLibraryClassVisiting){
+			//method's parameters (formals)
+			for (Formal f: method.getFormals()){
+				f.setScope(method_scope);
+				try{
+					method_scope.getVarParamSymbol(f.getName());
+					SemanticError error = new SemanticError("parameter is previously defined in method " + method.getName());
+					System.out.println(error);
+					System.exit(-1);
+				} catch (SemanticError not_defined){
+					try{
+						method_scope.addParamSymbol(f.getName(), f.getType().getFullName());
+					} 
+					catch (SemanticError e){
+						//error adding the parameter symbol
+						System.out.println(e);
+						System.exit(-1);
+					}
+				}
+				f.accept(this);
+			}
+			
+			//method statements
+			for (Stmt s: method.getStatementList().getStatements()){
+				s.setScope(method_scope);
+				s.accept(this); 
+			}
+			
+			//return variable
+			try{
+				method_scope.setReturnVarSymbol(method.getType().getFullName());
+			} 
+			//error setting the return variable
+			catch (SemanticError error){
+				error.toString();
+				System.exit(-1);
+			}
+		}
+	}
+	
 	public void visit(ClassMethod method) {
-		// TODO Auto-generated method stub
-		
+		methodVisit(method);	
 	}
 
-
-	@Override
 	public void visit(StaticMethod method) {
-		// TODO Auto-generated method stub
-		
+		methodVisit(method);
 	}
 
-
-	@Override
-	public void visit(PrimitiveType primitiveType) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * PrimitiveType visitor - does nothing.
+	 */
+	public void visit(PrimitiveType primitiveType) {		
 	}
 
+	/**
+	 * ClassType visitor - does nothing.
+	 */
+	public void visit(ClassType classType) {}
 
-	@Override
-	public void visit(ClassType classType) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
+	/**
+	 * Sets the scope for the type of a field and visits it.
+	 *
+	 */
 	public void visit(Field field) {
-		// TODO Auto-generated method stub
-		
+		field.getType().setScope(field.getScope());
+		field.getType().accept(this);
 	}
 
-
-	@Override
+	/**
+	 * Sets the scope for the type of a formal and visits it.
+	 *
+	 */
 	public void visit(Formal formal) {
-		// TODO Auto-generated method stub
+		formal.getType().setScope(formal.getScope());
+		formal.getType().accept(this);
 		
 	}
 
 
-	@Override
 	public void visit(StmtList stmts) {
-		// TODO Auto-generated method stub
-		
+		for(Stmt s: stmts.getStatements()){
+			s.setScope(s.getScope());
+			s.accept(this);
+		}
 	}
 
-
-	@Override
+	/**
+	 * Abstract class Stmt, will get here.
+	 * @throws RuntimeException
+	 */
 	public void visit(Stmt stmt) {
-		// TODO Auto-generated method stub
-		
+		throw new  RuntimeException("visiting Stmt");
 	}
 
-
-	@Override
+	/**
+	 * Sets the scope of the location and expression of an assignment.
+	 *
+	 */
 	public void visit(AssignStmt stmt) {
-		// TODO Auto-generated method stub
+		stmt.getLocation().setScope(stmt.getScope());
+		stmt.getLocation().accept(this);
 		
+		stmt.getRhs().setScope(stmt.getScope());
+		stmt.getRhs().accept(this);
 	}
 
-
-	@Override
+	/**
+	 * Sets the scope of the call statement.
+	 *
+	 */
 	public void visit(CallStmt stmt) {
-		// TODO Auto-generated method stub
-		
+		stmt.getCall().setScope(stmt.getScope());
+		stmt.getCall().accept(this);
 	}
 
-
-	@Override
+	/**
+	 * Sets the scope of the return statement.
+	 *
+	 */
 	public void visit(ReturnStmt stmt) {
-		// TODO Auto-generated method stub
-		
+		if (stmt.hasExpr()){
+			stmt.getExpr().setScope(stmt.getScope());
+			stmt.getExpr().accept(this);
+		}
 	}
 
 
-	@Override
+	/**
+	 * Sets the scope of the if statement.
+	 *
+	 */
 	public void visit(IfStmt stmt) {
-		// TODO Auto-generated method stub
+		stmt.getCond().setScope(stmt.getScope());
+		stmt.getCond().accept(this);
 		
+		Stmt if_stmt = stmt.getBody();
+		if (if_stmt instanceof IDStmt){
+			BlockSymbolTable block_st = new BlockSymbolTable(stmt.getScope());
+			((BlockSymbolTable)stmt.getScope()).addStack(block_st);
+			if_stmt.setScope(block_st);	
+		} 
+		else if_stmt.setScope(stmt.getScope());
+		if_stmt.accept(this);
+		
+		if (stmt.hasElse()){
+			Stmt else_stmt = stmt.getElseStmt();
+			if (else_stmt instanceof IDStmt){
+				BlockSymbolTable block_st = new BlockSymbolTable(stmt.getScope());
+				((BlockSymbolTable)stmt.getScope()).addStack(block_st);
+				else_stmt.setScope(block_st);	
+			} 
+			else else_stmt.setScope(stmt.getScope());
+			else_stmt.accept(this);
+		}	
 	}
 
-
-	@Override
+	/**
+	 * Sets the scope of the while statement.
+	 *
+	 */
 	public void visit(WhileStmt stmt) {
-		// TODO Auto-generated method stub
-		
+		stmt.getCond().setScope(stmt.getScope());
+		stmt.getCond().accept(this);
+
+		Stmt body = stmt.getBody();
+		if (body instanceof IDStmt){
+			BlockSymbolTable block_st = new BlockSymbolTable(stmt.getScope());
+			((BlockSymbolTable)stmt.getScope()).addStack(block_st);
+			body.setScope(block_st);	
+		} 
+		else body.setScope(stmt.getScope());
+		body.accept(this);
 	}
 
+	/**
+	 * Break statement visitor - does nothing.
+	 */
+	public void visit(BreakStmt stmt) {}
+
+	/**
+	 * Break statement visitor - does nothing.
+	 */
+	public void visit(ContinueStmt stmt) {}
 
 	@Override
-	public void visit(BreakStmt stmt) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void visit(ContinueStmt stmt) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
+	/**
+	 * Visits all components of the current block statement
+	 */
 	public void visit(BlockStmt stmt) {
-		// TODO Auto-generated method stub
+		BlockSymbolTable block_st = new BlockSymbolTable(stmt.getScope());
 		
+		stmt.getStatementList().accept(this);
+		
+		BlockSymbolTable block_parent = (BlockSymbolTable) stmt.getScope();
+		block_parent.addStack(block_st);
 	}
 
-
-	@Override
+	/**
+	 * Sets the scope of ID statement.
+	 *
+	 */
 	public void visit(IDStmt stmt) {
-		// TODO Auto-generated method stub
+		stmt.getType().setScope(stmt.getScope());
+		stmt.getType().accept(this);
 		
+		BlockSymbolTable block_st = (BlockSymbolTable)stmt.getScope();
+		try{
+			block_st.getVarSymbol(stmt.getName());
+			SemanticError error = new SemanticError("Variable is previously defined");
+			System.out.println(error);
+			System.exit(-1);
+		} 
+		catch (SemanticError e1){
+			try{
+				block_st.addVarSymbol(stmt.getName(), stmt.getType().getFullName());
+			} 
+			catch (SemanticError e2){
+				System.out.println(e2);
+				System.exit(-1);
+			}
+		}
+		
+		if (stmt.hasValue()){
+			stmt.getValue().setScope(stmt.getScope());
+			stmt.getValue().accept(this);
+		}
 	}
 
 
-	@Override
+	/**
+	 * Sets the scope of variable's location and visits its node.
+	 *
+	 */
 	public void visit(VarLocation var_loc) {
-		// TODO Auto-generated method stub
-		
+		if (var_loc.getLocation() != null){
+			var_loc.getLocation().setScope(var_loc.getScope());
+			var_loc.getLocation().accept(this);
+		}
+		else 
+			try{
+				//Check if variable defined
+				((BlockSymbolTable)var_loc.getScope()).getVarSymbol(var_loc.getName());
+			} 
+			catch (SemanticError e){
+				e.setLineNum(var_loc.getLineNum());
+				//error
+			}
 	}
 
-
-	@Override
+	/**
+	 * Sets the scope of array's index and location, and visits their AST nodes.
+	 *
+	 */
 	public void visit(ArrLocation arr_loc) {
-		// TODO Auto-generated method stub
+		arr_loc.getArrLocation().setScope(arr_loc.getScope());
+		arr_loc.getArrLocation().accept(this);
 		
+		arr_loc.getIndex().setScope(arr_loc.getScope());
+		arr_loc.getIndex().accept(this);
 	}
 
-
-	@Override
+	/**
+	 * Sets the scope for the method arguments, and visits arguments' AST nodes.
+	 *
+	 */
 	public void visit(StaticCall static_call) {
-		// TODO Auto-generated method stub
-		
+		for (Expr e: static_call.getArguments()){
+			e.setScope(static_call.getScope());
+			e.accept(this);
+		}
 	}
 
 
-	@Override
+	/**
+	 * Sets the call's reference scope according to the call's scope if needed & 
+	 * Sets the scope for the method arguments, and visits arguments' AST nodes.
+	 * 
+	 */
 	public void visit(VirtualCall virtual_call) {
-		// TODO Auto-generated method stub
-		
+		if (virtual_call.getObjectReference() != null) {
+			virtual_call.getObjectReference().setScope(virtual_call.getScope());
+			virtual_call.getObjectReference().accept(this);
+		}
+		for (Expr e: virtual_call.getArguments()){
+			e.setScope(virtual_call.getScope());
+			e.accept(this);
+		}
 	}
 
-
-	@Override
-	public void visit(Literal literal) {
-		// TODO Auto-generated method stub
-		
+	/**
+	 * Literal visitor - does nothing.
+	 */
+	public void visit(Literal literal) {	
 	}
 
-
-	@Override
-	public void visit(This t) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void visit(NewObject new_obj) {
-		// TODO Auto-generated method stub
-		
-	}
+	/**
+	 * This visitor - does nothing.
+	 */
+	public void visit(This t) {}
+	
+	/**
+	 * New class visitor - does nothing.
+	 */
+	public void visit(NewObject new_obj) {}
 
 
-	@Override
+	/**
+	 * Sets the scope of a new array's type and length, and visits their AST nodes.
+	 *
+	 */
 	public void visit(NewArray new_arr) {
-		// TODO Auto-generated method stub
+		new_arr.getType().setScope(new_arr.getScope());
+		new_arr.getType().accept(this);
 		
+		new_arr.getArrayLength().setScope(new_arr.getScope());
+		new_arr.getArrayLength().accept(this);
+
 	}
 
-
-	@Override
+	/**
+	 * Sets array's scope, according to its length scope.
+	 * 
+	 */
 	public void visit(Length length) {
-		// TODO Auto-generated method stub
-		
+		length.getExpression().setScope(length.getScope());
+		length.getExpression().accept(this);
 	}
 
 
-	@Override
+	/**
+	 * Abstract class Expr, will never get here.
+	 * @throw RuntimeException
+	 */
 	public void visit(Expr expr) {
-		// TODO Auto-generated method stub
-		
+		throw new  RuntimeException("visiting Expr");
 	}
 
 
 	@Override
+	/**
+	 * Visits all components of the current block expression.
+	 */
 	public void visit(BlockExpr expr) {
-		// TODO Auto-generated method stub
-		
+		expr.getExpression().setScope(expr.getScope());
+		expr.getExpression().accept(this);
 	}
+	
 
 
-	@Override
+	/**
+	 * Sets the scope of the expression's operand, and visits its AST nodes.
+	 *
+	 */
 	public void visit(UnaryOpExpr expr) {
-		// TODO Auto-generated method stub
-		
+		expr.getOperand().setScope(expr.getScope());
+		expr.getOperand().accept(this);
 	}
-
-
-	@Override
+	
+	/**
+	 * Sets the scope of both of the expression's operands, and visits their AST nodes.
+	 *
+	 */
 	public void visit(BinaryOpExpr expr) {
-		// TODO Auto-generated method stub
+		expr.getLeftOperand().setScope(expr.getScope());
+		expr.getLeftOperand().accept(this) ;
 		
+		expr.getRightOperand().setScope(expr.getScope());
+		expr.getRightOperand().accept(this);
 	}
+
 }
