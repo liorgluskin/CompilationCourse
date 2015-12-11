@@ -16,7 +16,8 @@ public class ClassSymbol extends Symbol {
 		super(classdecl.getName(), classdecl.getLineNum());
 		TypeTable.addClass(classdecl);
 		type = TypeTable.getClass(sym_name);
-		this.classdecl = classdecl;		
+		this.classdecl = classdecl;	
+		
 	}
 	
 	public ClassDecl getClassDecl(){

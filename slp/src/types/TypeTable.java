@@ -62,7 +62,7 @@ public class TypeTable {
     	if (programClasses.containsKey(c.getName())){ 
     		throw new SemanticError("class already defined: "+c.getName(), c.getLineNum());
     	}
-    	if (c.getSuperClassName() == null) {
+    	if (c.getSuperClassName() != null) {
     		if (!programClasses.containsKey(c.getSuperClassName()))
     			throw new SemanticError("super-class is undefined: " +c.getSuperClassName(),c.getLineNum());
     	}

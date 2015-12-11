@@ -3,7 +3,7 @@ package symbolTableHandler;
 import semantic.SemanticError;
 
 /**
- * Symbol of type 'local variable'. 
+ * Field symbol. 
  *
  */
 

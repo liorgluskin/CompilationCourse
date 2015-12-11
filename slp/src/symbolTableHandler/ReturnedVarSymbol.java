@@ -3,7 +3,8 @@ package symbolTableHandler;
 import semantic.SemanticError;
 
 /**
- * Symbol of type 'returned method variable'. 
+ * 
+ * Symbol for returned variable of a method. 
  *
  */
 

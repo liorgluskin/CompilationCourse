@@ -31,36 +31,36 @@ public class BlockSymbolTable extends SymbolTable{
 	 * 				variable symbol
 	 * @throws SemanticError
 	 */
-	public VariableSymbol getVarSymbol(String name) throws SemanticError{
+	public VariableSymbol getVarSymbolLocal(String name) throws SemanticError{
 		VariableSymbol var_symbol = var_symbols.get(name);
-		if (var_symbol == null){
-			if(parent instanceof BlockSymbolTable) 
-				((BlockSymbolTable) parent).getVarSymbol(name);
-			else
-				throw new SemanticError("Variable "+ name + " hasn't been defined in one of "
-						+ "the enclosing block or method scopes.");
+		if (var_symbol == null){ 
+			throw new SemanticError("Variable "+ name + " hasn't been defined in one of "
+					+ "the enclosing block or method scopes.");
 		}
 		return var_symbol;
 	}
-		
+	
 	/**
-	 * 
+	 * Get variable symbol by its name - general.
 	 * @param name
-	 * 				variable name.
-	 * @return true iff the variable is a class field.
+	 * 				variable name
+	 * @return
+	 * 				variable symbol
+	 * @throws SemanticError
 	 */
-	public boolean isVarField (String name){
-		if (var_symbols.containsKey(name)) return false;
-		if(parent instanceof BlockSymbolTable) 
-			return ((BlockSymbolTable)parent).isVarField(name);
-		return true;
+	public VariableSymbol getVarSymbol(String name) throws SemanticError{
+		VariableSymbol var_symbol = var_symbols.get(name);
+		if (var_symbol == null){ 
+			var_symbol = ((BlockSymbolTable) parent).getVarSymbol(name);
+		}
+		return var_symbol;
 	}
 	
 	/**
-	 * Add a local variable symbol to the symbol table. 
-	 * @param varName
+	 * Add a variable symbol to the symbol table. 
+	 * @param var_name
 	 * 				variable name.
-	 * @param typeName
+	 * @param type_name
 	 * 				type name.
 	 * @throws SemanticError
 	 */

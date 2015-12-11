@@ -15,10 +15,8 @@ public class MethodSymbolTable extends BlockSymbolTable{
 		super(parent);
 		this.method_name = method_name;
 		
-		//null cant be returned here!
-		//method is 100% defined
+		//null cannot be returned here
 		this.is_static = parent.getMethodSymbol(method_name).isStatic();
-
 	}
 		
 	/**
@@ -40,12 +38,31 @@ public class MethodSymbolTable extends BlockSymbolTable{
 					+ name + "' ");
 		return var_param;
 	}
-		
+	
+	/**
+	 * Get variable symbol by its name.
+	 * @param name
+	 * 				variable name
+	 * @return
+	 * 				variable symbol
+	 * @throws SemanticError
+	 */
+	public VariableSymbol getVarSymbol(String name) throws SemanticError{
+		VariableSymbol var_symbol = var_symbols.get(name);
+		if (var_symbol == null){
+			if (this.is_static){
+				throw new SemanticError("cannot access variable '"+ name +"' in a static method");
+			} 
+			else var_symbol = ((ClassSymbolTable) parent).getFieldSymbol(name);
+		}
+		return var_symbol;
+	}
+	
 	/**
 	 * Add parameter symbol to table.
 	 * @param name
 	 * 				parameter name.
-	 * @param typeName
+	 * @param type_name
 	 * 				type name.
 	 * @throws SemanticError
 	 */
@@ -53,22 +70,10 @@ public class MethodSymbolTable extends BlockSymbolTable{
 		this.var_symbols.put(name, new ParameterSymbol(name, type_name));
 	}
 	
-	/**
-	 * 
-	 * @return returned variable symbol.
-	 */
 	public ReturnedVarSymbol getReturnVarSymbol()throws SemanticError{
 		return (ReturnedVarSymbol)this.getVarParamSymbol("returned");	
 	}
 		
-	/**
-	 * 
-	 * @param name
-	 * 				variable's name.
-	 * @param type_name
-	 * 				variable's type.
-	 * @throws SemanticError
-	 */
 	public void setReturnVarSymbol(String type_name) throws SemanticError{
 		this.var_symbols.put("returned", new ReturnedVarSymbol("returned", type_name));
 	}

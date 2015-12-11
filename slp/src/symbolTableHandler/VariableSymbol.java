@@ -4,7 +4,7 @@ import semantic.SemanticError;
 import types.TypeTable;
 
 /**
- * Symbol of type 'local variable'. 
+ * All types of variable symbols. 
  *
  */
 

@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java_cup.runtime.*;
+import semantic.SemanticEvaluator;
+import symbolTableHandler.GlobalSymbolTable;
 
 /** The entry point of the SLP (Straight Line Program) application.
  *
@@ -44,7 +46,7 @@ public class Main {
 			Parser parser = new Parser(scanner);
 
 			Symbol parseSymbol = parser.parse();
-			System.out.println("Parsed " + args[0] + " successfully!");
+			//System.out.println("Parsed " + args[0] + " successfully!");
 			Program root = (Program) parseSymbol.value;
 
 			//get file name of file
@@ -52,8 +54,8 @@ public class Main {
 			String fileName = p.getFileName().toString();
 
 			// Pretty-print the program to System.out
-			PrettyPrinter printer = new PrettyPrinter(root,fileName);
-			printer.print();
+			//PrettyPrinter printer = new PrettyPrinter(root,fileName);
+			//printer.print();
 
 			
 			////TO DECIDE!!!
@@ -67,8 +69,8 @@ public class Main {
 			
 			
 			// Interpret the program
-			SLPEvaluator evaluator = new SLPEvaluator(root);
-			evaluator.evaluate();
+			SemanticEvaluator evaluator = new SemanticEvaluator();
+			GlobalSymbolTable global_st = evaluator.getSymbolTable(root);
 		} catch (Exception e) {
 			System.out.print(e);
 		}
