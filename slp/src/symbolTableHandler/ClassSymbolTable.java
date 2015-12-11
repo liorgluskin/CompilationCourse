@@ -10,7 +10,7 @@ import types.*;
 public class ClassSymbolTable extends SymbolTable{
 
 	
-	private Map<String,MethodSymbol> methodsSymbols = new HashMap<>();
+	private Map<String,MethodSymbol> methodsSymbols = new HashMap<String,MethodSymbol>();
 	private Map<String,FieldSymbol> fieldsSymbols = new HashMap<String,FieldSymbol>();
 	private Map<String,ClassSymbolTable> kidsClassSymbolTables = new HashMap<String,ClassSymbolTable>();
 	private Map<String,MethodSymbolTable> methodSymbolTables = new HashMap<String,MethodSymbolTable>();

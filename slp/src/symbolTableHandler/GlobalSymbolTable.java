@@ -8,8 +8,8 @@ import slp.ClassDecl;
 import java.util.HashMap;
 
 public class GlobalSymbolTable extends SymbolTable {
-	private Map<String,ClassSymbol> tableEntries = new HashMap<>();
-	private Map<String,ClassSymbolTable> kids = new HashMap<>(); 
+	private Map<String,ClassSymbol> tableEntries = new HashMap<String,ClassSymbol>();
+	private Map<String,ClassSymbolTable> kids = new HashMap<String,ClassSymbolTable>(); 
 
 	public GlobalSymbolTable() {
 		super(null);

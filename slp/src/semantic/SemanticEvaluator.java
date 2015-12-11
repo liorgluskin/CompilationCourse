@@ -52,20 +52,20 @@ public class SemanticEvaluator implements Visitor{
 	 */
 	private void addStaticLibraryClass(Program program){
 		//creating all methods
-		List<FieldOrMethod> methodsLst = new ArrayList<>();
+		List<FieldOrMethod> methodsLst = new ArrayList<FieldOrMethod>();
 		
 		//println added
-		List<Formal> printlnFormals = new ArrayList<>(); 
+		List<Formal> printlnFormals = new ArrayList<Formal>(); 
 		printlnFormals.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"println",printlnFormals,new StmtList()));
 		
 		//print added
-		List<Formal> printFormals = new ArrayList<>(); 
+		List<Formal> printFormals = new ArrayList<Formal>(); 
 		printFormals.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"print",printFormals,new StmtList()));
 		
 		//printi added
-		List<Formal> printiFormals = new ArrayList<>(); 
+		List<Formal> printiFormals = new ArrayList<Formal>(); 
 		printiFormals.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"printi",printiFormals,new StmtList()));
 		
@@ -79,33 +79,33 @@ public class SemanticEvaluator implements Visitor{
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.BOOLEAN),"eof",new ArrayList<Formal>(),new StmtList()));
 		
 		//stoi
-		List<Formal> stoi = new ArrayList<>(); 
+		List<Formal> stoi = new ArrayList<Formal>(); 
 		stoi.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		stoi.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "n"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"stoi",stoi,new StmtList()));
 		
 		//itos
-		List<Formal> itos = new ArrayList<>(); 
+		List<Formal> itos = new ArrayList<Formal>(); 
 		itos.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"itos",itos,new StmtList()));
 		
 		
 		//stoa
-		List<Formal> stoa = new ArrayList<>(); 
+		List<Formal> stoa = new ArrayList<Formal>(); 
 		itos.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		PrimitiveType t = new PrimitiveType(-1, DataTypes.INT);
 		t.incrementDimension();
 		methodsLst.add(new StaticMethod(t,"stoa",stoa,new StmtList()));
 		
 		//atos
-		List<Formal> atos = new ArrayList<>();
+		List<Formal> atos = new ArrayList<Formal>();
 		PrimitiveType t_atos = new PrimitiveType(-1, DataTypes.INT);
 		t.incrementDimension();
 		atos.add(new Formal(t, "a"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"atos",atos,new StmtList()));
 		
 		//random
-		List<Formal> random = new ArrayList<>();
+		List<Formal> random = new ArrayList<Formal>();
 		random.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"random",random,new StmtList()));
 		
@@ -113,7 +113,7 @@ public class SemanticEvaluator implements Visitor{
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"time",new ArrayList<Formal>(),new StmtList()));
 		
 		//exit
-		List<Formal> exit = new ArrayList<>();
+		List<Formal> exit = new ArrayList<Formal>();
 		exit.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"exit",exit,new StmtList()));
 		
