@@ -11,11 +11,15 @@ import types.*;
 public class SemanticEvaluator implements Visitor{
 	private Boolean hasMain = false;
 	private Boolean isLibraryClassVisiting = false;
-	
+	private types.TypeTable programTypeTable;
 	private GlobalSymbolTable globaSymlTable = null;
 	
-	public SemanticEvaluator(){
-		TypeTable.initTypeTable();
+	/**
+	 * Construct new Semantic Evaluator
+	 * initialize the program type table
+	 */
+	public SemanticEvaluator(){	
+		this.programTypeTable = new types.TypeTable();
 	}
 	
 	public GlobalSymbolTable getSymbolTable(Program program){

@@ -19,6 +19,9 @@ public class BlockSymbolTable extends SymbolTable{
 	//Scope info
 	protected List<BlockSymbolTable> scope_stacks = new ArrayList<BlockSymbolTable>();
 	
+	/**
+	 * Constructor 
+	 */
 	public BlockSymbolTable(SymbolTable parent){
 		super(parent);
 	}

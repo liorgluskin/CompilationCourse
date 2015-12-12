@@ -42,6 +42,7 @@ import slp.VarLocation;
 import slp.VirtualCall;
 import slp.Visitor;
 import slp.WhileStmt;
+import symbolTableHandler.ClassSymbolTable;
 import symbolTableHandler.SymbolTable;
 import types.Type;
 import types.TypeArray;
@@ -219,7 +220,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		// get type of return statement, if followed by expression
 		if(stmt.hasExpr()){
-			returnType = (types.Type) stmt.getValue.accept(this, o);
+			returnType = (types.Type) stmt.getExpr().accept(this, o);
 		}
 		// return type is void
 		else{
@@ -228,7 +229,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		// get enclosing method type
 		///////////////////////////////edit to correct
-		enclosingMethodType = ( (BlockSymbolTable)stmt.getEnclosingScope() ).getVarSymbolRec("_ret").getType();
+		enclosingMethodType = ( (symbolTableHandler.BlockSymbolTable) stmt.getScope() ).getVarSymbolRec("_ret").getType();
 
 		// check if subtype of method type
 		if(!returnType.extendsType(enclosingMethodType)){
@@ -360,7 +361,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		if(stmt.hasValue()){
 			// get variable's type
 			/////////////
-			types.Type varType = ((BlockSymbolTable) stmt.getEnclosingScope()).getVarSymbol(stmt.getName()).getType();
+			types.Type varType = ((symbolTableHandler.BlockSymbolTable) stmt.getScope()).getVarSymbol(stmt.getName()).getType();
 			/////////////
 			// get value's type
 			types.Type valueType = (types.Type) stmt.getValue().accept(this, o);
@@ -392,7 +393,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			///////////////////////
 			// get the class symbol table - if class exists 
 			////// handle when class not found in sym table!
-			symbolTableHandler.ClassSymbolTable classSymTable = globaSymlTable.getClassSymbolTableRec(locationType.getName());
+			symbolTableHandler.ClassSymbolTable classSymTable = ((ClassSymbolTable) globaSymlTable).getClassSymbolTable(locationType.getName());
 			// get the class field - if exists
 			////// handle when field not found in class table!
 			symbolTableHandler.FieldSymbol fieldSymbol = classSymTable.getFieldSymbol(var_loc.getName());
@@ -401,7 +402,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// local variable location
 		else{
 			// get the local variable's type from the scope type-table
-			types.Type varType = ((BlockSymbolTable) var_loc.getEnclosingScope()).getVarSymbol(var_loc.getName()).getType();
+			types.Type varType = ((symbolTableHandler.BlockSymbolTable) var_loc.getScope()).getVarSymbol(var_loc.getName()).getType();
 			return varType;
 		}
 	}
@@ -449,10 +450,10 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		// validate static method's enclosing class exists
 		symbolTableHandler.ClassSymbolTable classSymTable = null;
-		classSymTable = globaSymlTable.getClassSymbolTableRec(static_call.getClassName());
+		classSymTable = ((ClassSymbolTable) globaSymlTable).getClassSymbolTable(static_call.getClassName());
 
 		// validate called method is defined in enclosing class, as static method
-		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbolRec(static_call.getMethodName());
+		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(static_call.getMethodName());
 		if (!methodSym.isStatic()){
 			SemanticError error = new SemanticError("Invalid static method call, method is not static",
 					static_call.getLineNum());
@@ -529,7 +530,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				System.exit(1);
 			}
 		}
-		
+
 		// validate method is defined as virtual in enclosing class
 		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbolRec(virtual_call.getMethodName());
 		if (methodSym.isStatic()){
@@ -539,7 +540,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			System.exit(1);
 		}
 
-		
+
 		// validate call parameters are subtypes of the method's formals types
 		// get call parameters
 		callParameters = call.getArguments();
@@ -610,7 +611,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			System.exit(1);
 		}
 		///////////////////////////////////////
-		types.Type thisType = ((BlockSymbolTable) t.getEnclosingScope()).getEnclosingClassSymbolTable().getMySymbol().getType();
+		types.Type thisType = ((BlockSymbolTable) t.getScope()).getEnclosingClassSymbolTable().getMySymbol().getType();
 		return thisType;
 	}
 
@@ -622,7 +623,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * @return the object type
 	 */
 	public Object visit(NewObject new_obj, Object o) {
-		types.Type objectType = types.TypeTable.getClassType(new_obj.getName());
+		types.Type objectType = types.TypeTable.getClassType(new_obj.getClassName());
 		if(objectType == null){
 			SemanticError error = new SemanticError("Invalid new Object(), object type undefined", 
 					new_obj.getLineNum());
@@ -652,7 +653,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			e.printStackTrace();
 		}
 		if(arrType == null){
-			SemanticError error = new SemanticError("Invalid new Array, array type invalid", 
+			SemanticError error = new SemanticError("Invalid new Array, array type undefined or void", 
 					new_arr.getLineNum());
 			System.out.println(error);
 			System.exit(1);
@@ -660,18 +661,12 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		// get type of array length
 		types.Type lenType = (types.Type) new_arr.getArrayLength().accept(this, 0);
-		try {
-			if(!lenType.extendsType(TypeTable.getType("int"))){
-				SemanticError error = new SemanticError("Array definiton invalid, length not of type int",
-						new_arr.getLineNum());
-				System.out.println(error);
-				System.exit(1);
-			}
-		} catch (SemanticError e) {
-			// if Type table does not contain type "int"
-			e.printStackTrace();
+		if(!lenType.extendsType(new types.TypeInt())){
+			SemanticError error = new SemanticError("Array definiton invalid, length not of type int",
+					new_arr.getLineNum());
+			System.out.println(error);
+			System.exit(1);
 		}
-
 		return arrType;
 	}
 

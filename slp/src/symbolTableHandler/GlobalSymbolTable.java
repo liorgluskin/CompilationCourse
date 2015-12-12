@@ -8,39 +8,44 @@ import slp.ClassDecl;
 import java.util.HashMap;
 
 public class GlobalSymbolTable extends SymbolTable {
+	// map contains class-symbol-tables of all the classes of the program 
+	private Map<String,ClassSymbolTable> childrenSymTables = new HashMap<String,ClassSymbolTable>(); 
+	// map contains all of the class symbols in program
 	private Map<String,ClassSymbol> tableEntries = new HashMap<String,ClassSymbol>();
-	private Map<String,ClassSymbolTable> kids = new HashMap<String,ClassSymbolTable>(); 
 
 	public GlobalSymbolTable() {
 		super(null);
 	}
-	
-	public void addClass(ClassDecl c) throws SemanticError{
-		tableEntries.put(c.getName(), new ClassSymbol(c));
+
+
+	public ClassSymbol getClass(String className){
+		return tableEntries.get(className);
 	}
-	
-	public ClassSymbol getClass(String name){
-		return tableEntries.get(name);
-	}
-	
-	
+
 	public ClassSymbolTable getClassSymbolTable(String name){
-		ClassSymbolTable csm = kids.get(name);
-		if (csm != null) return csm;
-		else {
-			for (ClassSymbolTable csm_l: kids.values()){
-				csm = csm_l.getClassSymbolTable(name);
-				if (csm != null) return csm;
+		ClassSymbolTable classSymTable = childrenSymTables.get(name);
+		if(classSymTable != null){
+			return classSymTable;
+		}
+		else{
+			for (ClassSymbolTable childSymTable: childrenSymTables.values()){
+				classSymTable = childSymTable.getClassSymbolTable(name);
+				if (classSymTable != null){
+					return classSymTable;
+				}
 			}
 		}
 		return null;
 	}
-	
-	public void addClassSymbolTable(ClassSymbolTable cst){
-		kids.put(cst.getSymbol().getName(), cst);
+
+	public void addClassSymbolTable(ClassSymbolTable classSymTable){
+		childrenSymTables.put(classSymTable.getSymbol().getName(), classSymTable);
 	}
-	
-	
-	
+
+	public void addClass(ClassDecl classDecl) throws SemanticError{
+		tableEntries.put(classDecl.getName(), new ClassSymbol(classDecl));
+	}
+
+
 
 }

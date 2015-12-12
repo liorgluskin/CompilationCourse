@@ -21,7 +21,6 @@ public class TypeMethod extends Type {
 	
 	public boolean subtypeOf(Type t){
 		if (t == this) return true;
-		//if (t.getName() == this.getName()) return true;
 		else return false;
 	}
 	
@@ -37,6 +36,26 @@ public class TypeMethod extends Type {
 	 */
 	public List<Type> getParamTypes(){
 		return this.paramTypes;
+	}
+	
+	/**
+	 * checks if mt equals this (by name, returned type and all parameter types)
+	 * @param mt
+	 * @return
+	 */
+	public boolean equals(TypeMethod mt){
+		if (this.getName() != mt.getName()) return false;
+		else if (this.returnType != mt.getReturnType()) return false;
+		else{
+			Iterator<Type> myIter = this.paramTypes.iterator();
+			Iterator<Type> otherIter = mt.paramTypes.iterator();
+			
+			while (myIter.hasNext() && otherIter.hasNext()){
+				if (myIter.next() != otherIter.next()) return false; 
+			}
+			if (myIter.hasNext() || otherIter.hasNext()) return false;
+			else return true;
+		}
 	}
 	
 	/**

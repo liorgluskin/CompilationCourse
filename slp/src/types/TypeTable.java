@@ -13,148 +13,143 @@ import slp.ClassDecl;
  *
  */
 public class TypeTable {
-    private static Map<String,TypeClass> programClasses = new HashMap<String,TypeClass>();
-    private static Map<Type,TypeArray> programArrays = new HashMap<Type,TypeArray>();
-    private static Map<String,TypeMethod> programMethods = new HashMap<String,TypeMethod>();
-    private static Map<String,Type> programPrimitives = new HashMap<String,Type>();
-    protected static int idCounter = 0;
-    
-    public static Map<String, Type> getProgramPrimitives() {
-		return programPrimitives;
+
+	// Types of IC literals
+	private TypeInt intType;
+	private TypeString stringType;
+	private TypeBoolean booleanType;
+	private TypeVoid voidType;
+	private TypeNull nullType;
+
+	// hash map that contains for each class in program, its type and type-name
+	private Map<String,TypeClass> programClassTypes;
+	// hash map that contains for each method in program, its type and type-name
+	private Map<String,TypeMethod> programMethodTypes;
+	// hash map that contains for each array in program, its element-types and type-name
+	private Map<Type,TypeArray> programArrayTypes;
+
+
+	/**
+	 * Type Table constructor
+	 * initialize the literal types
+	 * initialize the type hash maps
+	 */
+	public TypeTable(){
+		this.intType = new TypeInt();
+		this.stringType = new TypeString();
+		this.booleanType = new TypeBoolean();
+		this.voidType = new TypeVoid();
+		this.nullType = new TypeNull();
+		this.programClassTypes = new HashMap<String,TypeClass>();
+		this.programMethodTypes = new HashMap<String,TypeMethod>();
+		this.programArrayTypes = new HashMap<Type,TypeArray>();
 	}
 
-    /**
-     * initialize the type table
-     */
-    public static void initTypeTable(){
-    	programPrimitives.put("int", new TypeInt());
-    	programPrimitives.put("boolean", new TypeBoolean());
-    	programPrimitives.put("null", new TypeNull());
-    	programPrimitives.put("string", new TypeString());
-    	programPrimitives.put("void", new TypeVoid());
-    }
-    
 
-    /**
-     *  Returns unique array type object
-     * 
-     */
-    public static TypeArray typeArray(Type elemType) {
-       if (programArrays.containsKey(elemType)) {
-          // array type object already created – return it
-          return programArrays.get(elemType);
-       }
-       else {
-          // object doesn't exist – create and return it
-          TypeArray arrt = new TypeArray(elemType);
-          programArrays.put(elemType,arrt);
-          return arrt;
-       }
-    }
-    
-    /**
-     * Adds a new TypeClass entry to TypeTable. If the class is already defined
-     * or extends a class that was not previously defined, throws SemanticError. 
-     * @param c
-     * @throws SemanticError
-     */
-    public static void addClass(ClassDecl c) throws SemanticError{
-    	if (programClasses.containsKey(c.getName())){ 
-    		throw new SemanticError("class already defined: "+c.getName(), c.getLineNum());
-    	}
-    	if (c.getSuperClassName() != null) {
-    		if (!programClasses.containsKey(c.getSuperClassName()))
-    			throw new SemanticError("super-class is undefined: " +c.getSuperClassName(),c.getLineNum());
-    	}
-    	
-    	TypeClass ct = new TypeClass(c);
-    	programClasses.put(c.getName(),ct);
-    }
-    
-    /** 
-     * Returns unique class type object
-     */
-    public static TypeClass getClass(String name) throws SemanticError{
-    	TypeClass ct = programClasses.get(name);
-    	if (ct == null) throw new SemanticError("class is undefined: "+ name);
-    	else return ct;
-    }
-    
-    public static TypeMethod typeMethod(Type returnType, List<Type> paramTypes){
-    	TypeMethod mt = new TypeMethod(returnType,paramTypes);
-    	String key = mt.toString();
-    	
-    	TypeMethod mt2 = programMethods.get(key);
-    	if (mt2 == null) {
-    		programMethods.put(key, mt);
-    		return mt;
-    	} else return mt2;
-    	
-    }
-    
-    /**
-     * A getter that gets a String and returns the type
-     */
-    public static Type getType(String typeName) throws SemanticError{
-    	Type t;
-    	
-    	// case primitive type
-    	t = programPrimitives.get(typeName);
-    	if (t != null) return t;
-    	// case array type
-    	if (typeName.endsWith("[]")) return typeArray(getType(typeName.substring(0, typeName.length()-2)));
-    	// case class type
-    	else return getClass(typeName);
-    }
-    
-    /**
-     * returns string representation for the TypeTable fitting the "-dump-symtab" IC.Compiler flag
-     * @return
-     */
-    public static String staticToString(){
-    	String str = "";
-    	
-    	// construct string representation for primitive types
-    	Iterator<Type> programPrimitivesIter = programPrimitives.values().iterator();
-    	String primitiveTypesStr = "";
-    	while (programPrimitivesIter.hasNext()){
-    		Type t = programPrimitivesIter.next();
-    		primitiveTypesStr += "\t"+t.getTypeID()+": Primitive type: "+t.getName()+"\n";
-    	}
-    	
-    	// construct string representation for class types
-    	Iterator<TypeClass> programClassesIter = programClasses.values().iterator();
-    	String TypeClasssStr = "";
-    	while (programClassesIter.hasNext()){
-    		TypeClass ct = programClassesIter.next();
-    		TypeClasssStr += "\t"+ct.getTypeID()+": Class: "+ct.toString()+"\n";
-    	}
-    	
-    	// construct string representation for array types
-    	Iterator<TypeArray> programArraysIter = programArrays.values().iterator();
-    	String TypeArraysStr = "";
-    	while (programArraysIter.hasNext()){
-    		TypeArray at = programArraysIter.next();
-    		TypeArraysStr += "\t"+at.getTypeID()+": Array type: "+at.toString()+"\n";
-    	}
-    	
-    	// construct string representation for method types
-    	String TypeMethodsStr = "";
-    	for (TypeMethod mt: programMethods.values()){
-    		TypeMethodsStr += "\t"+mt.getTypeID()+": Method type: "+mt.toString()+"\n";
-    	}
-    	
-    	str += primitiveTypesStr+TypeClasssStr+TypeArraysStr+TypeMethodsStr;
-    	return str;
-    }
-    
-    /**
-     * Checks whether the name is of a primitive type (except for null or string).
-     * @param name - type name.
-     * @return true if type is primitive, false otherwise.
-     */
-    public static boolean isPrimitive(String name){
-    	return ((name == "int") || (name == "boolean") || (name == "void"));
-    }
-    
+
+	/**
+	 * Gets string representation of IC type 
+	 * @return the Type object
+	 * @throws SemanticError in case type is undefined
+	 */
+	public Type getType(String typeStr) throws SemanticError{
+
+		// check if the type is a literal
+		if(typeStr == slp.DataTypes.INT.getDescription()){
+			return intType;
+		}else if(typeStr == slp.DataTypes.STRING.getDescription()){
+			return stringType;
+		}else if(typeStr == slp.DataTypes.BOOLEAN.getDescription()){
+			return booleanType;
+		}else if(typeStr == slp.DataTypes.VOID.getDescription()){
+			return voidType;
+		}else if(typeStr == "null"){
+			return nullType;
+		}
+
+		// check if type-string belongs to an array type
+		if(typeStr.endsWith("[]")){
+			// make sure array's elements type is valid
+			Type elementsType = getArrayElemType(typeStr.substring(0, typeStr.length()-2));
+			// add array-type to types map
+			TypeArray arrType = new TypeArray(elementsType);
+			addArrayType(arrType);
+			return arrType; 
+		}
+
+		// The type is a user-defined type
+		return getClassType(typeStr);
+	}
+
+
+	/**
+	 * Gets the type of the array elements
+	 * @return the array type of these elements
+	 * @throws semantic error if element type does not exist
+	 * */
+	public Type getArrayype(Type arrayElementType) {
+		Type elementType;
+
+		// Check if array element-type is literal:
+
+		// check if element type was defined as int
+		if(elemTypeStr == slp.DataTypes.INT.getDescription()){
+			return intType;
+		}
+		// check if element type was defined as string
+		if(elemTypeStr == slp.DataTypes.STRING.getDescription()){
+			return stringType;
+		}
+		// check if element type was defined as boolean
+		if(elemTypeStr == slp.DataTypes.BOOLEAN.getDescription()){
+			return booleanType;
+		}
+		// check if element type was defined as void
+		if(elemTypeStr == slp.DataTypes.VOID.getDescription()){
+			return null; // no arrays of type 'void' allowed
+		}
+
+		// check if element type was defined as array-type
+		elementType = this.programArrayTypes.get(elemTypeStr);
+		if(elementType != null){
+			return elementType;
+		}
+
+		// check if element type was defined as class-type
+		elementType = this.programClassTypes.get(elemTypeStr);
+		if(elementType != null){
+			return elementType;
+		}
+
+		// array's element type is undefined
+		return null;
+	}
+
+	
+	public void addArrayType(TypeArray arrType) {
+		// check if array type already exists
+		
+		// if not - add new array type
+	}
+
+	/**
+	 * Gets a string representation of a class type
+	 * @return type of the class
+	 * @throws semantic error if class does not exist
+	 * */
+	public Type getClassType(String typeStr) throws SemanticError{
+		TypeClass classType = this.programClassTypes.get(typeStr);
+
+		// class type was not defined
+		if(classType == null){
+			throw new SemanticError("Undefined class, "+typeStr);
+		}
+		return classType;
+	}
+
+	public void addClassType(ClassDecl classDecl) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

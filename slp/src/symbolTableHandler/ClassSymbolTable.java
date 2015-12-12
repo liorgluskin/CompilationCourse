@@ -10,11 +10,11 @@ import types.*;
 public class ClassSymbolTable extends SymbolTable{
 
 	
-	private Map<String,MethodSymbol> methodsSymbols = new HashMap<String,MethodSymbol>();
 	private Map<String,FieldSymbol> fieldsSymbols = new HashMap<String,FieldSymbol>();
-	private Map<String,ClassSymbolTable> kidsClassSymbolTables = new HashMap<String,ClassSymbolTable>();
+	private Map<String,MethodSymbol> methodsSymbols = new HashMap<String,MethodSymbol>();
 	private Map<String,MethodSymbolTable> methodSymbolTables = new HashMap<String,MethodSymbolTable>();
-	
+	private Map<String,ClassSymbolTable> kidsClassSymbolTables = new HashMap<String,ClassSymbolTable>();
+
 	private ClassSymbol symbol;
 	private boolean is_extends;
 	
@@ -30,6 +30,20 @@ public class ClassSymbolTable extends SymbolTable{
 		is_extends = false;
 	}
 	
+	
+	public FieldSymbol getFieldSymbol(String name){
+		FieldSymbol fieldSym = fieldsSymbols.get(name);
+		if(fieldSym == null){
+			if(is_extends){
+				fieldSym = ((ClassSymbolTable)parent).getFieldSymbol(name);
+			}
+			else{
+				return null;
+			}
+		}
+		return fieldSym;
+	}
+	
 	public MethodSymbol getMethodSymbol(String name){
 		MethodSymbol ms = methodsSymbols.get(name);
 		if (ms == null){
@@ -39,65 +53,46 @@ public class ClassSymbolTable extends SymbolTable{
 		}
 		return ms;		
 	}
-	
 
-	
-	public void addMethodSymbol(MethodSymbol ms){
-		this.methodsSymbols.put(ms.getName(), ms);
-	}
-	
-	public FieldSymbol getFieldSymbol(String name){
-		FieldSymbol fs = fieldsSymbols.get(name);
-		if (fs == null) {
-			if (is_extends){
-				fs = ((ClassSymbolTable) parent).getFieldSymbol(name);
-			} else {
-				return null;
-			}
-		}
-		return fs;
-	}
-	
-	public void addFieldSymbol(String name, String type_name) throws SemanticError{
-		this.fieldsSymbols.put(name,new FieldSymbol(name, type_name));
-	}
-	
-	/**
-	 * a getter for the current class symbol table's symbol in the global symbol table
-	 * @return
-	 */
+	/**Get the symbol of the current class*/
 	public ClassSymbol getSymbol(){
 		return this.symbol;
 	}
 	
-
-	public void addMethodSymbolTable(MethodSymbolTable mst){
-		methodSymbolTables.put(mst.getName(), mst);
+	public MethodSymbolTable getMethodSymbolTable(String methodName){
+		return methodSymbolTables.get(methodName);
 	}
 	
-
-	public MethodSymbolTable getMethodSymbolTable(String name){
-		return methodSymbolTables.get(name);
-	}
-	
-
-	public void addClassSymbolTable(ClassSymbolTable cst){
-		kidsClassSymbolTables.put(cst.getSymbol().getName(), cst);
-	}
-
-	
-	public ClassSymbolTable getClassSymbolTable(String name){
-		ClassSymbolTable csm = kidsClassSymbolTables.get(name);
-		if (csm != null) return csm;
+	public ClassSymbolTable getClassSymbolTable(String className){
+		ClassSymbolTable classSymTable = kidsClassSymbolTables.get(className);
+		if (classSymTable != null){
+			return classSymTable;
+		}
 		else {
 			for (ClassSymbolTable csm_l: kidsClassSymbolTables.values()){
-				csm = csm_l.getClassSymbolTable(name);
-				if (csm != null) return csm;
+				classSymTable = csm_l.getClassSymbolTable(className);
+				if (classSymTable != null){
+					return classSymTable;
+				}
 			}
 		}
 		return null;
 	}
 	
+	public void addFieldSymbol(String fieldName, String fieldTypeName) throws SemanticError{
+		this.fieldsSymbols.put(fieldName,new FieldSymbol(fieldName, fieldTypeName));
+	}
 	
+	public void addMethodSymbol(MethodSymbol methodSym){
+		this.methodsSymbols.put(methodSym.getName(), methodSym);
+	}
+	
+	public void addMethodSymbolTable(MethodSymbolTable methodSymTable){
+		methodSymbolTables.put(methodSymTable.getName(), methodSymTable);
+	}
+	
+	public void addClassSymbolTable(ClassSymbolTable classSymTable){
+		kidsClassSymbolTables.put(classSymTable.getSymbol().getName(), classSymTable);
+	}
 
 }

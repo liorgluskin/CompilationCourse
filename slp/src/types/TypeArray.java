@@ -8,8 +8,7 @@ public class TypeArray extends Type{
 		this.elemType = elemType;
 	}
 	
-	/** Returns the type of the array's elements
-	 * **/
+
 	public Type getElemType(){
 		return this.elemType;
 	}

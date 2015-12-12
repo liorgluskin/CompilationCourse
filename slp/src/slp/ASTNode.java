@@ -45,6 +45,10 @@ public abstract class ASTNode {
 		this.scope = scope;
 	}
 	
+	/**
+	 * Returns the scope of the current AST-Node
+	 * Used in semantic and type evaluations
+	 * */
 	public SymbolTable getScope(){
 		return scope;
 	}
