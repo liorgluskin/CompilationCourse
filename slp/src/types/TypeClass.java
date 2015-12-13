@@ -5,21 +5,20 @@ import slp.ClassDecl;
 
 public class TypeClass extends Type {
 	private String superClass;
-	private ClassDecl classNode;
+	private ClassDecl classDecl;
 
-	public TypeClass(ClassDecl classNode){
-		super(classNode.getName());
-		this.superClass = classNode.getSuperClassName();
-		this.classNode = classNode;
+	public TypeClass(ClassDecl classDecl){
+		super(classDecl.getName());
+		this.superClass = classDecl.getSuperClassName();
+		this.classDecl = classDecl;
 	}
 	
 	
-	public ClassDecl getClassNode(){
-		return classNode;
+	public ClassDecl getClassDecl(){
+		return classDecl;
 	}
 	
 
-	@Override
 	public boolean extendsType(Type type){
 		if(!(type instanceof TypeClass)){
 			return false;
@@ -32,8 +31,8 @@ public class TypeClass extends Type {
 		}
 
 		try{
-			return TypeTable.getClass(superClass).extendsType(type);
-		}catch(SemanticError err){
+			return TypeTable.getTypeTable().getClassType(superClass).extendsType(type);
+		}catch(SemanticError error){
 			return false;
 		}
 	}

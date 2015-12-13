@@ -78,4 +78,14 @@ public class BlockSymbolTable extends SymbolTable{
 	public List<BlockSymbolTable> getScopeStacks(){
 		return scope_stacks;	
 	}
+	
+	public ClassSymbolTable getEnclosingClassSymbolTable(){
+		if( parent instanceof ClassSymbolTable)
+			//closest parent is the enclosing class
+			return (ClassSymbolTable) parent;
+		else
+			//if parent is not ClassSymbolTable then it has to be blockSymbolTable
+			return ((BlockSymbolTable)parent).getEnclosingClassSymbolTable();
+		
+	}
 }

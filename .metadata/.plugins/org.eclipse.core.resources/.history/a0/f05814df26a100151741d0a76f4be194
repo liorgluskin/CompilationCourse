@@ -1,0 +1,18 @@
+
+class List {
+	int data;
+	List next;
+
+	static void main(string[] args) {
+	 }
+}
+
+class Node {
+int data;
+Edge[] edges;
+}
+
+class Edge {
+int label;
+Node dest;
+}

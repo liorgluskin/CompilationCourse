@@ -1,0 +1,31 @@
+package types;
+
+/**
+ * Abstract Type class for all IC program types
+ */
+public abstract class Type {
+	private String typeName;
+	
+	public Type(String typeName){
+		this.typeName = typeName;
+	}
+	
+
+	public String getName(){
+		return this.typeName;
+	}
+	
+	public String toString(){
+		return this.typeName;
+	}
+	
+	/**
+	 * Returns if current type is equal to, or extends the Type t
+	 */
+	public boolean extendsType(Type t) {
+		if(t == this){
+			return true;
+		}
+		return false;
+	}
+}

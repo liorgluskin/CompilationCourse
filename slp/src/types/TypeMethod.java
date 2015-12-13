@@ -3,75 +3,64 @@ package types;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Method Type
- * Holds the input types and output type
- */
+
 public class TypeMethod extends Type {	
 
-	private List<Type> paramTypes;
+	private List<Type> parametersTypes;
 	private Type returnType;
 	
-	
-	public TypeMethod( Type returnType, List<Type> paramTypes){
+	public TypeMethod(Type returnType, List<Type> parametersTypes){
 		super(null);
 		this.returnType = returnType;
-		this.paramTypes = paramTypes;
+		this.parametersTypes = parametersTypes;
 	}
 	
-	public boolean subtypeOf(Type t){
-		if (t == this) return true;
-		else return false;
-	}
-	
-	/**
-	 * getter for the output type
-	 */
+
 	public Type getReturnType(){
 		return this.returnType;
 	}
 	
-	/**
-	 * getter for the input types list
-	 */
+
 	public List<Type> getParamTypes(){
-		return this.paramTypes;
+		return this.parametersTypes;
 	}
 	
-	/**
-	 * checks if mt equals this (by name, returned type and all parameter types)
-	 * @param mt
-	 * @return
-	 */
-	public boolean equals(TypeMethod mt){
-		if (this.getName() != mt.getName()) return false;
-		else if (this.returnType != mt.getReturnType()) return false;
+	public boolean equals(TypeMethod methodType){
+		if (this.getName() != methodType.getName()) return false;
+		else if (this.returnType != methodType.getReturnType()) return false;
 		else{
-			Iterator<Type> myIter = this.paramTypes.iterator();
-			Iterator<Type> otherIter = mt.paramTypes.iterator();
+			Iterator<Type> paramIterator = this.parametersTypes.iterator();
+			Iterator<Type> secondParamIter = methodType.parametersTypes.iterator();
 			
-			while (myIter.hasNext() && otherIter.hasNext()){
-				if (myIter.next() != otherIter.next()) return false; 
+			while (paramIterator.hasNext() && secondParamIter.hasNext()){
+				if (paramIterator.next() != secondParamIter.next()) return false; 
 			}
-			if (myIter.hasNext() || otherIter.hasNext()) return false;
+			if (paramIterator.hasNext() || secondParamIter.hasNext()) return false;
 			else return true;
 		}
 	}
 	
-	/**
-	 * returns the string representation for method type
-	 */
+	public boolean extendsType(Type type){
+		if(type == this){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	
 	public String toString(){
-		String str = "{ name: "+ this.getName();
-
-		// parameter types
-		Iterator<Type> paramIter = paramTypes.iterator();
-		if (paramIter.hasNext()) str += paramIter.next().getName(); // put first parameter if exists
-		while (paramIter.hasNext()) str += ", "+paramIter.next().getName(); // put others if exist
+		String methodStringRep = "{ name: "+ this.getName();
+		Iterator<Type> paramIter = parametersTypes.iterator();
 		
-		// return type
-		str += " -> "+this.returnType.getName()+"}";
+		if (paramIter.hasNext()){
+			methodStringRep += paramIter.next().getName();
+		}
+		while (paramIter.hasNext()){
+			methodStringRep += ", "+paramIter.next().getName();
+		}
 		
-		return str;
+		methodStringRep += " -> "+this.returnType.getName()+"}";
+		return methodStringRep;
 	}
 }

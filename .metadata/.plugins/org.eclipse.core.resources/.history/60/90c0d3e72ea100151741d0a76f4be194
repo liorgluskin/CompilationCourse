@@ -1,0 +1,16 @@
+
+class List{
+
+	int x;
+	void run(List n){ 
+	if(1==1){
+		int x = 99
+	}
+	x = 0;
+	 }
+
+	static void main(string[] args) {
+	int y = x;
+		 }
+}
+

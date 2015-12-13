@@ -1,0 +1,24 @@
+
+class List{
+
+	int x;
+
+	  void run(){
+x = 5;
+while(true){
+continue;
+}
+
+	 }
+	 
+	
+
+	static void main(string[] args) {
+			new Node().x = 5;
+		 }
+}
+
+class Node extends List{
+
+}
+

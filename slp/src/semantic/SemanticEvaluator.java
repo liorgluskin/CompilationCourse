@@ -19,7 +19,7 @@ public class SemanticEvaluator implements Visitor{
 	 * initialize the program type table
 	 */
 	public SemanticEvaluator(){	
-		this.programTypeTable = new types.TypeTable();
+		this.programTypeTable = TypeTable.getTypeTable();
 	}
 	
 	public GlobalSymbolTable getSymbolTable(Program program){
@@ -46,6 +46,9 @@ public class SemanticEvaluator implements Visitor{
 		//parameter is not of type string[]
 		slp.Type param_type = method.getFormals().get(0).getType();
 		if (param_type.getFullName().compareTo("string[]") != 0) return false;
+		
+		//paramer name has to be 'args'
+		if(!method.getFormals().get(0).getName().equals("args")) return false;
 		
 		return true;
 	}
@@ -104,8 +107,8 @@ public class SemanticEvaluator implements Visitor{
 		//atos
 		List<Formal> atos = new ArrayList<Formal>();
 		PrimitiveType t_atos = new PrimitiveType(-1, DataTypes.INT);
-		t.incrementDimension();
-		atos.add(new Formal(t, "a"));
+		t_atos.incrementDimension();
+		atos.add(new Formal(t_atos, "a"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"atos",atos,new StmtList()));
 		
 		//random
@@ -123,6 +126,7 @@ public class SemanticEvaluator implements Visitor{
 		
 		//declaring class
 		ClassDecl libraryClass = new ClassDecl(-2, "Library",methodsLst);
+		libraryClass.setScope(globaSymlTable);
 		List<ClassDecl> classes = program.getClasses();
 		Collections.reverse(classes);
 		classes.add(libraryClass);
@@ -132,17 +136,22 @@ public class SemanticEvaluator implements Visitor{
 	public void visit(Program program){
 		globaSymlTable = new GlobalSymbolTable();
 		addStaticLibraryClass(program);
-		//Add classes to global and updates the type table
+		int i = 0; //to get the first class which is Library
 		for (ClassDecl c: program.getClasses()){
+			
+			if(c.getName().equals("Library") && i != 0){
+				System.out.println(new SemanticError("Invalid class declaration, can't declare 'Library' class", c.getLineNum()));
+				System.exit(-1);
+			}
+			
 			try{
 				globaSymlTable.addClass(c);
 			} 
 			catch (SemanticError se){
-				//Class is previously defined or super class is not defined
-				se.setLineNum(c.getLineNum());
-				System.err.println(se);
+				System.out.println(new SemanticError(se.getMessage(),c.getLineNum()));
 				System.exit(-1);
 			}
+			i++;
 		}
 		
 		for (ClassDecl c: program.getClasses()){
@@ -150,9 +159,8 @@ public class SemanticEvaluator implements Visitor{
 			c.accept(this);
 		}
 
-		//Check if has main method
 		if (!hasMain){
-			System.err.println(new SemanticError("Program has no main method",0));
+			System.out.println("Symantic error: Program has no main method");
 			System.exit(-1);
 		}
 	}
@@ -162,10 +170,23 @@ public class SemanticEvaluator implements Visitor{
 			isLibraryClassVisiting = true;
 		}
 		
-		//Create symbol table for class 
+
 		ClassSymbolTable cst;		
 		if (class_decl.getSuperClassName() != null) {
+			//there are superClass
+			if(class_decl.getSuperClassName().equals("Library")){
+				System.out.println(new SemanticError("Invalid class declaretion, can't extend 'Library' class", class_decl.getLineNum()));
+				System.exit(-1);
+			}
+
+			
 			ClassSymbolTable scst = globaSymlTable.getClassSymbolTable(class_decl.getSuperClassName());
+			if(scst == null){
+				//double check should be here
+				System.out.println(new SemanticError("Invalid class declaration, superclass was not previously defined '"+
+			class_decl.getSuperClassName()+"'",
+						class_decl.getLineNum()));
+			}
 			cst = new ClassSymbolTable( scst, globaSymlTable.getClass(class_decl.getName()) );
 			scst.addClassSymbolTable(cst);
 			
@@ -183,13 +204,13 @@ public class SemanticEvaluator implements Visitor{
 				
 				//check if type is already defined
 				if(cst.getFieldSymbol(f.getName()) != null){
-					System.err.println(new SemanticError(f.getName() +" field is allready defined.",f.getLineNum()));
+					System.out.println(new SemanticError(f.getName() +" field is already defined.",f.getLineNum()));
 					System.exit(-1);
 				}
 				
 				//check if there a method with the same name
 				if(cst.getMethodSymbol(f.getName()) != null){
-					System.err.println(new SemanticError(f.getName() +" field is allready defined as method", f.getLineNum()));
+					System.out.println(new SemanticError(f.getName() +" field is already defined as method", f.getLineNum()));
 					System.exit(-1);
 				}
 				
@@ -198,7 +219,7 @@ public class SemanticEvaluator implements Visitor{
 				}
 				catch(SemanticError ex){
 					//Class type Error -> if Field class type is not defined
-					System.err.println(new SemanticError(ex.getMessage(),f.getLineNum()));
+					System.out.println(new SemanticError(ex.getMessage(),f.getLineNum()));
 					System.exit(-1);
 				}									
 			} 
@@ -209,36 +230,49 @@ public class SemanticEvaluator implements Visitor{
 				
 				//check if there isn't field with the same name declared before.
 				if(cst.getFieldSymbol(m.getName()) != null){
-					System.err.println(new SemanticError(m.getName() +" method is allready defined as field.",m.getLineNum()));
+					System.out.println(new SemanticError(m.getName() +" method is already defined as field.",m.getLineNum()));
+					System.exit(-1);
+				}
+				if(cst.getCurrentMethodSymbol(m.getName()) != null){
+					System.out.println(new SemanticError(m.getName() +" method is already defined in class.",m.getLineNum()));
 					System.exit(-1);
 				}
 				
 				//check if method is main
 				if(isMain(m)){
-					if(hasMain)
-						System.out.println(new SemanticError(m.getName() + "main is allready defined.", m.getLineNum()));
+					if(hasMain){
+						System.out.println(new SemanticError(m.getName() + " is already defined.", m.getLineNum()));
+						System.exit(-1);						
+					}
 					else
 						hasMain = true;
+				} else if(m.getName().equals("main") ){
+					System.out.println(new SemanticError(m.getName() + " wrong definition of main method, must be: 'static void main(string[] args).", m.getLineNum()));
+					System.exit(-1);
 				}
 				
+				
+				//check override or overload
 				MethodSymbol upperMethodSymbol = cst.getMethodSymbol(m.getName());
 				MethodSymbol currentMethodSymbol = null;
 				try{
 					currentMethodSymbol = new MethodSymbol(m);
 				}
 				catch(SemanticError se){
-					//this checked within typeChecker
+					//this checked within type evaluator
 					//should never get here at this point
-					System.err.println(new SemanticError(m.getName() + "method type is undefined",m.getLineNum()));
+					System.out.println(new SemanticError("'"+m.getName() + "' method type is undefined",m.getLineNum()));
 					System.exit(-1);
 				}
+				
+				
 				
 				//a method with the same name exists
 				//now we want to check if it is an override 
 				if(upperMethodSymbol != null){
 					if(!currentMethodSymbol.getType().extendsType(upperMethodSymbol.getType())){
 						//method is not override- its overload and its not legal
-						System.err.println(new SemanticError(m.getName() + "method is allready defined.",m.getLineNum()));
+						System.out.println(new SemanticError(m.getName() + " method is already defined.",m.getLineNum()));
 						System.exit(-1);
 					}
 				}
@@ -261,7 +295,9 @@ public class SemanticEvaluator implements Visitor{
 	 */
 	private void methodVisit(Method method){
 		//create symbol table for method scope
+		
 		MethodSymbolTable method_scope = new MethodSymbolTable(method.getName(),(ClassSymbolTable)method.getScope());
+		((ClassSymbolTable)method.getScope()).addMethodSymbolTable(method_scope);
 
 		method.getType().setScope(method_scope);
 		if(!isLibraryClassVisiting){
@@ -271,7 +307,7 @@ public class SemanticEvaluator implements Visitor{
 				try{
 					method_scope.getVarParamSymbol(f.getName());
 					SemanticError error = new SemanticError("parameter is previously defined in method " + method.getName(),method.getLineNum());
-					System.err.println(error);
+					System.out.println(error);
 					System.exit(-1);
 				} catch (SemanticError not_defined){
 					try{
@@ -280,7 +316,7 @@ public class SemanticEvaluator implements Visitor{
 					catch (SemanticError e){
 						//error adding the parameter symbol
 						e.setLineNum(method.getLineNum());
-						System.err.println(e);
+						System.out.println(e);
 						System.exit(-1);
 					}
 				}
@@ -298,7 +334,24 @@ public class SemanticEvaluator implements Visitor{
 			//error setting the return variable
 			catch (SemanticError error){
 				error.setLineNum(method.getLineNum());
-				System.err.println(error);
+				System.out.println(error);
+				System.exit(-1);
+			}
+		}
+		
+		// if method is not void make sure it has a return statement
+		if(!method.getType().getFullName().equals("void") && !isLibraryClassVisiting){
+			boolean hasReturnStatement = false;
+			for(Stmt s : method.getStatementList().getStatements()){
+				if(s instanceof ReturnStmt){
+					hasReturnStatement = true;
+				}
+			}
+			// check if seen return stmt
+			if(!hasReturnStatement){
+				SemanticError error = new SemanticError("Invalid method, method with type '"
+						+method.getType().getFullName()+"' must have 'return' statement", method.getLineNum());
+				System.out.println(error);
 				System.exit(-1);
 			}
 		}
@@ -473,7 +526,7 @@ public class SemanticEvaluator implements Visitor{
 		try{
 			block_st.getVarSymbolLocal(stmt.getName());
 			SemanticError error = new SemanticError("variable '"+ stmt.getName() +"' is previously defined",stmt.getLineNum());
-			System.err.println(error);
+			System.out.println(error);
 			System.exit(-1);
 		} 
 		catch (SemanticError e1){
@@ -482,7 +535,7 @@ public class SemanticEvaluator implements Visitor{
 			} 
 			catch (SemanticError e2){
 				e2.setLineNum(stmt.getLineNum());
-				System.err.println(e2);
+				System.out.println(e2);
 				System.exit(-1);
 			}
 		}
@@ -510,7 +563,7 @@ public class SemanticEvaluator implements Visitor{
 			} 
 			catch (SemanticError e){
 				e.setLineNum(var_loc.getLineNum());
-				System.err.println(e);
+				System.out.println(e);
 				System.exit(-1);
 			}
 	}
@@ -558,7 +611,12 @@ public class SemanticEvaluator implements Visitor{
 	/**
 	 * New class visitor - does nothing.
 	 */
-	public void visit(NewObject new_obj) {}
+	public void visit(NewObject new_obj) {		
+		if(new_obj.getClassName() == "Library"){
+			System.out.println(new SemanticError("Can't create an instance of 'Library' class",new_obj.getLineNum()));
+			System.exit(-1);
+		}
+	}
 
 
 	/**

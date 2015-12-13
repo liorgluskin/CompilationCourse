@@ -1,0 +1,19 @@
+
+class List{
+
+	int x;
+	void run(List n){
+	call();
+	while(1==1){
+		this.x = 99;
+	}
+	Node n = new Node();
+	x = 0;
+	 }
+	 //void call(){}
+
+	static void main(string[] args) {
+	//int y = x;
+		 }
+}
+

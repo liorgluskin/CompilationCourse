@@ -1,16 +1,16 @@
 package types;
 
 public class TypeArray extends Type{
-	private Type elemType;
+	private Type elementType;
 	
-	public TypeArray(Type elemtype){
-		super(elemtype.getName() +"[]");
-		this.elemType = elemType;
+	public TypeArray(Type elementType){
+		super(elementType.getName() +"[]");
+		this.elementType = elementType;
 	}
 	
 
-	public Type getElemType(){
-		return this.elemType;
+	public Type getElementType(){
+		return this.elementType;
 	}
 
 

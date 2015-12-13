@@ -1,0 +1,12 @@
+
+class List{
+
+	int x;
+	void run(List n){ 
+	 }
+
+	static void main(string[] args) {
+	int y = x;
+		 }
+}
+

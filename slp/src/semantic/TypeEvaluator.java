@@ -1,5 +1,6 @@
 package semantic;
 
+import java.util.List;
 import java.util.function.BinaryOperator;
 
 import slp.ArrLocation;
@@ -42,10 +43,15 @@ import slp.VarLocation;
 import slp.VirtualCall;
 import slp.Visitor;
 import slp.WhileStmt;
+import symbolTableHandler.BlockSymbolTable;
 import symbolTableHandler.ClassSymbolTable;
+import symbolTableHandler.GlobalSymbolTable;
 import symbolTableHandler.SymbolTable;
 import types.Type;
 import types.TypeArray;
+import types.TypeBoolean;
+import types.TypeInt;
+import types.TypeString;
 import types.TypeTable;
 
 /**
@@ -56,15 +62,15 @@ import types.TypeTable;
  * */
 public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
-	private SymbolTable globaSymlTable;
-	private boolean inLoopScope = false;
+	private GlobalSymbolTable globaSymlTable;
+	int inLoopScope = 0;
 	private boolean inStaticMethod = false;
 
 
 	/** Constructor for evaluator of all type checks in program
 	 * @param symbol-table of the program global scope
 	 */
-	public TypeEvaluator(SymbolTable globaSymlTable){
+	public TypeEvaluator(GlobalSymbolTable globaSymlTable){
 		this.globaSymlTable = globaSymlTable;
 	}
 
@@ -102,6 +108,8 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		for(Stmt s : method.getStatementList().getStatements()){
 			s.accept(this, o);
 		}
+		inStaticMethod = false;
+
 		return true;
 	}
 
@@ -114,6 +122,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	/** Type Evaluator for Static Methods
 	 */
 	public Object visit(StaticMethod method, Object o) {
+		inStaticMethod = true;
 		return visitMethod(method, o);	
 	}
 
@@ -205,7 +214,10 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * @return call return type
 	 */
 	public Object visit(CallStmt stmt, Object o) {
-		return stmt.accept(this, o);
+		if(stmt.getCall().accept(this, o) == null){
+			return null;
+		}
+		return true;
 	}
 
 
@@ -224,16 +236,23 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		}
 		// return type is void
 		else{
-			returnType = types.TypeTable.getType("void");
+
+			returnType = new types.TypeVoid();
 		}
 
 		// get enclosing method type
-		///////////////////////////////edit to correct
-		enclosingMethodType = ( (symbolTableHandler.BlockSymbolTable) stmt.getScope() ).getVarSymbolRec("_ret").getType();
+
+		try {
+			enclosingMethodType = ( (symbolTableHandler.BlockSymbolTable) stmt.getScope() ).getVarSymbol("returned").getType();
+		} catch (SemanticError e) {
+			// got here if 'method symbol table' doe not contain 'returned'
+			e.printStackTrace();
+		}
+
 
 		// check if subtype of method type
 		if(!returnType.extendsType(enclosingMethodType)){
-			SemanticError error = new SemanticError("Invalid return statement, incossistent with enclosing method type", 
+			SemanticError error = new SemanticError("Invalid return statement, inconsistent with enclosing method type", 
 					stmt.getLineNum());
 			System.out.println(error);
 			System.exit(1);
@@ -296,9 +315,9 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		}
 
 		// validate while statement body
-		inLoopScope = true;
+		inLoopScope++;
 		stmt.getBody().accept(this, o);
-		inLoopScope = false; //finished validating while
+		inLoopScope--; //finished validating while
 
 		return true;
 	}
@@ -310,7 +329,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * @return true if successful
 	 */
 	public Object visit(BreakStmt stmt, Object o) {
-		if(!inLoopScope){
+		if(inLoopScope<=0){
 			SemanticError error = new SemanticError("Break statement must occur inside an enclosing loop",
 					stmt.getLineNum());
 			System.out.println(error);
@@ -326,7 +345,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * @return true if successful
 	 */
 	public Object visit(ContinueStmt stmt, Object o) {
-		if(!inLoopScope){
+		if(inLoopScope<=0){
 			SemanticError error = new SemanticError("Continue statement must occur inside an enclosing loop",
 					stmt.getLineNum());
 			System.out.println(error);
@@ -360,9 +379,15 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// variable has been assigned with value
 		if(stmt.hasValue()){
 			// get variable's type
-			/////////////
-			types.Type varType = ((symbolTableHandler.BlockSymbolTable) stmt.getScope()).getVarSymbol(stmt.getName()).getType();
-			/////////////
+			types.Type varType=null;
+			try {
+
+				varType = ((symbolTableHandler.BlockSymbolTable) stmt.getScope()).getVarSymbol(stmt.getName()).getType();
+			} catch (SemanticError e) {
+				// variable type undefined, print error and exit
+				System.out.println(new SemanticError(e.getMessage(),stmt.getLineNum()));
+				System.exit(-1);
+			}
 			// get value's type
 			types.Type valueType = (types.Type) stmt.getValue().accept(this, o);
 
@@ -390,19 +415,34 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			types.Type locationType = (types.Type) var_loc.getLocation().accept(this, o);
 
 			// Verify the class contains a field with var_loc's name
-			///////////////////////
 			// get the class symbol table - if class exists 
 			////// handle when class not found in sym table!
-			symbolTableHandler.ClassSymbolTable classSymTable = ((ClassSymbolTable) globaSymlTable).getClassSymbolTable(locationType.getName());
+			symbolTableHandler.ClassSymbolTable classSymTable = globaSymlTable.getClassSymbolTable(locationType.getName());
 			// get the class field - if exists
 			////// handle when field not found in class table!
 			symbolTableHandler.FieldSymbol fieldSymbol = classSymTable.getFieldSymbol(var_loc.getName());
+
+			// field symbol undefined
+			if(fieldSymbol == null){
+				SemanticError error  = new SemanticError("Class field is undefined",
+						var_loc.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+
 			return fieldSymbol.getType(); // return the field's type
 		}
 		// local variable location
 		else{
 			// get the local variable's type from the scope type-table
-			types.Type varType = ((symbolTableHandler.BlockSymbolTable) var_loc.getScope()).getVarSymbol(var_loc.getName()).getType();
+			types.Type varType = null;
+			try {
+				varType = ((symbolTableHandler.BlockSymbolTable) var_loc.getScope()).getVarSymbol(var_loc.getName()).getType();
+			} catch (SemanticError e) {
+				// variable type undefined, print error and exit
+				System.out.println(new SemanticError(e.getMessage(),var_loc.getLineNum()));
+				System.exit(-1);
+			}
 			return varType;
 		}
 	}
@@ -422,19 +462,16 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// get the type of the array location index
 		types.Type indexType = (types.Type) arr_loc.getIndex().accept(this, o);
 		// validate index type is int
-		try {
-			if(!indexType.extendsType(TypeTable.getType("int"))){
-				SemanticError error = new SemanticError("Array location invalid, index not of type int",
-						arr_loc.getLineNum());
-				System.out.println(error);
-				System.exit(1);
-			}
-		} catch (SemanticError e) {
-			// in case type table does not contain type "int"
-			e.printStackTrace();
+
+		if(!indexType.extendsType(new TypeInt())){
+			SemanticError error = new SemanticError("Array location invalid, index not of type int",
+					arr_loc.getLineNum());
+			System.out.println(error);
+			System.exit(1);
 		}
 
-		return arrType;
+
+		return ((TypeArray)arrType).getElementType();
 	}
 
 
@@ -450,7 +487,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		// validate static method's enclosing class exists
 		symbolTableHandler.ClassSymbolTable classSymTable = null;
-		classSymTable = ((ClassSymbolTable) globaSymlTable).getClassSymbolTable(static_call.getClassName());
+		classSymTable = globaSymlTable.getClassSymbolTable(static_call.getClassName());
 
 		// validate called method is defined in enclosing class, as static method
 		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(static_call.getMethodName());
@@ -463,12 +500,12 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		// validate call parameters are subtypes of the method's formals types
 		// get call parameters
-		callParameters = call.getArguments();
+		List<Expr> callParameters = static_call.getArguments();
 		// get call method formals
-		methodFormalsTypes = ( (types.TypeMethod) methodSym.getType()).getParamTypes();
+		List<Type> methodFormalsTypes = ( (types.TypeMethod) methodSym.getType()).getParamTypes();
 
 		// wrong number of arguments in call
-		if(callParameters.length() != methodFormalsTypes.length()){
+		if(callParameters.size() != methodFormalsTypes.size()){
 			SemanticError error = new SemanticError("Invalid static method call, method called with wrong number of arguments",
 					static_call.getLineNum());
 			System.out.println(error);
@@ -478,11 +515,11 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// if correct num of parameters passed to call
 		// validate each parameter type corresponds to formal type in method declaration
 		types.Type callParamType = null;
-		for(int i = 0 ; i < callParameters.length(); i++){
+		for(int i = 0 ; i < callParameters.size(); i++){
 			// get current call parameter type
 			callParamType = (types.Type) (callParameters.get(i)).accept(this, o); 
-			// validate paramter type is not subtype of method formal
-			if( !callParamType.extendsType(methodFormalsTypes(i)) ){
+			// validate parameter type is not subtype of method formal
+			if( !callParamType.extendsType(methodFormalsTypes.get(i)) ){
 				SemanticError error = new SemanticError("Invalid static method call, passed wrong argument type",
 						static_call.getLineNum());
 				System.out.println(error);
@@ -491,7 +528,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		}
 
 		// the call returns the method return-type
-		return ((types.MethodType) methodSym.getType()).getReturnType();
+		return ((types.TypeMethod) methodSym.getType()).getReturnType();
 	}
 
 
@@ -506,12 +543,13 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 */
 	public Object visit(VirtualCall virtual_call, Object o) {
 
+		symbolTableHandler.ClassSymbolTable classSymTable = null;
+
 		// virtual call of an instance: obj.call()
 		if(virtual_call.getObjectReference() != null){
 			// get instance type
 			types.Type objType = (types.Type) virtual_call.getObjectReference().accept(this, o);
-			////////////////////////////////
-			symbolTableHandler.ClassSymbolTable objClassTable = globaSymlTable.getClassSymbolTableRec(objType.getName());
+			symbolTableHandler.ClassSymbolTable objClassTable = ((GlobalSymbolTable) globaSymlTable).getClassSymbolTable(objType.getName());
 			// instance class undefined
 			if(objClassTable == null){
 				SemanticError error = new SemanticError("Invalid virutal method call, instance class undefined",
@@ -521,7 +559,9 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			}
 		}
 		// virtual call without object instance
-		else{
+		else{		
+			classSymTable = ((BlockSymbolTable)virtual_call.getScope()).getEnclosingClassSymbolTable();
+
 			// validate call is not from static method body
 			if(inStaticMethod){
 				SemanticError error = new SemanticError("Invalid virutal method call, non-refernce call from a static method",
@@ -530,11 +570,19 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				System.exit(1);
 			}
 		}
+		classSymTable = ((BlockSymbolTable)virtual_call.getScope()).getEnclosingClassSymbolTable();
 
 		// validate method is defined as virtual in enclosing class
-		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbolRec(virtual_call.getMethodName());
-		if (methodSym.isStatic()){
-			SemanticError error = new SemanticError("Invalid virtual method call, method is not virtual",
+		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(virtual_call.getMethodName());
+		if(methodSym == null){
+			SemanticError error = new SemanticError("Invalid method call, method is undefined",
+					virtual_call.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+
+		else if (methodSym.isStatic()){
+			SemanticError error = new SemanticError("Invalid virtual method call, method '"+virtual_call.getMethodName()+"' is not virtual",
 					virtual_call.getLineNum());
 			System.out.println(error);
 			System.exit(1);
@@ -543,12 +591,12 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		// validate call parameters are subtypes of the method's formals types
 		// get call parameters
-		callParameters = call.getArguments();
+		List<Expr> callParameters = virtual_call.getArguments();
 		// get call method formals
-		methodFormalsTypes = ( (types.TypeMethod) methodSym.getType()).getParamTypes();
+		List<Type> methodFormalsTypes = ( (types.TypeMethod) methodSym.getType()).getParamTypes();
 
 		// wrong number of arguments in call
-		if(callParameters.length() != methodFormalsTypes.length()){
+		if(callParameters.size() != methodFormalsTypes.size()){
 			SemanticError error = new SemanticError("Invalid virtual method call, method called with wrong number of arguments",
 					virtual_call.getLineNum());
 			System.out.println(error);
@@ -558,11 +606,11 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// if correct num of parameters passed to call
 		// validate each parameter type corresponds to formal type in method declaration
 		types.Type callParamType = null;
-		for(int i = 0 ; i < callParameters.length(); i++){
+		for(int i = 0 ; i < callParameters.size(); i++){
 			// get current call parameter type
 			callParamType = (types.Type) (callParameters.get(i)).accept(this, o); 
 			// validate paramter type is not subtype of method formal
-			if( !callParamType.extendsType(methodFormalsTypes(i)) ){
+			if( !callParamType.extendsType(methodFormalsTypes.get(i)) ){
 				SemanticError error = new SemanticError("Invalid virtual method call, passed wrong argument type",
 						virtual_call.getLineNum());
 				System.out.println(error);
@@ -583,11 +631,11 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		LiteralType literalType = literal.getType();
 		try {
 			switch(literalType){
-			case INTEGER: return types.TypeTable.getType("int");
-			case STRING: return types.TypeTable.getType("string");
-			case TRUE: return types.TypeTable.getType("boolean");
-			case FALSE: return types.TypeTable.getType("boolean");
-			case NULL: return types.TypeTable.getType("null");
+			case INTEGER: return types.TypeTable.getTypeTable().getType("int");
+			case STRING: return types.TypeTable.getTypeTable().getType("string");
+			case TRUE: return types.TypeTable.getTypeTable().getType("boolean");
+			case FALSE: return types.TypeTable.getTypeTable().getType("boolean");
+			case NULL: return types.TypeTable.getTypeTable().getType("null");
 			} 
 		}catch (SemanticError e) {
 			// if the type-table does not contain the above types
@@ -610,8 +658,12 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			System.out.println(error);
 			System.exit(1);
 		}
-		///////////////////////////////////////
-		types.Type thisType = ((BlockSymbolTable) t.getScope()).getEnclosingClassSymbolTable().getMySymbol().getType();
+		types.Type thisType = null;
+		if(t.getScope() instanceof ClassSymbolTable)
+			thisType = ((ClassSymbolTable)t.getScope()).getSymbol().getType();
+		else
+			thisType = ((BlockSymbolTable)t.getScope()).getEnclosingClassSymbolTable().getSymbol().getType();
+
 		return thisType;
 	}
 
@@ -623,7 +675,15 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * @return the object type
 	 */
 	public Object visit(NewObject new_obj, Object o) {
-		types.Type objectType = types.TypeTable.getClassType(new_obj.getClassName());
+		types.Type objectType = null;
+		try {
+			objectType = types.TypeTable.getTypeTable().getClassType(new_obj.getClassName());
+		} catch (SemanticError e) {
+			// if class object already declared, print error and exit
+			SemanticError error = new SemanticError(e.getMessage(), new_obj.getLineNum());
+			System.out.println(error);
+			System.exit(-1);
+		}
 		if(objectType == null){
 			SemanticError error = new SemanticError("Invalid new Object(), object type undefined", 
 					new_obj.getLineNum());
@@ -633,7 +693,6 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		return objectType;
 	}
 
-	//////////// no void arrays allowed!!!!
 	/**
 	 * Type checks for a New Array expression:
 	 * validate array type is not void
@@ -647,11 +706,13 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// get array type - if exists
 		types.Type arrType = null;
 		try {
-			arrType = TypeTable.getType(new_arr.getType().getFullName());
+			arrType = TypeTable.getTypeTable().getType(new_arr.getType().getFullName()+"[]");
 		} catch (SemanticError e) {
-			// if array type does not exist
-			e.printStackTrace();
+			SemanticError error = new SemanticError(e.getMessage(), new_arr.getLineNum());
+			System.out.println(error);
+			System.exit(-1);
 		}
+
 		if(arrType == null){
 			SemanticError error = new SemanticError("Invalid new Array, array type undefined or void", 
 					new_arr.getLineNum());
@@ -687,7 +748,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			System.exit(1);
 		}
 		try {
-			return types.TypeTable.getType("int");
+			return types.TypeTable.getTypeTable().getType("int");
 		} catch (SemanticError e) {
 			e.printStackTrace(); //if type table does not contain value "int"
 		}
@@ -737,7 +798,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		}
 		// validate parameter is of the correct type
 		try {
-			if(!paramType.extendsType(types.TypeTable.getType(expectedParamType))){
+			if(!paramType.extendsType(types.TypeTable.getTypeTable().getType(expectedParamType))){
 				SemanticError error = new SemanticError("Invalid unary operation, operand not of type "+expectedParamType, 
 						expr.getLineNum());
 				System.out.println(error);
@@ -769,6 +830,14 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		BinOperator operator = expr.getOp();
 
+		// Binary operation of string concatenation
+		boolean leftParamIsStr = (leftParamType instanceof TypeString);
+		boolean rightParamIsStr = (rightParamType instanceof TypeString);
+		// if both concatenation operands are strings
+		if(expr.getOp() == BinOperator.PLUS && leftParamIsStr && rightParamIsStr){
+			return leftParamType; // return string type
+		}
+
 		// equality comparisons - operands must have the same type
 		if(expr.getOp() == BinOperator.EQUAL || expr.getOp() == BinOperator.NEQUAL){
 			boolean validExprTypes = false;
@@ -785,33 +854,25 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				System.out.println(error);
 				System.exit(1);
 			}
+			// if successful return boolean type
+			return new TypeBoolean();
 		}
 
 		// conditional operators - operands must be booleans
 		else if(expr.getOp() == BinOperator.LAND || expr.getOp() == BinOperator.LOR){
 			// check if left operand of type boolean
-			try {
-				if(!leftParamType.extendsType(types.TypeTable.getType("boolean"))){
-					SemanticError error = new SemanticError("Invalid binary operation, left operand not of type boolean", 
-							expr.getLineNum());
-					System.out.println(error);
-					System.exit(1);
-				}
-			} catch (SemanticError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(!leftParamType.extendsType(new TypeBoolean())){
+				SemanticError error = new SemanticError("Invalid binary operation, left operand not of type boolean", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
 			}
 			// check if right operand of type int
-			try {
-				if(!rightParamType.extendsType(types.TypeTable.getType("boolean"))){
-					SemanticError error = new SemanticError("Invalid binary operation, right operand not of type boolean", 
-							expr.getLineNum());
-					System.out.println(error);
-					System.exit(1);
-				}
-			} catch (SemanticError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(!rightParamType.extendsType(new TypeBoolean())){
+				SemanticError error = new SemanticError("Invalid binary operation, right operand not of type boolean", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
 			}
 		}
 
@@ -820,42 +881,58 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				expr.getOp() == BinOperator.MINUS ||
 				expr.getOp() == BinOperator.MULTIPLY ||
 				expr.getOp() == BinOperator.DIVIDE ||
-				expr.getOp() == BinOperator.MOD ||
-				expr.getOp() == BinOperator.LT ||
+				expr.getOp() == BinOperator.MOD){
+
+			// check if left operand of type int
+			if(!leftParamType.extendsType(new TypeInt())){
+				SemanticError error = new SemanticError("Invalid binary operation, left operand not of type int", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+
+			// check if right operand of type int
+			if(!rightParamType.extendsType(new TypeInt())){
+				SemanticError error = new SemanticError("Invalid binary operation, right operand not of type int", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+
+			// all checks are valid return the higher type of the operands
+			if(leftParamType.extendsType(rightParamType)){
+				return rightParamType;
+			}
+		}
+
+		else if(expr.getOp() == BinOperator.LT ||
 				expr.getOp() == BinOperator.GT ||
 				expr.getOp() == BinOperator.LTE ||
 				expr.getOp() == BinOperator.GTE	){
 
 			// check if left operand of type int
-			try {
-				if(!leftParamType.extendsType(types.TypeTable.getType("int"))){
-					SemanticError error = new SemanticError("Invalid binary operation, left operand not of type int", 
-							expr.getLineNum());
-					System.out.println(error);
-					System.exit(1);
-				}
-			} catch (SemanticError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(!leftParamType.extendsType(new TypeInt())){
+				SemanticError error = new SemanticError("Invalid binary operation, left operand not of type int", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
 			}
+
 			// check if right operand of type int
-			try {
-				if(!rightParamType.extendsType(types.TypeTable.getType("int"))){
-					SemanticError error = new SemanticError("Invalid binary operation, right operand not of type int", 
-							expr.getLineNum());
-					System.out.println(error);
-					System.exit(1);
-				}
-			} catch (SemanticError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if(!rightParamType.extendsType(new TypeInt())){
+				SemanticError error = new SemanticError("Invalid binary operation, right operand not of type int", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+
+			// all checks are valid return type boolean
+			if(leftParamType.extendsType(rightParamType)){
+				return new TypeBoolean();
 			}
 		}
 
-		// all checks are valid return the higher type of the operands
-		if(leftParamType.extendsType(rightParamType)){
-			return rightParamType;
-		}
+
 		return leftParamType;
 	}
 

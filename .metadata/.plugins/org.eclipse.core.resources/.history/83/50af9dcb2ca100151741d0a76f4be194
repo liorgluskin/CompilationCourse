@@ -1,0 +1,22 @@
+
+class List{
+	int data;
+	List run(Node n){ 
+	return new List();
+	 }
+
+	static void main(string[] args) {
+	//int m = "mois";
+	
+	if(2==2){
+	int x =1;
+	}
+	x =2;
+	
+	int c = b.data;
+		 }
+}
+
+class Node extends List{
+List foo(){ return new Node();}
+}

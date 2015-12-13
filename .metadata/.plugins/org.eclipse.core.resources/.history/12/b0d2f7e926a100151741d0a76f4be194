@@ -1,0 +1,13 @@
+
+class List extends Node{
+	int data;
+	List next;
+
+	static void main(string[] args) {
+	 }
+}
+
+class Node extends List{
+int data;
+Edge[] edges;
+}

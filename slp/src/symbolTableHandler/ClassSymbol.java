@@ -14,8 +14,8 @@ public class ClassSymbol extends Symbol {
 
 	public ClassSymbol(ClassDecl classdecl) throws SemanticError{
 		super(classdecl.getName(), classdecl.getLineNum());
-		TypeTable.addClass(classdecl);
-		type = TypeTable.getClass(sym_name);
+		TypeTable.getTypeTable().addClassType(classdecl);
+		type = TypeTable.getTypeTable().getClassType(sym_name);
 		this.classdecl = classdecl;	
 		
 	}

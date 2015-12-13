@@ -1,0 +1,10 @@
+class A {
+static void main(string[] args){}
+void foo() {
+int x;
+{
+boolean x;
+x = true; // ’x’ refers to the variable defined in the inner scope.
+}
+}
+}

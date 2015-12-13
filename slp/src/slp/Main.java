@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 
 import java_cup.runtime.*;
 import semantic.SemanticEvaluator;
+import semantic.TypeEvaluator;
 import symbolTableHandler.GlobalSymbolTable;
 
 /** The entry point of the SLP (Straight Line Program) application.
@@ -57,22 +58,26 @@ public class Main {
 			//PrettyPrinter printer = new PrettyPrinter(root,fileName);
 			//printer.print();
 
-			
-			////TO DECIDE!!!
-			// Handling IC Library class
+
 
 			///////////////////////////////
 			/// Semantic Analysis Part: ///
-			///////////////////////////////
+			///////////////////////////////	
 
-			// Create the Symbol Table
-			
-			
-			// Interpret the program
+			// Interpret the program:
+			System.out.println("Semantic Evaluation of input file: '"+fileName+"'");
+			System.out.println("---------------------------------------------------");
+
+			// create symbol table and initial semantic evaluation
+			// IC Library classes added to program symbol table automatically
 			SemanticEvaluator evaluator = new SemanticEvaluator();
 			GlobalSymbolTable global_st = evaluator.getSymbolTable(root);
+			// validate semantics of program types
+			TypeEvaluator typeEvalutor = new TypeEvaluator(global_st);
+			typeEvalutor.visit(root, null);
+
 		} catch (Exception e) {
-			System.out.print(e);
+			e.printStackTrace();
 		}
 	}
 

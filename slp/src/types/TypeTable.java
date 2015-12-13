@@ -14,6 +14,9 @@ import slp.ClassDecl;
  */
 public class TypeTable {
 
+	// only one instance exists
+	private static TypeTable typeTable = null;
+
 	// Types of IC literals
 	private TypeInt intType;
 	private TypeString stringType;
@@ -22,133 +25,154 @@ public class TypeTable {
 	private TypeNull nullType;
 
 	// hash map that contains for each class in program, its type and type-name
-	private Map<String,TypeClass> programClassTypes;
+	private Map<String, TypeClass> programClassTypes;
 	// hash map that contains for each method in program, its type and type-name
-	private Map<String,TypeMethod> programMethodTypes;
-	// hash map that contains for each array in program, its element-types and type-name
-	private Map<Type,TypeArray> programArrayTypes;
-
+	private Map<String, TypeMethod> programMethodTypes;
+	// hash map that contains for each array in program, its element-types and
+	// type-name
+	private Map<Type, TypeArray> programArrayTypes;
 
 	/**
-	 * Type Table constructor
-	 * initialize the literal types
-	 * initialize the type hash maps
+	 * Type Table constructor initialize the literal types initialize the type
+	 * hash maps
 	 */
-	public TypeTable(){
+	private TypeTable() {
 		this.intType = new TypeInt();
 		this.stringType = new TypeString();
 		this.booleanType = new TypeBoolean();
 		this.voidType = new TypeVoid();
 		this.nullType = new TypeNull();
-		this.programClassTypes = new HashMap<String,TypeClass>();
-		this.programMethodTypes = new HashMap<String,TypeMethod>();
-		this.programArrayTypes = new HashMap<Type,TypeArray>();
+		this.programClassTypes = new HashMap<String, TypeClass>();
+		this.programMethodTypes = new HashMap<String, TypeMethod>();
+		this.programArrayTypes = new HashMap<Type, TypeArray>();
 	}
 
-
+	// Singelton
+	public static TypeTable getTypeTable() {
+		if (typeTable == null) {
+			typeTable = new TypeTable();
+		}
+		return typeTable;
+	}
 
 	/**
-	 * Gets string representation of IC type 
+	 * Gets string representation of IC type
+	 * 
 	 * @return the Type object
-	 * @throws SemanticError in case type is undefined
+	 * @throws SemanticError
+	 *             in case type is undefined
 	 */
-	public Type getType(String typeStr) throws SemanticError{
+	public Type getType(String typeStr) throws SemanticError {
 
 		// check if the type is a literal
-		if(typeStr == slp.DataTypes.INT.getDescription()){
+		if (typeStr.equals(slp.DataTypes.INT.getDescription())) {
 			return intType;
-		}else if(typeStr == slp.DataTypes.STRING.getDescription()){
+		} else if (typeStr.equals(slp.DataTypes.STRING.getDescription())) {
 			return stringType;
-		}else if(typeStr == slp.DataTypes.BOOLEAN.getDescription()){
+		} else if (typeStr.equals(slp.DataTypes.BOOLEAN.getDescription())) {
 			return booleanType;
-		}else if(typeStr == slp.DataTypes.VOID.getDescription()){
+		} else if (typeStr.equals(slp.DataTypes.VOID.getDescription())) {
 			return voidType;
-		}else if(typeStr == "null"){
+		} else if (typeStr == "null") {
 			return nullType;
 		}
 
 		// check if type-string belongs to an array type
-		if(typeStr.endsWith("[]")){
+		if (typeStr.endsWith("[]")) {
 			// make sure array's elements type is valid
-			Type elementsType = getArrayElemType(typeStr.substring(0, typeStr.length()-2));
+			Type elementsType = getType(typeStr.substring(0, typeStr.length() - 2));
 			// add array-type to types map
 			TypeArray arrType = new TypeArray(elementsType);
-			addArrayType(arrType);
-			return arrType; 
+
+			// check if we have array type already
+			if (getArrayType(arrType.getElementType()) == null) {
+				// if not add new array type
+				addArrayType(arrType);
+			}
+			return (getArrayType(arrType.getElementType()));
 		}
 
 		// The type is a user-defined type
 		return getClassType(typeStr);
 	}
 
-
 	/**
 	 * Gets the type of the array elements
+	 * 
 	 * @return the array type of these elements
 	 * @throws semantic error if element type does not exist
-	 * */
-	public Type getArrayype(Type arrayElementType) {
-		Type elementType;
-
-		// Check if array element-type is literal:
-
-		// check if element type was defined as int
-		if(elemTypeStr == slp.DataTypes.INT.getDescription()){
-			return intType;
+	 */
+	public Type getArrayType(Type arrayElementType) {
+		if(programArrayTypes.containsKey(arrayElementType)){
+			return programArrayTypes.get(arrayElementType);
 		}
-		// check if element type was defined as string
-		if(elemTypeStr == slp.DataTypes.STRING.getDescription()){
-			return stringType;
-		}
-		// check if element type was defined as boolean
-		if(elemTypeStr == slp.DataTypes.BOOLEAN.getDescription()){
-			return booleanType;
-		}
-		// check if element type was defined as void
-		if(elemTypeStr == slp.DataTypes.VOID.getDescription()){
-			return null; // no arrays of type 'void' allowed
-		}
-
-		// check if element type was defined as array-type
-		elementType = this.programArrayTypes.get(elemTypeStr);
-		if(elementType != null){
-			return elementType;
-		}
-
-		// check if element type was defined as class-type
-		elementType = this.programClassTypes.get(elemTypeStr);
-		if(elementType != null){
-			return elementType;
-		}
-
-		// array's element type is undefined
 		return null;
 	}
 
-	
 	public void addArrayType(TypeArray arrType) {
-		// check if array type already exists
-		
-		// if not - add new array type
+		// add new array type
+		programArrayTypes.put(arrType.getElementType(), arrType);
+	}
+
+	/**
+	 * Gets a method's return-type and formals-types Adds method-type to table,
+	 * if not defined
+	 * 
+	 * @return the method's type
+	 * @throws semantic error if class does not exist
+	 */
+	public TypeMethod adddMethodType(Type returnType, List<Type> formalsTypes) {
+		TypeMethod methodType = new TypeMethod(returnType, formalsTypes);
+		TypeMethod definedMethodType = programMethodTypes.get(methodType.toString());
+
+		// method was not previously defined
+		if (definedMethodType == null) {
+			// add method-type to program types
+			programMethodTypes.put(methodType.toString(), methodType);
+			return methodType;
+		}
+		// return the existing method type
+		return definedMethodType;
 	}
 
 	/**
 	 * Gets a string representation of a class type
+	 * 
 	 * @return type of the class
 	 * @throws semantic error if class does not exist
-	 * */
-	public Type getClassType(String typeStr) throws SemanticError{
+	 */
+	public Type getClassType(String typeStr) throws SemanticError {
 		TypeClass classType = this.programClassTypes.get(typeStr);
 
 		// class type was not defined
-		if(classType == null){
-			throw new SemanticError("Undefined class, "+typeStr);
+		if (classType == null) {
+			throw new SemanticError("Undefined class, " + typeStr);
 		}
 		return classType;
 	}
 
-	public void addClassType(ClassDecl classDecl) {
-		// TODO Auto-generated method stub
+	/**
+	 * Gets a class AST node adds the class type to the type table
+	 * 
+	 * @throws SemanticError
+	 * @throws semantic error if class already defined in program
+	 */
+	public void addClassType(ClassDecl classDecl) throws SemanticError {
+		if (programClassTypes.containsKey(classDecl.getName())) {
+			throw new SemanticError("Invalid class declaration, class already declared", classDecl.getLineNum());
+		}
+		// in case class has super-class
+		String superClassName = classDecl.getSuperClassName();
+		if (superClassName != null) {
+			// check if super class is defined
+			if (!programClassTypes.containsKey(superClassName)) {
+				throw new SemanticError("Invalid class declaration, super class in undefined: '" + superClassName + "'",
+						classDecl.getLineNum());
+			}
+		}
+
+		TypeClass newClassType = new TypeClass(classDecl);
+		programClassTypes.put(classDecl.getName(), newClassType);
 
 	}
 

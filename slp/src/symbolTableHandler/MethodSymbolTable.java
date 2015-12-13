@@ -50,10 +50,13 @@ public class MethodSymbolTable extends BlockSymbolTable{
 	public VariableSymbol getVarSymbol(String name) throws SemanticError{
 		VariableSymbol var_symbol = var_symbols.get(name);
 		if (var_symbol == null){
-			if (this.is_static){
+			var_symbol = ((ClassSymbolTable) parent).getFieldSymbol(name);
+			if(var_symbol == null){
+				throw new SemanticError("variable '"+ name +"' cannot be resolved");
+			}
+			else if (this.is_static){
 				throw new SemanticError("cannot access variable '"+ name +"' in a static method");
 			} 
-			else var_symbol = ((ClassSymbolTable) parent).getFieldSymbol(name);
 		}
 		return var_symbol;
 	}

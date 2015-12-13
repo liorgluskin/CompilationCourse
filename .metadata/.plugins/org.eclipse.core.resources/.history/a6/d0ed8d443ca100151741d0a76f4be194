@@ -1,0 +1,26 @@
+
+class List{
+
+	int x;
+	void run(List n){
+	this.x = 5;
+	while(1==1){
+		this.x = 99;
+		break;
+	}
+	Node d = new Node();
+	x = 0;
+	 }
+	 static void call(){}
+
+	static void main(string[] args) {
+			List a;
+			a.run(new List());
+		 }
+}
+
+class Node extends List{
+
+
+}
+

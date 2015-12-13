@@ -1,0 +1,64 @@
+package types;
+
+import java.util.Iterator;
+import java.util.List;
+
+
+public class TypeMethod extends Type {	
+
+	private List<Type> parametersTypes;
+	private Type returnType;
+	
+	
+	public TypeMethod( Type returnType, List<Type> parametersTypes){
+		super(null);
+		this.returnType = returnType;
+		this.parametersTypes = parametersTypes;
+	}
+	
+	public boolean subtypeOf(Type t){
+		if (t == this) return true;
+		else return false;
+	}
+	
+
+	public Type getReturnType(){
+		return this.returnType;
+	}
+	
+
+	public List<Type> getParamTypes(){
+		return this.parametersTypes;
+	}
+	
+	public boolean equals(TypeMethod mt){
+		if (this.getName() != mt.getName()) return false;
+		else if (this.returnType != mt.getReturnType()) return false;
+		else{
+			Iterator<Type> myIter = this.paramTypes.iterator();
+			Iterator<Type> otherIter = mt.paramTypes.iterator();
+			
+			while (myIter.hasNext() && otherIter.hasNext()){
+				if (myIter.next() != otherIter.next()) return false; 
+			}
+			if (myIter.hasNext() || otherIter.hasNext()) return false;
+			else return true;
+		}
+	}
+	
+	public String toString(){
+		String str = "{ name: "+ this.getName();
+
+		Iterator<Type> paramIter = parametersTypes.iterator();
+		if (paramIter.hasNext()){
+			str += paramIter.next().getName(); // put first parameter if exists
+		}
+		while (paramIter.hasNext()){
+			str += ", "+paramIter.next().getName(); // put others if exist
+		}
+		
+		str += " -> "+this.returnType.getName()+"}";
+		
+		return str;
+	}
+}

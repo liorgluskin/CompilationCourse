@@ -1,0 +1,9 @@
+class A {
+static void main(string[] args){}
+int foo;
+}
+
+class B extends A {
+void foo() {}
+}
+

@@ -1,0 +1,10 @@
+
+class B {
+	int bint;
+	static void main(string[] args) { }
+	boolean yes(int a, boolean b) {
+	int[] arr = new int[9];
+	
+		return true;
+	}
+}

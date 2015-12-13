@@ -53,6 +53,10 @@ public class ClassSymbolTable extends SymbolTable{
 		}
 		return ms;		
 	}
+	
+	public MethodSymbol getCurrentMethodSymbol(String name){
+		return methodsSymbols.get(name);
+	}
 
 	/**Get the symbol of the current class*/
 	public ClassSymbol getSymbol(){
@@ -62,6 +66,7 @@ public class ClassSymbolTable extends SymbolTable{
 	public MethodSymbolTable getMethodSymbolTable(String methodName){
 		return methodSymbolTables.get(methodName);
 	}
+	
 	
 	public ClassSymbolTable getClassSymbolTable(String className){
 		ClassSymbolTable classSymTable = kidsClassSymbolTables.get(className);
@@ -78,6 +83,7 @@ public class ClassSymbolTable extends SymbolTable{
 		}
 		return null;
 	}
+	
 	
 	public void addFieldSymbol(String fieldName, String fieldTypeName) throws SemanticError{
 		this.fieldsSymbols.put(fieldName,new FieldSymbol(fieldName, fieldTypeName));

@@ -1,8 +1,0 @@
-package types;
-
-import slp.ClassDecl;
-
-public class TypeClass {
-	private String superClass;
-	private ClassDecl classNode;
-}

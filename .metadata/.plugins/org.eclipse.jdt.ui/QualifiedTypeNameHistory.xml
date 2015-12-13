@@ -5,13 +5,18 @@
 <fullyQualifiedTypeName name="java.util.HashMap"/>
 <fullyQualifiedTypeName name="java.util.Map"/>
 <fullyQualifiedTypeName name="symbolTableHandler.ClassSymbol"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="slp.ClassDecl"/>
-<fullyQualifiedTypeName name="semantic.SemanticError"/>
-<fullyQualifiedTypeName name="types.TypeTable"/>
 <fullyQualifiedTypeName name="slp.Visitor"/>
 <fullyQualifiedTypeName name="symbolTableHandler.SymbolTable"/>
-<fullyQualifiedTypeName name="symbolTableHandler.ClassSymbolTable"/>
 <fullyQualifiedTypeName name="com.sun.org.apache.bcel.internal.classfile.FieldOrMethod"/>
+<fullyQualifiedTypeName name="slp.DataTypes"/>
+<fullyQualifiedTypeName name="slp.BinOperator"/>
+<fullyQualifiedTypeName name="types.TypeTable"/>
+<fullyQualifiedTypeName name="types.TypeInt"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="symbolTableHandler.BlockSymbolTable"/>
 <fullyQualifiedTypeName name="symbolTableHandler.GlobalSymbolTable"/>
+<fullyQualifiedTypeName name="symbolTableHandler.ClassSymbolTable"/>
+<fullyQualifiedTypeName name="semantic.SemanticError"/>
+<fullyQualifiedTypeName name="semantic.TypeEvaluator"/>
 </qualifiedTypeNameHistroy>

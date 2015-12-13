@@ -1,0 +1,9 @@
+class A {
+
+
+  void vfunc() {
+    int[] arr = new int[6];
+
+    }
+  }
+}

@@ -1,0 +1,14 @@
+
+class List{
+	int data;
+	List run(Node n){ 
+	return new Node();
+	 }
+
+	static void main(string[] args) {
+	 }
+}
+
+class Node extends List{
+	List run(Node b){return new Node}
+}
