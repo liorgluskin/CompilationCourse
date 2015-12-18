@@ -99,7 +99,7 @@ public class SemanticEvaluator implements Visitor{
 		
 		//stoa
 		List<Formal> stoa = new ArrayList<Formal>(); 
-		itos.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
+		stoa.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		PrimitiveType t = new PrimitiveType(-1, DataTypes.INT);
 		t.incrementDimension();
 		methodsLst.add(new StaticMethod(t,"stoa",stoa,new StmtList()));

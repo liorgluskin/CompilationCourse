@@ -550,6 +550,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			// get instance type
 			types.Type objType = (types.Type) virtual_call.getObjectReference().accept(this, o);
 			symbolTableHandler.ClassSymbolTable objClassTable = ((GlobalSymbolTable) globaSymlTable).getClassSymbolTable(objType.getName());
+			classSymTable = objClassTable;
 			// instance class undefined
 			if(objClassTable == null){
 				SemanticError error = new SemanticError("Invalid virutal method call, instance class undefined",
@@ -570,7 +571,6 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				System.exit(1);
 			}
 		}
-		classSymTable = ((BlockSymbolTable)virtual_call.getScope()).getEnclosingClassSymbolTable();
 
 		// validate method is defined as virtual in enclosing class
 		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(virtual_call.getMethodName());
