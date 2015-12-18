@@ -1,0 +1,20 @@
+
+class List{
+
+	int x;
+	static void run(Lisr n){
+	this.x = 5;
+
+	 }
+	 static void call(){}
+
+	static void main(string[] args) {
+
+		 }
+}
+
+class Node extends List{
+
+
+}
+

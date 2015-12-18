@@ -1,0 +1,10 @@
+package slp;
+
+public class symString implements sym {
+
+	public static String getStringOfSymbol(int symId){
+		switch (symId){
+		case sym.DIVIDE
+		}
+	}
+}

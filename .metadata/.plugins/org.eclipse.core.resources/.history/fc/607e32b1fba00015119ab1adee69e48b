@@ -1,0 +1,23 @@
+/**
+ * Sieve <n>: finds all prime numbers less than n.
+ * Output: all prime numbers less than n.
+ */
+
+//class Library {
+//  void println(string s) {}
+//  void print(string s) {}
+//  void printi(int i) {}
+//  int stoi(string s, int error) {}
+//}
+
+
+class Sieve {
+
+  int[] num;
+
+  static void main(string[] args) {
+    int i = num.length;
+
+  }
+
+}

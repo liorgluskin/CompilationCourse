@@ -1,0 +1,22 @@
+
+class List{
+
+	int x;
+	 void run(List n){
+
+
+	 }
+	 
+	
+
+	static void main(string[] args) {
+
+		 }
+}
+
+class Node extends List{
+
+ int run(List b){
+	 }
+}
+

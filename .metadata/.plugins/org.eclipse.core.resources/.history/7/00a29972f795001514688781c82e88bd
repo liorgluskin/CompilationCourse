@@ -1,0 +1,8 @@
+package slp;
+
+public class symString implements sym {
+
+	public static String getStringOfSymbol(int symId){
+		
+	}
+}

@@ -1,0 +1,12 @@
+
+class B {
+	static void main(string[] args) {
+	
+		string s = null;
+	 }
+
+	
+
+
+	}
+}

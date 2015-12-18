@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/Lexer/src/Main.java"/>
+<listEntry value="/slp/src/slp/Main.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
 </listAttribute>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="Main"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="input\InvalidFile.ic"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="Lexer"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="slp.Main"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="test/test1.slp"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="slp"/>
 </launchConfiguration>

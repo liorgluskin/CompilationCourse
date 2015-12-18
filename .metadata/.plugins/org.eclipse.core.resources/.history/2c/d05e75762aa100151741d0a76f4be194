@@ -1,0 +1,15 @@
+
+class List{
+	int data;
+	List run(Node n){ 
+	return new Node();
+	 }
+
+	static void main(string[] args) {
+	 }
+}
+
+class Node {
+
+int foo(){ return 1;}
+}

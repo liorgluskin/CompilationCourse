@@ -1,0 +1,59 @@
+class A {
+
+	/* testing type
+	rules and some other stuff 
+	this should all be compiled ok*/
+	
+	static void main (string[] args) {
+	//boolean literals
+	boolean t = true;
+	boolean f = false;
+	
+	//integer literals
+	int i = 5;
+	
+	//string literal
+	string s = "hello";
+	
+	//array
+	int[] a = new int[5];
+	
+
+
+	
+	i=-5;
+	
+	if(a[0] > 5)
+	
+
+	
+
+	
+	B b = new B();
+	b.bint = 5;
+
+	
+	if(b.bint > 5)
+	
+
+	
+
+	
+
+	
+	no(i,t);
+	
+	
+	
+	}
+	
+
+}
+
+class B {
+	int bint;
+	static int test1(int arg1, string srg2) { }
+	boolean yes(int a, boolean b) {
+		return true;
+	}
+}

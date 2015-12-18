@@ -1,0 +1,15 @@
+
+class List{
+
+	int x;
+	static void run(List n){
+	this.x = 5;
+
+	 }
+
+	static void main(string[] args) {
+
+		 }
+}
+
+

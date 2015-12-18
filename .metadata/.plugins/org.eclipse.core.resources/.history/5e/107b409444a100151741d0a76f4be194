@@ -1,0 +1,22 @@
+
+class List{
+
+	int x;
+
+	  void run(){
+x = 5;
+
+
+	 }
+	 
+	
+
+	static void main(string[] args) {
+			Node[][][][] n = new Node[][][][]();
+		 }
+}
+
+class Node extends List{
+
+}
+

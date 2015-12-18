@@ -1,0 +1,22 @@
+
+class List{
+
+	int x;
+	static void run(List n){
+
+
+	 }
+	 static void call(){
+	 this.x = 5;
+	 }
+
+	static void main(string[] args) {
+		List.run(new Node());
+		 }
+}
+
+class Node extends List{
+
+
+}
+
