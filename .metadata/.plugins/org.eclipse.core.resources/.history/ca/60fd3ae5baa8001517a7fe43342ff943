@@ -1,0 +1,9 @@
+package lir;
+
+public class Environment {
+	
+	private int currentRegister = 0;
+	Map<String,String> stringToLabelMap = new HashMap<>();
+	
+
+}

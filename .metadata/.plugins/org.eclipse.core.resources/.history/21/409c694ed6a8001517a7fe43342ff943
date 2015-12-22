@@ -1,0 +1,6 @@
+package lir;
+
+public class LirReturnInfo {
+
+	private MoveCommandEnum moveCommand = MoveCommandEnum.DUMMY;
+}

@@ -1,0 +1,16 @@
+package lir;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Environment {
+	
+	
+	//represents the next available string to use.
+	private int currentRegister = 0;
+	
+	//represents the map from string lables to the actial string
+	Map<String,String> stringToLabelMap = new HashMap<>();
+	
+
+}

@@ -1,0 +1,18 @@
+package lir;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Environment {
+	
+	
+	//represents the next available string to use.
+	private int currentRegister = 0;
+	
+	//represents the map from string labels to the actual string
+	private Map<String,String> stringToLabelMap = new HashMap<>();
+	
+	//represnt the core code
+	
+
+}

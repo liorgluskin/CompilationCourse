@@ -1,0 +1,10 @@
+package lir;
+
+public enum functionEnum {
+	
+	MOVE,
+	MOVE_FIELD,
+	MOVE_ARRAY,
+	DUMMY
+
+}

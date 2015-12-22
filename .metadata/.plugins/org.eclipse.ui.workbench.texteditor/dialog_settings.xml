@@ -2,12 +2,13 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="addArrayTy" key="selection"/>
+		<item value="Invalid method call, method is undefined" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="Invalid method call, method is undefined"/>
 			<item value="addArrayTy"/>
 			<item value="varSymbol"/>
 			<item value="length("/>
@@ -15,7 +16,6 @@
 			<item value="hasExternal"/>
 			<item value="The expression length was applied to, is not an array"/>
 			<item value="static method"/>
-			<item value="cannot access variable"/>
 		</list>
 		<list key="replacehistory">
 			<item value="System.out"/>

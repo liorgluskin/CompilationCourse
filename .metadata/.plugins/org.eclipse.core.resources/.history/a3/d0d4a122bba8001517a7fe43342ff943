@@ -1,0 +1,13 @@
+package lir;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class Environment {
+	
+	//represent the next available register to use.
+	private int currentRegister = 0;
+	Map<String,String> stringToLabelMap = new HashMap<>();
+	
+
+}

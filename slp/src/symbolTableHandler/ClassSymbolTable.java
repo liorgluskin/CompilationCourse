@@ -1,5 +1,6 @@
 package symbolTableHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ public class ClassSymbolTable extends SymbolTable{
 	private Map<String,ClassSymbolTable> kidsClassSymbolTables = new HashMap<String,ClassSymbolTable>();
 
 	private ClassSymbol symbol;
+	private int offsetIndex = 0;
 	private boolean is_extends;
 	
 	public ClassSymbolTable(ClassSymbolTable parent, ClassSymbol symbol) {
@@ -86,7 +88,7 @@ public class ClassSymbolTable extends SymbolTable{
 	
 	
 	public void addFieldSymbol(String fieldName, String fieldTypeName) throws SemanticError{
-		this.fieldsSymbols.put(fieldName,new FieldSymbol(fieldName, fieldTypeName));
+		this.fieldsSymbols.put(fieldName,new FieldSymbol(fieldName, fieldTypeName,offsetIndex++));
 	}
 	
 	public void addMethodSymbol(MethodSymbol methodSym){
@@ -99,6 +101,12 @@ public class ClassSymbolTable extends SymbolTable{
 	
 	public void addClassSymbolTable(ClassSymbolTable classSymTable){
 		kidsClassSymbolTables.put(classSymTable.getSymbol().getName(), classSymTable);
+	}
+	
+	public List<String> getAllMethods(){
+		ArrayList<String> methods = new ArrayList<>();
+		methods.addAll(methodsSymbols.keySet());
+		return methods;
 	}
 
 }

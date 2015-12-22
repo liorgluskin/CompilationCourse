@@ -1,0 +1,7 @@
+package lir;
+
+public class Environment {
+	
+	private int currentRegister = 0;
+
+}

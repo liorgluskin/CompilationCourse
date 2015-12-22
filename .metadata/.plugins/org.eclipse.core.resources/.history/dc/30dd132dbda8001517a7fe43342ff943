@@ -1,0 +1,25 @@
+package lir;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Environment {
+	
+	
+	//represents the next available string to use.
+	protected int currentRegister = 0;
+	
+	//represents the map from string labels to the actual string
+	protected Map<String,String> stringToLabelMap = new HashMap<>();
+	
+	//represents the core code
+	protected StringBuilder lirCode = new StringBuilder();
+	
+	//represents the virtual table map
+	protected Map<String,ArrayList<String>> dispacherTable = new HashMap<>();
+	
+	protected Map<String,int> varToRegister = new Hash
+	
+
+}

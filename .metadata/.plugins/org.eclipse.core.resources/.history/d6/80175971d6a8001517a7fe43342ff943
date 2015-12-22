@@ -1,0 +1,8 @@
+package lir;
+
+public class LirReturnInfo {
+
+	private MoveCommandEnum moveCommand = MoveCommandEnum.DUMMY;
+	
+	private String registerLocation = "";
+}
