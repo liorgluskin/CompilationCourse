@@ -25,7 +25,7 @@ public class Environment {
 	protected Map<String,ArrayList<String>> dispacherTables = new HashMap<>();
 		
 	//this array is responsible for keeping the order of classes seen till
-	//current moment, to be able to print later the dispacher table in the right order
+	//current moment, to be able to print later the dispatcher table in the right order
 	protected ArrayList<String> classOrderKeeper = new ArrayList<>();
 	
 	protected int incrementStringLabelIndex(){ return ++currentStringLabelIndex;};
@@ -103,7 +103,58 @@ public class Environment {
 		}
 	}
 		
-	public StringBuilder getLirCode(){ return lirCode;};	
 	
+	//used to update current lir code
+	public StringBuilder getLirStringBuilder(){ return lirCode;};
+	
+	//generates the code from all info in class including
+	//run time checks and strings
+	public String generateLirCode(){
+		
+		StringBuilder codeGeneration = new StringBuilder();
+
+		//generate all string errors
+		codeGeneration.append("str_null_ref: \"Runtime Error: Null pointer dereference!\"\n");
+		codeGeneration.append("str_array_access: \"Runtime Error: Array index out of bounds!\"\n");
+		codeGeneration.append("str_size: \"Runtime Error: Array allocation with negative array size!\"\n");
+		codeGeneration.append("str_zero: \"Runtime Error: Division by zero!\"\n");
+		
+		//generate all string literals
+		for(String str :stringToLabelMap.keySet() ){
+			codeGeneration.append(stringToLabelMap.get(str)+": \"" + str +"\"\n");
+		}
+		
+		//generate dispatcher table
+		for(String className: classOrderKeeper){
+			codeGeneration.append("_DV_"+className+": [");
+			for(String method:dispacherTables.get(className) ){
+				codeGeneration.append(method+",");
+			}
+			codeGeneration.setCharAt(codeGeneration.length()-1, ']');
+			codeGeneration.append("\n");
+		}
+		
+		//add runTimeCheckFunctions
+		//TO DO: run time checks
+
+		//add lirCode
+		codeGeneration.append("\n\n");
+		codeGeneration.append(lirCode);
+		
+		
+		return codeGeneration.toString();
+	}
+	
+	public int getMethodOffset(String className,String methodName){
+		
+		ArrayList<String> methods = dispacherTables.get(className);
+		if(methods == null){
+			System.out.println("==BUG==");
+			System.out.println(methodName + " is not in "+className+ " dispatcher table.");
+			System.exit(-1);
+		}
+		return methods.indexOf(methodName);
+		
+	}
 
 }
