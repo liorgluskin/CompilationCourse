@@ -20,10 +20,14 @@ public class ClassSymbolTable extends SymbolTable{
 	private int offsetIndex = 0;
 	private boolean is_extends;
 	
+	
 	public ClassSymbolTable(ClassSymbolTable parent, ClassSymbol symbol) {
 		super(parent);
 		this.symbol = symbol;
-		is_extends = true;		
+		is_extends = true;
+		
+		//current class contains all the field the super class has.
+		offsetIndex = parent.getCurrentClassFieldOffset();
 	}
 	
 	public ClassSymbolTable(GlobalSymbolTable parent,ClassSymbol symbol){
@@ -103,10 +107,36 @@ public class ClassSymbolTable extends SymbolTable{
 		kidsClassSymbolTables.put(classSymTable.getSymbol().getName(), classSymTable);
 	}
 	
-	public List<String> getAllMethods(){
+	
+	//returns all new virtual functions defined in current class definition
+	//Not recursive function.
+	//Note: to get all virtual function of current class you should
+	//iterate all over it's parents
+	//This is a helper function for Lir Code virtual table generation.
+	public List<String> getAllVirtualMethods(){
 		ArrayList<String> methods = new ArrayList<>();
-		methods.addAll(methodsSymbols.keySet());
+		for(String m : methodsSymbols.keySet()){
+			if(!methodsSymbols.get(m).isStatic()){
+				methods.add(m);
+			}
+		}
 		return methods;
 	}
+	
+	//apart from taking care of putting the fields in correct offset
+	//this function represents the number of fields for each class
+	//therefore, we can calculate the size of class by calling to
+	//this function
+	public int getCurrentClassFieldOffset(){
+		return offsetIndex;
+	}
+	
+	//returns the offset of a field in class, including it super class fields
+	//that are inherited
+	public int getOffsetOfField(String field){
+		return getFieldSymbol(field).getOffset();
+	}
+	
+
 
 }
