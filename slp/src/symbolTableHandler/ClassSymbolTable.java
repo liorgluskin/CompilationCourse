@@ -114,7 +114,7 @@ public class ClassSymbolTable extends SymbolTable{
 	//iterate all over it's parents
 	//This is a helper function for Lir Code virtual table generation.
 	public List<String> getAllVirtualMethods(){
-		ArrayList<String> methods = new ArrayList<>();
+		ArrayList<String> methods = new ArrayList<String>();
 		for(String m : methodsSymbols.keySet()){
 			if(!methodsSymbols.get(m).isStatic()){
 				methods.add(m);

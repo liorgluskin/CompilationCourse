@@ -14,7 +14,7 @@ public class Environment {
 	protected int currentRegister = 0;
 	
 	//represents the map from string labels to the actual string
-	protected Map<String,String> stringToLabelMap = new HashMap<>();
+	protected Map<String,String> stringToLabelMap = new HashMap<String,String>();
 	
 	//represents the core Lir code
 	protected StringBuilder lirCode = new StringBuilder();
@@ -22,11 +22,11 @@ public class Environment {
 	//represents the virtual table map
 	//Note: It uses ArrayList because of the importance of the order
 	//as we will be using its index as offset in Lir Code generation
-	protected Map<String,ArrayList<String>> dispacherTables = new HashMap<>();
+	protected Map<String,ArrayList<String>> dispatchTables = new HashMap<String,ArrayList<String>>();
 		
 	//this array is responsible for keeping the order of classes seen till
-	//current moment, to be able to print later the dispatcher table in the right order
-	protected ArrayList<String> classOrderKeeper = new ArrayList<>();
+	//current moment, to be able to print later the dispatch table in the right order
+	protected ArrayList<String> classOrderKeeper = new ArrayList<String>();
 	
 	protected int incrementStringLabelIndex(){ return ++currentStringLabelIndex;};
 	
@@ -38,19 +38,19 @@ public class Environment {
 		stringToLabelMap.put(str, "str"+incrementStringLabelIndex());
 	}
 	
-	//adding virtual table for class that doent have a super class.
+	//adding virtual table for class without a super class.
 	public void addVirtualTable(String className, List<String> rawMethodsNames){
 		
 		//order keeper
 		classOrderKeeper.add(className);
 		
-		ArrayList<String> methods = new ArrayList<>();
+		ArrayList<String> methods = new ArrayList<String>();
 		for(String rawMethod : rawMethodsNames){
 			String method = "_"+className +"_"+ rawMethod;
 			methods.add(method);
 		}
 		
-		dispacherTables.put(className, methods);
+		dispatchTables.put(className, methods);
 	}
 	
 	//Note You can send to this functions also only the new defined functions
@@ -64,17 +64,17 @@ public class Environment {
 		classOrderKeeper.add(className);
 		
 		//get parent virtual table
-		ArrayList<String> superClassVirtualTable = dispacherTables.get(superClassName);
+		ArrayList<String> superClassVirtualTable = dispatchTables.get(superClassName);
 		
 		//should never enter this if statement
 		if(superClassVirtualTable == null){
 			System.out.println("==BUG==");
-			System.out.println("Environment, line 57:dispacherTables dont have the supper class.");
+			System.out.println("Environment, line 57:dispatchTables dont have the supper class.");
 			System.exit(-1);
 		}
 		
 		//Init current class virtual table by adding to it all parents functions
-		ArrayList<String> classVirtualTable = new ArrayList<>();
+		ArrayList<String> classVirtualTable = new ArrayList<String>();
 		classVirtualTable.addAll(superClassVirtualTable);
 		
 		//looping over all rawMethods
@@ -124,10 +124,10 @@ public class Environment {
 			codeGeneration.append(stringToLabelMap.get(str)+": \"" + str +"\"\n");
 		}
 		
-		//generate dispatcher table
+		//generate dispatch table
 		for(String className: classOrderKeeper){
 			codeGeneration.append("_DV_"+className+": [");
-			for(String method:dispacherTables.get(className) ){
+			for(String method:dispatchTables.get(className) ){
 				codeGeneration.append(method+",");
 			}
 			codeGeneration.setCharAt(codeGeneration.length()-1, ']');
@@ -147,10 +147,10 @@ public class Environment {
 	
 	public int getMethodOffset(String className,String methodName){
 		
-		ArrayList<String> methods = dispacherTables.get(className);
+		ArrayList<String> methods = dispatchTables.get(className);
 		if(methods == null){
 			System.out.println("==BUG==");
-			System.out.println(methodName + " is not in "+className+ " dispatcher table.");
+			System.out.println(methodName + " is not in "+className+ " dispatch table.");
 			System.exit(-1);
 		}
 		return methods.indexOf(methodName);
