@@ -2,19 +2,27 @@ package lir;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Environment {
 
-	//represents the index of str label
-	private int currentStringLabelIndex = 0;
+	//represents the index of str literal
+	private int currentStringLiteralIndex = 0;
+
+	//represents the index of lir labels
+	private int currentLabelIndex = 0;
 
 	//represents the next available string to use.
 	protected int currentRegister = 0;
 
-	//represents the map from string labels to the actual string
-	protected Map<String,String> stringToLabelMap = new HashMap<String,String>();
+	//represents the map from string literals to the actual string
+	protected Map<String,String> stringLiteralsMap = new HashMap<String,String>();
+
+	//represents the map from string to label name
+	protected Set<String> labels = new HashSet<String>();
 
 	//represents the core Lir code
 	protected StringBuilder lirCode = new StringBuilder();
@@ -28,7 +36,9 @@ public class Environment {
 	//current moment, to be able to print later the dispatch table in the right order
 	protected ArrayList<String> classOrderKeeper = new ArrayList<String>();
 
-	protected int incrementStringLabelIndex(){ return ++currentStringLabelIndex;};
+	protected int incrementStringLiteralIndex(){ return ++currentStringLiteralIndex;};
+
+	protected int incrementLabelIndex(){ return currentLabelIndex++;};
 
 	public void incrementRegistr(){ ++currentRegister;};
 
@@ -36,11 +46,23 @@ public class Environment {
 
 
 	/**
-	 * Adds a new string label to the label map
+	 * Adds a new string literal to the string literals map
 	 * */
-	public void addLabel(String str){
-		stringToLabelMap.put(str, "str"+incrementStringLabelIndex());
+	public void addStringLiteral(String str){
+		stringLiteralsMap.put(str, "str"+incrementStringLiteralIndex());
 	}
+
+
+	/**
+	 * Adds a new label represenatation to the label map
+	 * @return: the LIR label representation
+	 * */
+	public String addLabel(String labelName){
+		String labelRep = "_"+labelName+incrementLabelIndex();
+		labels.add(labelRep);
+		return labelRep;
+	}
+
 
 	/**
 	 * adding virtual table for class without a super class. 
@@ -131,8 +153,8 @@ public class Environment {
 		codeGeneration.append("str_zero: \"Runtime Error: Division by zero!\"\n");
 
 		//generate all string literals
-		for(String str :stringToLabelMap.keySet() ){
-			codeGeneration.append(stringToLabelMap.get(str)+": \"" + str +"\"\n");
+		for(String str :stringLiteralsMap.keySet() ){
+			codeGeneration.append(stringLiteralsMap.get(str)+": \"" + str +"\"\n");
 		}
 
 		//generate dispatch table
