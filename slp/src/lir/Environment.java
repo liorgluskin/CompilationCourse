@@ -169,15 +169,15 @@ public class Environment {
 
 	/**
 	 * Appends a new LIR instruction to the LIR code
-	 * of LIR format: 'Instruction opB,opA #lineNum'
+	 * of LIR format: '#lineNum\n Instruction opB,opA'
 	 */
 	public void addLirInstruction(String instruction, String opA, String opB, int lineNum){
+		if(lineNum != -1){
+			lirCode.append("# line number: "+lineNum+"\n");
+		}
 		lirCode.append(instruction+" "+opA);
 		if(opB != null){
 			lirCode.append(","+opB);
-		}
-		if(lineNum != -1){
-			lirCode.append("# line number: "+lineNum);
 		}
 		lirCode.append("\n");
 	}
