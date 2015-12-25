@@ -37,19 +37,35 @@ public class Environment {
 	protected ArrayList<String> classOrderKeeper = new ArrayList<String>();
 
 	protected int incrementStringLiteralIndex(){ return ++currentStringLiteralIndex;}
-
+	
+	public int getLabelIndex(){
+		return this.currentLabelIndex;
+	}
+	
 	protected int incrementLabelIndex(){ return currentLabelIndex++;}
 
 	public void incrementRegistr(){ ++currentRegister;}
 
 	public void decrementRegistr(){ --currentRegister;}
-
+	
+	public boolean containedInStringToLabelMap(String str_key){
+		return this.stringLiteralsMap.containsKey(str_key);
+	}
+	
+	public void addStringLabel(String str){
+		stringLiteralsMap.put(str, "str"+incrementLabelIndex());
+	}
+	
+	public String getStringLabel(String str_key){
+		return stringLiteralsMap.get(str_key);
+	}
+	
 	////////////////////////////////////////////////////////
-	public int getCurrentRegistr() {return currentRegister;}
+	public int getCurrentRegister() {return currentRegister;}
 
 	public int makeNewRegistr() {
 		incrementRegistr();
-		return getCurrentRegistr();
+		return getCurrentRegister();
 	}
 
 	// for while, break and continue statements, 
@@ -168,6 +184,7 @@ public class Environment {
 	 */
 	public StringBuilder getLirStringBuilder(){ return lirCode;};
 
+	public void addToLirStringBuilder(String code){ this.lirCode.append(code);};
 
 	/**
 	 * generates the code from all info in class including run time checks and strings
