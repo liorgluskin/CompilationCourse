@@ -1,6 +1,6 @@
 package lir;
 
-public enum MoveCommandEnum {
+public enum MoveEnum {
 	MOVE("Move"),
 	MOVE_FIELD("MoveField"),
 	MOVE_ARRAY("MoveArray"),
@@ -8,7 +8,7 @@ public enum MoveCommandEnum {
 	
 	private final String name;
 	
-	MoveCommandEnum(String name){
+	MoveEnum(String name){
 		this.name = name;
 	}
 	
