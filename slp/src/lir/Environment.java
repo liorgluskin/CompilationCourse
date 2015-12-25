@@ -36,13 +36,43 @@ public class Environment {
 	//current moment, to be able to print later the dispatch table in the right order
 	protected ArrayList<String> classOrderKeeper = new ArrayList<String>();
 
-	protected int incrementStringLiteralIndex(){ return ++currentStringLiteralIndex;};
+	protected int incrementStringLiteralIndex(){ return ++currentStringLiteralIndex;}
 
-	protected int incrementLabelIndex(){ return currentLabelIndex++;};
+	protected int incrementLabelIndex(){ return currentLabelIndex++;}
 
-	public void incrementRegistr(){ ++currentRegister;};
+	public void incrementRegistr(){ ++currentRegister;}
 
-	public void decrementRegistr(){ --currentRegister;};
+	public void decrementRegistr(){ --currentRegister;}
+
+	////////////////////////////////////////////////////////
+	public int getCurrentRegistr() {return currentRegister;}
+
+	public int makeNewRegistr() {
+		incrementRegistr();
+		return getCurrentRegistr();
+	}
+
+	// for while, break and continue statements, 
+	// we must save the enclosing while loop label (test, end) for continue and break
+	private String loopTestLabel = null;
+	private String loopEndLabel = null;
+
+	public String getLoopTestLabel() {
+		return loopTestLabel;
+	}
+	public void setLoopTestLabel(String newLabel) {
+		this.loopTestLabel = newLabel;
+	}
+
+	public String getLoopEndLabel() {
+		return loopEndLabel;
+	}
+	public void setLoopEndLabel(String newLabel) {
+		this.loopEndLabel = newLabel;
+	}
+
+
+	//////////////////////////////////////////////////
 
 
 	/**
