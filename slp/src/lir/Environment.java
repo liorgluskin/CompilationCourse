@@ -208,14 +208,32 @@ public class Environment {
 	}
 
 	public int getMethodOffset(String className,String methodName){
+		
 
 		ArrayList<String> methods = dispatchTables.get(className);
+		
 		if(methods == null){
 			System.out.println("==BUG==");
 			System.out.println(methodName + " is not in "+className+ " dispatch table.");
 			System.exit(-1);
 		}
-		return methods.indexOf(methodName);
+		
+		for(String method : methods ){
+			String originalMethodName = method
+					.substring(method.length() - methodName.length());
+			
+			if(method.equals(methodName)){
+				return methods.indexOf(method);
+				
+			}
+		}
+		
+		//shuld not come here
+		System.out.println("==BUG==");
+		System.out.println(methodName + " is not in "+className+ " dispatch table.");
+		System.exit(-1);
+		return -1;
+
 
 	}
 
