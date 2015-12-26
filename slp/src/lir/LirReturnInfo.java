@@ -2,11 +2,11 @@ package lir;
 
 public class LirReturnInfo {
 
-	private MoveCommandEnum moveCommand = MoveCommandEnum.DUMMY;
+	private MoveEnum moveCommand = MoveEnum.DUMMY;
 	
 	private String registerLocation = "";
 	
-	public LirReturnInfo(MoveCommandEnum cmd, String loc){
+	public LirReturnInfo(MoveEnum cmd, String loc){
 		moveCommand = cmd;
 		registerLocation = loc;
 		
@@ -16,7 +16,7 @@ public class LirReturnInfo {
 		return registerLocation;
 	}
 	
-	public MoveCommandEnum getMoveCommand(){
+	public MoveEnum getMoveCommand(){
 		return moveCommand;
 	}
 }

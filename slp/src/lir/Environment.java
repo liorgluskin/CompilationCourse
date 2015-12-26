@@ -37,35 +37,36 @@ public class Environment {
 	protected ArrayList<String> classOrderKeeper = new ArrayList<String>();
 
 	protected int incrementStringLiteralIndex(){ return ++currentStringLiteralIndex;}
-	
+
 	public int getLabelIndex(){
 		return this.currentLabelIndex;
 	}
-	
+
 	protected int incrementLabelIndex(){ return currentLabelIndex++;}
 
-	public void incrementRegistr(){ ++currentRegister;}
+	public void incrementRegister(){ ++currentRegister;}
 
-	public void decrementRegistr(){ --currentRegister;}
-	
+	public void decrementRegister(){ --currentRegister;}
+
 	public boolean containedInStringToLabelMap(String str_key){
 		return this.stringLiteralsMap.containsKey(str_key);
 	}
-	
+
 	public void addStringLabel(String str){
 		stringLiteralsMap.put(str, "str"+incrementLabelIndex());
 	}
-	
+
 	public String getStringLabel(String str_key){
 		return stringLiteralsMap.get(str_key);
 	}
-	
-	////////////////////////////////////////////////////////
-	public int getCurrentRegister() {return currentRegister;}
 
-	public int makeNewRegistr() {
-		incrementRegistr();
-		return getCurrentRegister();
+	public int getCurrentRegister() {
+		return currentRegister;
+	}
+
+	public String makeNewRegister() {
+		incrementRegister();
+		return "R"+getCurrentRegister();
 	}
 
 	// for while, break and continue statements, 
@@ -88,9 +89,7 @@ public class Environment {
 	}
 
 
-	//////////////////////////////////////////////////
-
-
+	
 	/**
 	 * Adds a new string literal to the string literals map
 	 * */
@@ -225,14 +224,32 @@ public class Environment {
 	}
 
 	public int getMethodOffset(String className,String methodName){
+		
 
 		ArrayList<String> methods = dispatchTables.get(className);
+		
 		if(methods == null){
 			System.out.println("==BUG==");
 			System.out.println(methodName + " is not in "+className+ " dispatch table.");
 			System.exit(-1);
 		}
-		return methods.indexOf(methodName);
+		
+		for(String method : methods ){
+			String originalMethodName = method
+					.substring(method.length() - methodName.length());
+			
+			if(method.equals(methodName)){
+				return methods.indexOf(method);
+				
+			}
+		}
+		
+		//shuld not come here
+		System.out.println("==BUG==");
+		System.out.println(methodName + " is not in "+className+ " dispatch table.");
+		System.exit(-1);
+		return -1;
+
 
 	}
 
@@ -258,6 +275,13 @@ public class Environment {
 	}
 	public void addLirInstruction(String instruction, String op){
 		addLirInstruction(instruction, op, -1);
+	}
+	
+	public void addLirInstruction(MoveEnum move, String opA, String opB, int lineNum) {
+		addLirInstruction(move.toString(), opA, opB, lineNum);	
+	}
+	public void addLirInstruction(MoveEnum move, String opA, String opB) {
+		addLirInstruction(move.toString(), opA, opB, -1);	
 	}
 
 

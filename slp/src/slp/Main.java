@@ -37,6 +37,7 @@ public class Main {
 			}
 
 
+
 			///////////////////////////////
 			/// Lexical and Syntax Part: ///
 			///////////////////////////////
@@ -75,6 +76,14 @@ public class Main {
 			// validate semantics of program types
 			TypeEvaluator typeEvalutor = new TypeEvaluator(global_st);
 			typeEvalutor.visit(root, null);
+
+
+
+			///////////////////////////////
+			/// LIR Translation Part: /////
+			///////////////////////////////	
+
+
 
 		} catch (Exception e) {
 			e.printStackTrace();

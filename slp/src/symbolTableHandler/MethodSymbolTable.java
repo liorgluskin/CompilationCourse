@@ -80,4 +80,10 @@ public class MethodSymbolTable extends BlockSymbolTable{
 	public void setReturnVarSymbol(String type_name) throws SemanticError{
 		this.var_symbols.put("returned", new ReturnedVarSymbol("returned", type_name));
 	}
+	
+	public boolean isField (String var){
+		if (var_symbols.containsKey(var)) 
+			return false;
+		return true;
+	}
 }

@@ -88,4 +88,15 @@ public class BlockSymbolTable extends SymbolTable{
 			return ((BlockSymbolTable)parent).getEnclosingClassSymbolTable();
 		
 	}
+	
+	/**
+	 * checks if the given variable is a class field
+	 * @param var
+	 * 
+	 */
+	public boolean isField (String var){
+		if (var_symbols.containsKey(var)) 
+			return false;
+		return ((BlockSymbolTable)parent).isField(var);
+	}
 }
