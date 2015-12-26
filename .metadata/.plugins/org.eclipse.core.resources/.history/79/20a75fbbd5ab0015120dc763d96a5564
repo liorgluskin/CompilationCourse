@@ -83,10 +83,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	 * Common handler for static and virtual methods
 	 */
 	private void methodVisitor(Method method, Environment d) {
-		
-		if(method.getName().equals("main")){
-			d.turnOnMainProccessing();
-		}
 
 		//get current updated lir code
 		StringBuilder strb = d.getLirStringBuilder();

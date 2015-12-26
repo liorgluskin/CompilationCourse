@@ -240,8 +240,7 @@ public class Environment {
 		//add lirCode
 		codeGeneration.append("\n\n");
 		codeGeneration.append(lirCode);
-		codeGeneration.append("\n");
-		codeGeneration.append(mainLirCode);
+		codeGeneration.append(mainLirCode);;
 
 		return codeGeneration.toString();
 	}

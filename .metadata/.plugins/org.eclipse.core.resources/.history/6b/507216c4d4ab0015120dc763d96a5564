@@ -191,20 +191,10 @@ public class Environment {
 	 */
 	public StringBuilder getLirStringBuilder(){ 
 		if(isMainProccessed)
-			return mainLirCode; 
-		return lirCode;
-		
-	};
-	
-	public void turnOnMainProccessing(){
-		isMainProccessed = true;
-	}
-	
-	public void turnOffMainProccessing(){
-		isMainProccessed = false;
-	}
+			return isMainProccessed; 
+		return lirCode;};
 
-	public void addToLirStringBuilder(String code){  getLirStringBuilder().append(code);};
+	public void addToLirStringBuilder(String code){ this.lirCode.append(code);};
 
 	/**
 	 * generates the code from all info in class including run time checks and strings
@@ -240,8 +230,6 @@ public class Environment {
 		//add lirCode
 		codeGeneration.append("\n\n");
 		codeGeneration.append(lirCode);
-		codeGeneration.append("\n");
-		codeGeneration.append(mainLirCode);
 
 		return codeGeneration.toString();
 	}
@@ -282,13 +270,13 @@ public class Environment {
 	 */
 	public void addLirInstruction(String instruction, String opA, String opB, int lineNum){
 		if(lineNum != -1){
-			 getLirStringBuilder().append("# line number: "+lineNum+"\n");
+			lirCode.append("# line number: "+lineNum+"\n");
 		}
-		 getLirStringBuilder().append(instruction+" "+opA);
+		lirCode.append(instruction+" "+opA);
 		if(opB != null){
-			 getLirStringBuilder().append(","+opB);
+			lirCode.append(","+opB);
 		}
-		 getLirStringBuilder().append("\n");
+		lirCode.append("\n");
 	}
 	public void addLirInstruction(String instruction, String opA, String opB){
 		addLirInstruction(instruction, opA, opB, -1);

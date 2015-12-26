@@ -199,10 +199,6 @@ public class Environment {
 	public void turnOnMainProccessing(){
 		isMainProccessed = true;
 	}
-	
-	public void turnOffMainProccessing(){
-		isMainProccessed = false;
-	}
 
 	public void addToLirStringBuilder(String code){  getLirStringBuilder().append(code);};
 
@@ -240,8 +236,6 @@ public class Environment {
 		//add lirCode
 		codeGeneration.append("\n\n");
 		codeGeneration.append(lirCode);
-		codeGeneration.append("\n");
-		codeGeneration.append(mainLirCode);
 
 		return codeGeneration.toString();
 	}
