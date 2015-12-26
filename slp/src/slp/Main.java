@@ -91,7 +91,6 @@ public class Main {
 			System.out.println(lirCode);
 
 
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -174,6 +174,7 @@ public class Environment {
 				}
 			}
 		}
+		dispatchTables.put(className, classVirtualTable);
 	}
 
 
