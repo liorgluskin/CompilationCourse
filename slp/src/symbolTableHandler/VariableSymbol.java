@@ -9,21 +9,26 @@ import types.TypeTable;
  */
 
 public class VariableSymbol extends Symbol{
-	//initialized to -1 for internal use
-	//contains the value of variable
-	private int register_num=-1;
+	private String varLabel = null;
 	
 	public VariableSymbol(String sym_name, String type_name) throws SemanticError{
 		super(sym_name,-1);
 		this.type = TypeTable.getTypeTable().getType(type_name);
 	}
 	
-	public int getRegisterNum(){
-		return register_num;
+	
+	// Methods for LIR translation - VarLabelVisitor
+	// for each program variable symbol we keep the variable's 'memory address',
+	// which is a label of the variable of format:
+	//	 v_ID_symname - for local variable
+	//	 p_ID_symname - for method parameters
+	// 	 f_ID_symname - for class fields
+	public String getLabel(){
+		return varLabel;
+	}
+	public void setLabel(String varLabel){
+		this.varLabel = varLabel;
 	}
 	
-	public void setRegisterNum(int register){
-		register_num = register;
-	}
 	
 }
