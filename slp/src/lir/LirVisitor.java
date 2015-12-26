@@ -230,20 +230,23 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}
 	}
 
-
 	/**
 	 * Translate Assignment statement into LIR code
 	 */
 	public LirReturnInfo visit(AssignStmt stmt, Environment d) {
+		
 		// get the assignment right-hand-side info first
 		LirReturnInfo valueInfo = stmt.getRhs().accept(this, d);
 		String valueReg = valueInfo.getRegisterLocation(); // register where value is stored
 		
 		// get the label of the assignment location
+		LirReturnInfo locationInfo = stmt.getLocation().accept(this, d);
+		String locationReg = locationInfo.getRegisterLocation(); // register where location is stored
 		
+		// handle the assignment
+		lirAssignHandler(locationReg, valueReg, stmt.getLineNum(), d);
 		return null;
 	}
-
 
 	/**
 	 * Translate Call statement into LIR code
