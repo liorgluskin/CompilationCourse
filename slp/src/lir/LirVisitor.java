@@ -1,16 +1,26 @@
 package lir;
 
+import semantic.SemanticError;
 import semantic.TypeEvaluator;
 import slp.*;
 import symbolTableHandler.*;
 
+/**
+ * Class traverses the global symbol table,
+ * and translates the program into LIR code.
+ * 
+ * each visit is passed the LIR program Environment,
+ * that contains the information regarding the LIR code and registers.
+ * 
+ * setting the program variable labels is done in VarLabelVisitor before is run LirVisitor.
+ */
 public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>{
 
 	private GlobalSymbolTable globalSymTable = null;
 	private Environment environment = null;
 
-	public LirVisitor(GlobalSymbolTable globalSymT){
-		globalSymTable = globalSymT;
+	public LirVisitor(GlobalSymbolTable globalSymTable){
+		this.globalSymTable = globalSymTable;
 	}
 
 	String getLirCode(Program program){
@@ -356,9 +366,22 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		// if the variable statement contained an initial value,
 		// we translate the value, and move it to the variable's memory location
 		if(idStmt.hasValue()){
+			
+			// get the register where the value is stored
 			LirReturnInfo initialValueInfo = idStmt.getValue().accept(this, d);
 			String reg = initialValueInfo.getRegisterLocation();
-			//!!!!!!!!!!!!! how to deal with getting variable label from symbol table!
+			
+			// get the label of the local variable
+			MethodSymbolTable mst = (MethodSymbolTable) idStmt.getScope();
+			VariableSymbol localVarSym;
+			try {
+				localVarSym = mst.getVarSymbolLocal(idStmt.getName());
+				String varLabel = localVarSym.getLabel();
+			} catch (SemanticError e) {
+				// in case method symbol table does not contain parameter
+				// should never get here, already checked in Semantic part
+				e.printStackTrace();
+			}			
 			lirAssignHandler(idStmt.getName(), reg, idStmt.getLineNum(), d);
 		}
 		return null;
