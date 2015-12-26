@@ -1,5 +1,9 @@
 package slp;
 
+import symbolTableHandler.ClassSymbolTable;
+import symbolTableHandler.Symbol;
+import symbolTableHandler.VariableSymbol;
+
 public class Field extends FieldOrMethod{
 	private Type type;
 	private String name;
@@ -44,4 +48,5 @@ public class Field extends FieldOrMethod{
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
 	}
+
 }

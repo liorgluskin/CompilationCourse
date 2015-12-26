@@ -1,5 +1,11 @@
 package slp;
 
+import semantic.SemanticError;
+import symbolTableHandler.BlockSymbolTable;
+import symbolTableHandler.MethodSymbolTable;
+import symbolTableHandler.Symbol;
+import symbolTableHandler.VariableSymbol;
+
 public class Formal extends ASTNode{
 	private Type type;
 	private String name;

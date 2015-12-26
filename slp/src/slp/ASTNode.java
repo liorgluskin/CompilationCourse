@@ -1,5 +1,6 @@
 package slp;
 
+import symbolTableHandler.Symbol;
 import symbolTableHandler.SymbolTable;
 
 /** The base class of all AST nodes in this package.
