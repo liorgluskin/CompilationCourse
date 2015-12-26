@@ -8,6 +8,7 @@ import java_cup.runtime.*;
 import semantic.SemanticEvaluator;
 import semantic.TypeEvaluator;
 import symbolTableHandler.GlobalSymbolTable;
+import lir.*;
 
 /** The entry point of the SLP (Straight Line Program) application.
  *
@@ -82,6 +83,12 @@ public class Main {
 			///////////////////////////////
 			/// LIR Translation Part: /////
 			///////////////////////////////	
+			lir.VarLabelVisitor labelVisit = new lir.VarLabelVisitor();
+			labelVisit.visit(root);
+			
+			lir.LirVisitor lirVisitor = new lir.LirVisitor(global_st);
+			String lirCode = lirVisitor.getLirCode(root);
+			System.out.println(lirCode);
 
 
 
