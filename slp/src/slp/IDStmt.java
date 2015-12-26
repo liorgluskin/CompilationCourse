@@ -1,14 +1,20 @@
 package slp;
 
+import semantic.SemanticError;
+import symbolTableHandler.BlockSymbolTable;
+import symbolTableHandler.ClassSymbolTable;
+import symbolTableHandler.Symbol;
+import symbolTableHandler.VariableSymbol;
+
 /** An AST node for Variable Declaration Statements.
-*
-*/
+ *
+ */
 public class IDStmt extends Stmt {
-	
+
 	private Type type;
 	private String name;
 	private Expr value = null;
-	
+
 	/**Constructor for variable declaration without value
 	 * */
 	public IDStmt(Type type, String name) {
@@ -16,7 +22,7 @@ public class IDStmt extends Stmt {
 		this.type = type;
 		this.name = name;
 	}
-	
+
 	/**Constructor for variable declaration and value assignment
 	 * */
 	public IDStmt(Type type, String name, Expr value) {
@@ -31,7 +37,7 @@ public class IDStmt extends Stmt {
 	public void accept(Visitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	/** Accepts a propagating visitor parameterized by two types.
 	 * 
 	 * @param <DownType> The type of the object holding the context.
@@ -45,19 +51,19 @@ public class IDStmt extends Stmt {
 			PropagatingVisitor<DownType, UpType> visitor, DownType context) {
 		return visitor.visit(this, context);
 	}
-	
+
 	public Type getType(){
 		return type;
 	}
-	
+
 	public String getName(){
 		return name;
 	}
-	
+
 	public Expr getValue(){
 		return value;
 	}
-	
+
 	public boolean hasValue(){
 		return (value != null);
 	}
