@@ -253,8 +253,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		LirReturnInfo locationInfo = stmt.getLocation().accept(this, d);
 		String locationReg = locationInfo.getRegisterLocation(); // register where location is stored
 		
-		// handle the assignment
-		lirAssignHandler(locationReg, valueReg, stmt.getLineNum(), d);
 		return null;
 	}
 
