@@ -14,9 +14,13 @@ public class Environment {
 
 	//represents the index of lir labels
 	private int currentLabelIndex = 0;
+	
+	private boolean isMainProccessed = false;
 
 	//represents the next available string to use.
 	protected int currentRegister = 0;
+	
+	
 
 	//represents the map from string literals to the actual string
 	protected Map<String,String> stringLiteralsMap = new HashMap<String,String>();
@@ -26,6 +30,10 @@ public class Environment {
 
 	//represents the core Lir code
 	protected StringBuilder lirCode = new StringBuilder();
+	
+	//represents main method code
+	protected StringBuilder mainLirCode = new StringBuilder();
+	
 
 	//represents the virtual table map
 	//Note: It uses ArrayList because of the importance of the order
@@ -45,9 +53,15 @@ public class Environment {
 	protected int incrementLabelIndex(){ return currentLabelIndex++;}
 
 	public void incrementRegister(){ ++currentRegister;}
+<<<<<<< HEAD
 
 	public void decrementRegister(){ --currentRegister;}
 
+=======
+
+	public void decrementRegister(){ --currentRegister;}
+	
+>>>>>>> 1d1a38ff5064126a64ee3eaab4225fa0fff7d2dd
 	public boolean containedInStringToLabelMap(String str_key){
 		return this.stringLiteralsMap.containsKey(str_key);
 	}
@@ -181,9 +195,22 @@ public class Environment {
 	 * used to update current lir code
 	 * @return lircode string-builder
 	 */
-	public StringBuilder getLirStringBuilder(){ return lirCode;};
+	public StringBuilder getLirStringBuilder(){ 
+		if(isMainProccessed)
+			return mainLirCode; 
+		return lirCode;
+		
+	};
+	
+	public void turnOnMainProccessing(){
+		isMainProccessed = true;
+	}
+	
+	public void turnOffMainProccessing(){
+		isMainProccessed = false;
+	}
 
-	public void addToLirStringBuilder(String code){ this.lirCode.append(code);};
+	public void addToLirStringBuilder(String code){  getLirStringBuilder().append(code);};
 
 	/**
 	 * generates the code from all info in class including run time checks and strings
@@ -219,6 +246,8 @@ public class Environment {
 		//add lirCode
 		codeGeneration.append("\n\n");
 		codeGeneration.append(lirCode);
+		codeGeneration.append("\n");
+		codeGeneration.append(mainLirCode);
 
 		return codeGeneration.toString();
 	}
@@ -259,13 +288,13 @@ public class Environment {
 	 */
 	public void addLirInstruction(String instruction, String opA, String opB, int lineNum){
 		if(lineNum != -1){
-			lirCode.append("# line number: "+lineNum+"\n");
+			 getLirStringBuilder().append("# line number: "+lineNum+"\n");
 		}
-		lirCode.append(instruction+" "+opA);
+		 getLirStringBuilder().append(instruction+" "+opA);
 		if(opB != null){
-			lirCode.append(","+opB);
+			 getLirStringBuilder().append(","+opB);
 		}
-		lirCode.append("\n");
+		 getLirStringBuilder().append("\n");
 	}
 	public void addLirInstruction(String instruction, String opA, String opB){
 		addLirInstruction(instruction, opA, opB, -1);

@@ -83,6 +83,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	 * Common handler for static and virtual methods
 	 */
 	private void methodVisitor(Method method, Environment d) {
+		
+		if(method.getName().equals("main")){
+			d.turnOnMainProccessing();
+		}
 
 		//get current updated lir code
 		StringBuilder strb = d.getLirStringBuilder();
@@ -114,11 +118,16 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//visit all statements
 		method.getStatementList().accept(this, d);
+		
+		
 
 		//return 9999 if function return type is void
 		if(method.getType().getFullName().equals("void")){
 			strb.append("Return 9999\n");
 		}
+		
+		//turn off any way
+		d.turnOffMainProccessing();
 
 	}
 
@@ -187,6 +196,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}
 		
 		return false;
+<<<<<<< HEAD
 	}
 
 	/***
@@ -230,6 +240,52 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}
 	}
 
+=======
+	}
+
+	/***
+	 * Function to handle the possible assignments (moves) in LIR
+	 * @param location - register, memory, field or array-location
+	 * @param value - immediate, register or memory
+	 * @param lineNum - line number in translated code
+	 * @param d - the current LIR environment
+	 */
+	private void lirAssignHandler(String location, String value, int lineNum, Environment d){
+
+		// handle a move to a register
+		if(location.startsWith("R")){
+			d.addLirInstruction(MoveEnum.MOVE, value, location, lineNum);
+		}
+
+		// handle a move to memory
+		else if(isMemoryVar(location)){
+			String register = value;
+			// attempting to move from memory to memory, illegal in LIR
+			// must first move value to register, then move register value to location
+			if(isMemoryVar(value)){
+				register = d.makeNewRegister();
+				// move value to register
+				d.addLirInstruction(MoveEnum.MOVE, value, register, lineNum);				
+			}
+			// move from register to location
+			d.addLirInstruction(MoveEnum.MOVE, register, location, lineNum);
+		}
+
+		// handle a move to a field
+		// field is of format 'Reg.Reg' or 'Reg.Immediate'
+		else if(location.contains(".")){
+			d.addLirInstruction(MoveEnum.MOVE_FIELD, value, location, lineNum);
+		}
+
+		// handle a move to an array-location
+		// only array ends with ']'
+		else if(location.endsWith("]")){ 
+			d.addLirInstruction(MoveEnum.MOVE_ARRAY, value, location, lineNum);
+		}
+	}
+
+
+>>>>>>> 1d1a38ff5064126a64ee3eaab4225fa0fff7d2dd
 	/**
 	 * Translate Assignment statement into LIR code
 	 */
@@ -248,6 +304,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		return null;
 	}
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1d1a38ff5064126a64ee3eaab4225fa0fff7d2dd
 	/**
 	 * Translate Call statement into LIR code
 	 */
