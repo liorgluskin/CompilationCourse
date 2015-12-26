@@ -102,7 +102,7 @@ public class VarLabelVisitor implements Visitor{
 		ClassSymbolTable cst = (ClassSymbolTable) field.getScope();
 		VariableSymbol varSym = cst.getFieldSymbol(field.getName());
 		// set field label accordingly
-		varSym.setLabel("f_"+ (uniqueID++) + field.getName());			
+		varSym.setLabel("f_"+ (uniqueID++)+"_" + field.getName());			
 		field.getType().accept(this);
 	}
 
@@ -115,7 +115,7 @@ public class VarLabelVisitor implements Visitor{
 			MethodSymbolTable mst = (MethodSymbolTable) formal.getScope();
 			VariableSymbol varSym = mst.getVarParamSymbol(formal.getName());
 			// set parameter label accordingly
-			varSym.setLabel("p_"+ (uniqueID++) + formal.getName());	
+			varSym.setLabel("p_"+ (uniqueID++)+"_" + formal.getName());	
 		} catch (SemanticError e) {
 			// in case method symbol table does not contain parameter
 			// should never get here, already checked in Semantic part
@@ -181,7 +181,7 @@ public class VarLabelVisitor implements Visitor{
 		try {
 			varSym = bst.getVarSymbolLocal(stmt.getName());
 			// set field label accordingly
-			varSym.setLabel("v_"+ (uniqueID++) + stmt.getName());
+			varSym.setLabel("v_"+ (uniqueID++)+"_" + stmt.getName());
 		} catch (SemanticError e) {
 			// in case block symbol table does not contain parameter
 			// should never get here, already checked in Semantic part

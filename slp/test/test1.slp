@@ -6,9 +6,8 @@ class A {
     return z;
   }
   static void main(string[] args) {
-    B p = new B();
+    A p = new B();
     p.foo(5);
-    B.bar();
   }
 }
 
@@ -19,11 +18,7 @@ class B extends A {
     Library.println(s);
     int[] sarr = Library.stoa(s);
     int l = sarr.length;
-    Library.printi(l);
+   Library.printi(l);
     return l;
-  }
-  
-  static int bar(){
-  	return 1;
   }
 }

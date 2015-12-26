@@ -16,7 +16,7 @@ public class Environment {
 	private int currentLabelIndex = 0;
 
 	//represents the next available string to use.
-	protected int currentRegister = 0;
+	protected int currentRegister = 1;
 
 	//represents the map from string literals to the actual string
 	protected Map<String,String> stringLiteralsMap = new HashMap<String,String>();
@@ -53,7 +53,7 @@ public class Environment {
 	}
 
 	public void addStringLabel(String str){
-		stringLiteralsMap.put(str, "str"+incrementLabelIndex());
+		stringLiteralsMap.put(str, "str"+incrementStringLiteralIndex());
 	}
 
 	public String getStringLabel(String str_key){
@@ -201,7 +201,7 @@ public class Environment {
 
 		//generate all string literals
 		for(String str :stringLiteralsMap.keySet() ){
-			codeGeneration.append(stringLiteralsMap.get(str)+": \"" + str +"\"\n");
+			codeGeneration.append(stringLiteralsMap.get(str)+": " + str +"\n");
 		}
 
 		//generate dispatch table
