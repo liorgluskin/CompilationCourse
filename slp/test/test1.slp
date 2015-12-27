@@ -2,7 +2,7 @@ class A {
   int x;
   string s;
   int foo(int y) {
-    int z=y+1;
+    int z=y-1;
     return z;
   }
   static void main(string[] args) {
