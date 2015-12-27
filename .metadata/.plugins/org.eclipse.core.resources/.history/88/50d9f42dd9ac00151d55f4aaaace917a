@@ -339,7 +339,22 @@ public class SemanticEvaluator implements Visitor{
 			}
 		}
 		
-		
+		// if method is not void make sure it has a return statement
+		if(!method.getType().getFullName().equals("void") && !isLibraryClassVisiting){
+			boolean hasReturnStatement = false;
+			for(Stmt s : method.getStatementList().getStatements()){
+				if(s instanceof ReturnStmt){
+					hasReturnStatement = true;
+				}
+			}
+			// check if seen return stmt
+			if(!hasReturnStatement){
+				SemanticError error = new SemanticError("Invalid method, method with type '"
+						+method.getType().getFullName()+"' must have 'return' statement", method.getLineNum());
+				System.out.println(error);
+				System.exit(-1);
+			}
+		}
 	}
 	
 	public void visit(ClassMethod method) {

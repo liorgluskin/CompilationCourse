@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename type &apos;semantic.TypeChecker&apos; to &apos;TypeEvaluator&apos;&#x0D;&#x0A;- Original project: &apos;slp&apos;&#x0D;&#x0A;- Original element: &apos;semantic.TypeChecker&apos;&#x0D;&#x0A;- Renamed element: &apos;semantic.TypeEvaluator&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;TypeChecker&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;semantic{TypeChecker.java[TypeChecker" matchStrategy="1" name="TypeEvaluator" qualified="false" references="true" similarDeclarations="false" stamp="1449244542131" textual="false" version="1.0"/>
-</session>

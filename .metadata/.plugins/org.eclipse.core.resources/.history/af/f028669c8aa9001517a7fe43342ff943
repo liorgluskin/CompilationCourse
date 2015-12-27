@@ -1,7 +1,0 @@
-package lir;
-
-import slp.PropagatingVisitor;
-
-public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>{
-
-}

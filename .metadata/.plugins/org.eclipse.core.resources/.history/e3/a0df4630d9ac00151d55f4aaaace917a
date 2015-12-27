@@ -339,7 +339,7 @@ public class SemanticEvaluator implements Visitor{
 			}
 		}
 		
-		
+		}
 	}
 	
 	public void visit(ClassMethod method) {

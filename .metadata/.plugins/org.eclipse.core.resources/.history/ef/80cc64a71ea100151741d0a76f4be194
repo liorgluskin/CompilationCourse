@@ -1,9 +1,0 @@
-
-class B {
-	static void main(string[] args) { }
-	boolean yes(int a, boolean b) {
-
-	
-
-	}
-}
