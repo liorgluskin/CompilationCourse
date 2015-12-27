@@ -88,7 +88,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	private void methodVisitor(Method method, Environment d, boolean isMain) {
 
 		//get current updated lir code
-		StringBuilder strb;
+		StringBuilder strb = d.getLirStringBuilder();
 		
 		//get class name for comment and label
 		String class_name = ((ClassSymbolTable)method.getScope()).getSymbol().getName();
@@ -98,15 +98,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			//if name == main then it must be the static main function by IC specification	
 			environment.setCurrentStringBuilder(environment.getMainStringBuilder());
 			
-			strb = d.getCurrentStringBuilder();
-			
 			d.addToMainStringBuilder("\n####main in "+class_name+"####\n");
 
 			//add label
 			d.addToMainStringBuilder("_ic_main:\n");			
 		} else {
 			//not main function
-			strb = d.getCurrentStringBuilder();
+
 			//add comment with method and class name
 			strb.append("\n####"+class_name+"."+method.getName()+"####\n");
 
