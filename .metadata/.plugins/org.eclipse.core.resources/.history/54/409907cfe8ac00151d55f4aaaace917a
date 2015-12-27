@@ -15,7 +15,7 @@
      return 1;
    }
    
-   static void main(string[] args) {
+   static void main(...) {
      Foo f = new Bar();
      f.rise(1);
      f.shine(2);

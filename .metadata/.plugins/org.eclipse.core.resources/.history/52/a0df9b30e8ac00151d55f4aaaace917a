@@ -208,7 +208,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		
 		//edited by lior: can be also R1.2 which is a field
 		// handle a move to a register
-		if(location.startsWith("R") && /*added by lior */!location.contains(".") && !location.contains("]")){
+		if(location.startsWith("R") && /*added by lior */!location.contains(".")){
 			d.addInstructionToBuilder(MoveEnum.MOVE, value, location, lineNum);
 		}
 

@@ -3,8 +3,6 @@ class A {
   string s;
   int foo(int y) {
     int z=y+1;
-    int[][][] b = new int[][][5];
-    b[4] = new int[][5];
     return z;
   }
   static void main(string[] args) {

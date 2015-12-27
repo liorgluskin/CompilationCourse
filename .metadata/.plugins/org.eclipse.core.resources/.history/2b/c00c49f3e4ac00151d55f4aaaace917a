@@ -208,7 +208,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		
 		//edited by lior: can be also R1.2 which is a field
 		// handle a move to a register
-		if(location.startsWith("R") && /*added by lior */!location.contains(".") && !location.contains("]")){
+		if(location.startsWith("R") && /*added by lior */!location.contains(".")){
 			d.addInstructionToBuilder(MoveEnum.MOVE, value, location, lineNum);
 		}
 
@@ -228,6 +228,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		// handle a move to a field
 		// field is of format 'Reg.Reg' or 'Reg.Immediate'
+		//won't enter here
 		else if(location.contains(".")){
 			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, value, location, lineNum);
 		}
@@ -433,7 +434,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			LirReturnInfo location_expr = var_loc.getLocation().accept(this, d);
 			
 			//move to register only if location_expr not in a register
-			if(location_expr.getRegisterLocation().charAt(0)!= 'R' || location_expr.getRegisterLocation().contains(".")){
+			if(location_expr.getRegisterLocation().charAt(0)!= 'R'){
 				d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),loc);
 				d.incrementRegister();
 			}else{
@@ -723,12 +724,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.addInstructionToBuilder("StaticCall","__checkSize(n="+loc+")","Rdummy");
 		
 		String resLoc = "R" + d.getCurrentRegister();
-		d.incrementRegister();
 
 		//library function - allocate memory for a new array
-		d.addInstructionToBuilder("Library","__allocateArray("+loc+")",resLoc);
+		d.addInstructionToBuilder("Library","__allocateArray("+loc+")",reg);
 
-		return new LirReturnInfo(MoveEnum.MOVE,resLoc);
+		return new LirReturnInfo(MoveEnum.MOVE,reg);
 	}
 
 	public LirReturnInfo visit(Length length, Environment d) {
