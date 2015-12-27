@@ -26,7 +26,13 @@ public class Environment {
 
 	//represents the core Lir code
 	protected StringBuilder lirCode = new StringBuilder();
-
+	
+	//string builder for main method code - keren
+	protected StringBuilder mainMethodString = new StringBuilder();
+	
+	//keren
+	protected StringBuilder currentBuilder = new StringBuilder();
+	
 	//represents the virtual table map
 	//Note: It uses ArrayList because of the importance of the order
 	//as we will be using its index as offset in Lir Code generation
@@ -152,6 +158,10 @@ public class Environment {
 
 		//looping over all rawMethods
 		for(String rawMethod : rawMethodsNames){
+			boolean isOverride = false;
+			//setting function name
+			String fullMethodName = "_"+className +"_"+ rawMethod;
+			
 			//checking if super class has a function with the same name
 			for(String superMethodName :superClassVirtualTable ){
 
@@ -160,19 +170,25 @@ public class Environment {
 				String originalMethodName = superMethodName
 						.substring(superMethodName.length() - rawMethod.length());
 
-				//setting function name
-				String fullMethodName = "_"+className +"_"+ rawMethod;
 
 				if(originalMethodName.equals(rawMethod)){
+					isOverride = true;
 					//overriding
 					int index = superClassVirtualTable.indexOf(superMethodName);
 					classVirtualTable.set(index, fullMethodName);
+					break;
 
-				} else{
-					//new method
-					classVirtualTable.add(fullMethodName);
-				}
+				} 
+				
 			}
+			if(isOverride)
+				continue;
+			else{
+				//new method
+				classVirtualTable.add(fullMethodName);
+			}
+			
+			
 		}
 		dispatchTables.put(className, classVirtualTable);
 	}
@@ -185,6 +201,7 @@ public class Environment {
 	public StringBuilder getLirStringBuilder(){ return lirCode;};
 
 	public void addToLirStringBuilder(String code){ this.lirCode.append(code);};
+	public void addToCurrentStringBuilder(String code){ currentBuilder.append(code);};
 
 	/**
 	 * generates the code from all info in class including run time checks and strings
@@ -258,6 +275,7 @@ public class Environment {
 	 * Appends a new LIR instruction to the LIR code
 	 * of LIR format: '#lineNum\n Instruction opB,opA'
 	 */
+	/*
 	public void addLirInstruction(String instruction, String opA, String opB, int lineNum){
 		if(lineNum != -1){
 			lirCode.append("# line number: "+lineNum+"\n");
@@ -284,6 +302,50 @@ public class Environment {
 	public void addLirInstruction(MoveEnum move, String opA, String opB) {
 		addLirInstruction(move.toString(), opA, opB, -1);	
 	}
-
+	 */
+	//functions for main string bulider - keren
+	public StringBuilder getMainStringBuilder(){
+		return mainMethodString;
+	}
+	
+	public void addToMainStringBuilder(String code){
+		mainMethodString.append(code);
+	}
+	
+	public StringBuilder getCurrentStringBuilder(){
+		return currentBuilder;
+	}
+	
+	public void setCurrentStringBuilder(StringBuilder st){
+		currentBuilder = st;
+	}
+	
+	public void addInstructionToBuilder(String instruction, String opA, String opB, int lineNum){
+		if(lineNum != -1){
+			currentBuilder.append("# line number: "+lineNum+"\n");
+		}
+		currentBuilder.append(instruction+" "+opA);
+		if(opB != null){
+			currentBuilder.append(","+opB);
+		}
+		currentBuilder.append("\n");
+	}
+	
+	public void addInstructionToBuilder(String instruction, String opA, String opB){
+		addInstructionToBuilder(instruction, opA, opB, -1);
+	}
+	public void addInstructionToBuilder(String instruction, String op, int lineNum){
+		addInstructionToBuilder(instruction, op, null, -1);
+	}
+	public void addInstructionToBuilder(String instruction, String op){
+		addInstructionToBuilder(instruction, op, -1);
+	}
+	
+	public void addInstructionToBuilder(MoveEnum move, String opA, String opB, int lineNum) {
+		addInstructionToBuilder(move.toString(), opA, opB, lineNum);	
+	}
+	public void addInstructionToBuilder(MoveEnum move, String opA, String opB) {
+		addInstructionToBuilder(move.toString(), opA, opB, -1);	
+	}
 
 }

@@ -1,5 +1,6 @@
 package symbolTableHandler;
 
+import lir.Environment;
 import semantic.SemanticError;
 
 /**
@@ -10,6 +11,7 @@ import semantic.SemanticError;
 public class MethodSymbolTable extends BlockSymbolTable{
 	private String method_name;
 	private boolean is_static;
+	private String thisReg = null;
 		
 	public MethodSymbolTable(String method_name, ClassSymbolTable parent){
 		super(parent);
@@ -85,5 +87,16 @@ public class MethodSymbolTable extends BlockSymbolTable{
 		if (var_symbols.containsKey(var)) 
 			return false;
 		return true;
+	}
+	
+	public String getThisregister(Environment d){
+		if(thisReg != null){
+			return thisReg;
+		}else{
+			thisReg = "R" + d.getCurrentRegister();
+			d.addInstructionToBuilder("Move", "this", thisReg);
+			d.incrementRegister();
+			return thisReg;
+		}
 	}
 }

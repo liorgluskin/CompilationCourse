@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lir.Environment;
 import semantic.SemanticError;
 
 /**
@@ -98,5 +99,9 @@ public class BlockSymbolTable extends SymbolTable{
 		if (var_symbols.containsKey(var)) 
 			return false;
 		return ((BlockSymbolTable)parent).isField(var);
+	}
+	
+	public String getThisregister(Environment d){
+		return ((BlockSymbolTable)parent).getThisregister(d);
 	}
 }
