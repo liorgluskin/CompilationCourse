@@ -116,9 +116,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		method.getStatementList().accept(this, d);
 		environment.setCurrentStringBuilder(environment.getLirStringBuilder());
 		
-		//return 9999 if function return type is void
+		//return Rdummy if function return type is void
 		if(method.getType().getFullName().equals("void")){
-			strb.append("Return 9999\n");
+			strb.append("Return Rdummy\n");
 		}
 
 	}
@@ -908,6 +908,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.addInstructionToBuilder("Move","1",operand1_reg);
 		d.addToCurrentStringBuilder(end_label+":\n");
 
-		return new LirReturnInfo(MoveEnum.MOVE,operand2_reg);
+		return new LirReturnInfo(MoveEnum.MOVE,operand1_reg);
 	}
 }

@@ -24,7 +24,7 @@ class A extends C {
 	}
 	
 	boolean isPositive(int n) {
-		return n > 0;
+		return n > 12;
 	}
 }
 
