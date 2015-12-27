@@ -1,3 +1,33 @@
-x = 5;
-y = 6;
-print(1<2 && y>=x);
+class C {
+
+	static void main(string[] args) {
+		A a = new A();
+		a.g(512);
+	}
+	
+}
+
+class A extends C {
+	string str;
+
+	void g(int x) {
+		str = " sentence";
+		Library.println("This is " + " a" + str);
+		Library.println("This is " + f(" a") + str + (f(" f ") + (" constant " +  str)));
+		Library.println("Goodbye!");
+	}
+
+	
+	string f(string s) {
+		str = " f was called! " + s;
+		return " { " + s + " } ";
+	}
+	
+	boolean isPositive(int n) {
+		return n > 0;
+	}
+}
+
+class B extends A {
+}
+

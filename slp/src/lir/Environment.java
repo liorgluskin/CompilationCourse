@@ -26,13 +26,13 @@ public class Environment {
 
 	//represents the core Lir code
 	protected StringBuilder lirCode = new StringBuilder();
-	
+
 	//string builder for main method code - keren
 	protected StringBuilder mainMethodString = new StringBuilder();
-	
+
 	//keren
 	protected StringBuilder currentBuilder = new StringBuilder();
-	
+
 	//represents the virtual table map
 	//Note: It uses ArrayList because of the importance of the order
 	//as we will be using its index as offset in Lir Code generation
@@ -95,7 +95,7 @@ public class Environment {
 	}
 
 
-	
+
 	/**
 	 * Adds a new string literal to the string literals map
 	 * */
@@ -161,7 +161,7 @@ public class Environment {
 			boolean isOverride = false;
 			//setting function name
 			String fullMethodName = "_"+className +"_"+ rawMethod;
-			
+
 			//checking if super class has a function with the same name
 			for(String superMethodName :superClassVirtualTable ){
 
@@ -179,7 +179,7 @@ public class Environment {
 					break;
 
 				} 
-				
+
 			}
 			if(isOverride)
 				continue;
@@ -187,8 +187,8 @@ public class Environment {
 				//new method
 				classVirtualTable.add(fullMethodName);
 			}
-			
-			
+
+
 		}
 		dispatchTables.put(className, classVirtualTable);
 	}
@@ -210,6 +210,8 @@ public class Environment {
 
 		StringBuilder codeGeneration = new StringBuilder();
 
+		codeGeneration.append("\n############################################\n");
+		codeGeneration.append("# String literals\n");
 		//generate all string errors
 		codeGeneration.append("str_null_ref: \"Runtime Error: Null pointer dereference!\"\n");
 		codeGeneration.append("str_array_access: \"Runtime Error: Array index out of bounds!\"\n");
@@ -220,16 +222,29 @@ public class Environment {
 		for(String str :stringLiteralsMap.keySet() ){
 			codeGeneration.append(stringLiteralsMap.get(str)+": " + str +"\n");
 		}
+		codeGeneration.append("############################################\n");
 
+		
 		//generate dispatch table
+		codeGeneration.append("\n############################################\n");
+		codeGeneration.append("# Dispatch vectors\n");
 		for(String className: classOrderKeeper){
 			codeGeneration.append("_DV_"+className+": [");
+			int commaCounter = 0; // for printing ','
 			for(String method:dispatchTables.get(className) ){
-				codeGeneration.append(method+",");
+				// if we are in final method, don't print comma
+				if(commaCounter == dispatchTables.get(className).size()-1){
+					codeGeneration.append(method);
+				}else{
+					codeGeneration.append(method+",");
+				}
+				commaCounter++;
 			}
-			codeGeneration.setCharAt(codeGeneration.length()-1, ']');
+			codeGeneration.append("]");
 			codeGeneration.append("\n");
 		}
+		codeGeneration.append("############################################\n");
+
 
 		//add runTimeCheckFunctions
 		//TO DO: run time checks
@@ -242,26 +257,26 @@ public class Environment {
 	}
 
 	public int getMethodOffset(String className,String methodName){
-		
+
 
 		ArrayList<String> methods = dispatchTables.get(className);
-		
+
 		if(methods == null){
 			System.out.println("==BUG==");
 			System.out.println(methodName + " is not in "+className+ " dispatch table.");
 			System.exit(-1);
 		}
-		
+
 		for(String method : methods ){
 			String originalMethodName = method
 					.substring(method.length() - methodName.length());
-			
+
 			if(methodName.equals(originalMethodName)){
 				return methods.indexOf(method);
-				
+
 			}
 		}
-		
+
 		//shuld not come here
 		System.out.println("==BUG==");
 		System.out.println(methodName + " is not in "+className+ " dispatch table.");
@@ -295,7 +310,7 @@ public class Environment {
 	public void addLirInstruction(String instruction, String op){
 		addLirInstruction(instruction, op, -1);
 	}
-	
+
 	public void addLirInstruction(MoveEnum move, String opA, String opB, int lineNum) {
 		addLirInstruction(move.toString(), opA, opB, lineNum);	
 	}
@@ -307,19 +322,19 @@ public class Environment {
 	public StringBuilder getMainStringBuilder(){
 		return mainMethodString;
 	}
-	
+
 	public void addToMainStringBuilder(String code){
 		mainMethodString.append(code);
 	}
-	
+
 	public StringBuilder getCurrentStringBuilder(){
 		return currentBuilder;
 	}
-	
+
 	public void setCurrentStringBuilder(StringBuilder st){
 		currentBuilder = st;
 	}
-	
+
 	public void addInstructionToBuilder(String instruction, String opA, String opB, int lineNum){
 		if(lineNum != -1){
 			currentBuilder.append("# line number: "+lineNum+"\n");
@@ -330,7 +345,7 @@ public class Environment {
 		}
 		currentBuilder.append("\n");
 	}
-	
+
 	public void addInstructionToBuilder(String instruction, String opA, String opB){
 		addInstructionToBuilder(instruction, opA, opB, -1);
 	}
@@ -340,7 +355,7 @@ public class Environment {
 	public void addInstructionToBuilder(String instruction, String op){
 		addInstructionToBuilder(instruction, op, -1);
 	}
-	
+
 	public void addInstructionToBuilder(MoveEnum move, String opA, String opB, int lineNum) {
 		addInstructionToBuilder(move.toString(), opA, opB, lineNum);	
 	}

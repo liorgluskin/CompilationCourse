@@ -67,9 +67,7 @@ public class Main {
 			///////////////////////////////	
 
 			// Interpret the program:
-			System.out.println("Semantic Evaluation of input file: '"+fileName+"'");
-			System.out.println("---------------------------------------------------");
-
+		
 			// create symbol table and initial semantic evaluation
 			// IC Library classes added to program symbol table automatically
 			SemanticEvaluator evaluator = new SemanticEvaluator();

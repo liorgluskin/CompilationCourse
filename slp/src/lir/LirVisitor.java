@@ -46,12 +46,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		for(ClassDecl c: program.getClasses()){
 			if (!c.getName().equals("Library")){
 				//create dispatcher table
-				ClassSymbolTable classSymT = globalSymTable
-						.getClassSymbolTable(c.getName());			
-
+				ClassSymbolTable classSymT = globalSymTable.getClassSymbolTable(c.getName());			
 				if(c.getSuperClassName() != null){
-					d.addVirtualTable(c.getName(), c.getSuperClassName(),
-							classSymT.getAllVirtualMethods());
+					d.addVirtualTable(c.getName(), c.getSuperClassName(), classSymT.getAllVirtualMethods());
 				}else{
 					d.addVirtualTable(c.getName(), classSymT.getAllVirtualMethods());
 				}
@@ -389,12 +386,12 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			// get the register where the value is stored
 			LirReturnInfo initialValueInfo = idStmt.getValue().accept(this, d);
 			String reg = initialValueInfo.getRegisterLocation();
-			
+					
 			// get the label of the local variable
-			MethodSymbolTable mst = (MethodSymbolTable) idStmt.getScope();
+			BlockSymbolTable bst = (BlockSymbolTable) idStmt.getScope();
 			VariableSymbol localVarSym;
 			try {
-				localVarSym = mst.getVarSymbolLocal(idStmt.getName());
+				localVarSym = bst.getVarSymbolLocal(idStmt.getName());
 				String varLabel = localVarSym.getLabel();
 				lirAssignHandler(varLabel, reg, idStmt.getLineNum(), d);
 			} catch (SemanticError e) {
