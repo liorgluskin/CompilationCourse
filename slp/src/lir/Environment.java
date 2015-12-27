@@ -152,6 +152,10 @@ public class Environment {
 
 		//looping over all rawMethods
 		for(String rawMethod : rawMethodsNames){
+			boolean isOverride = false;
+			//setting function name
+			String fullMethodName = "_"+className +"_"+ rawMethod;
+			
 			//checking if super class has a function with the same name
 			for(String superMethodName :superClassVirtualTable ){
 
@@ -160,19 +164,25 @@ public class Environment {
 				String originalMethodName = superMethodName
 						.substring(superMethodName.length() - rawMethod.length());
 
-				//setting function name
-				String fullMethodName = "_"+className +"_"+ rawMethod;
 
 				if(originalMethodName.equals(rawMethod)){
+					isOverride = true;
 					//overriding
 					int index = superClassVirtualTable.indexOf(superMethodName);
 					classVirtualTable.set(index, fullMethodName);
+					break;
 
-				} else{
-					//new method
-					classVirtualTable.add(fullMethodName);
-				}
+				} 
+				
 			}
+			if(isOverride)
+				continue;
+			else{
+				//new method
+				classVirtualTable.add(fullMethodName);
+			}
+			
+			
 		}
 		dispatchTables.put(className, classVirtualTable);
 	}
