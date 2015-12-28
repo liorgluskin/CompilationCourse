@@ -28,10 +28,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		environment = new Environment();
 		environment.setCurrentStringBuilder(environment.getLirStringBuilder());
 		visit(program,environment);
-		
+
 		//add main string builder at the end - keren
 		environment.addToLirStringBuilder(environment.getMainStringBuilder().toString());
-		
+
 		return environment.generateLirCode();
 	}
 
@@ -89,7 +89,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//get current updated lir code
 		StringBuilder strb;
-		
+
 		//get class name for comment and label
 		String class_name = ((ClassSymbolTable)method.getScope()).getSymbol().getName();
 
@@ -97,9 +97,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		if(isMain/*-keren; method.getName().equals("main")*/){
 			//if name == main then it must be the static main function by IC specification	
 			environment.setCurrentStringBuilder(environment.getMainStringBuilder());
-			
+
 			strb = d.getCurrentStringBuilder();
-			
+
 			d.addToMainStringBuilder("\n####main in "+class_name+"####\n");
 
 			//add label
@@ -116,7 +116,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//visit all statements
 		method.getStatementList().accept(this, d);
-		
+
 		//return Rdummy if function return type is void
 		if(method.getType().getFullName().equals("void")){
 			strb.append("Return Rdummy\n");
@@ -132,9 +132,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	public LirReturnInfo visit(StaticMethod staticMethod, Environment d) {
 		//is staticMethod is main method - keren
 		boolean isMain = staticMethod.getType().getName().equals("void")&&
-						staticMethod.getName().equals("main") &&
-						staticMethod.getFormals().size() == 1 &&
-						staticMethod.getFormals().get(0).getType().getFullName().equals("string[]");
+				staticMethod.getName().equals("main") &&
+				staticMethod.getFormals().size() == 1 &&
+				staticMethod.getFormals().get(0).getType().getFullName().equals("string[]");
 		methodVisitor(staticMethod,d,isMain);
 		return null; //nothing to be returned
 	}
@@ -193,7 +193,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		if(var.startsWith("this")){
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -205,7 +205,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	 * @param d - the current LIR environment
 	 */
 	private void lirAssignHandler(String location, String value, int lineNum, Environment d){
-		
+
 		//edited by lior: can be also R1.2 which is a field
 		// handle a move to a register
 		if(location.startsWith("R") && /*added by lior */!location.contains(".") && !location.contains("]")){
@@ -243,15 +243,15 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	 * Translate Assignment statement into LIR code
 	 */
 	public LirReturnInfo visit(AssignStmt stmt, Environment d) {
-		
+
 		// get the assignment right-hand-side info first
 		LirReturnInfo valueInfo = stmt.getRhs().accept(this, d);
 		String valueReg = valueInfo.getRegisterLocation(); // register where value is stored
-		
+
 		// get the label of the assignment location
 		LirReturnInfo locationInfo = stmt.getLocation().accept(this, d);
 		String locationReg = locationInfo.getRegisterLocation(); // register where location is stored
-		
+
 		// handle the assignment
 		lirAssignHandler(locationReg, valueReg, stmt.getLineNum(), d);
 		return null;
@@ -383,11 +383,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		// if the variable statement contained an initial value,
 		// we translate the value, and move it to the variable's memory location
 		if(idStmt.hasValue()){
-			
+
 			// get the register where the value is stored
 			LirReturnInfo initialValueInfo = idStmt.getValue().accept(this, d);
 			String reg = initialValueInfo.getRegisterLocation();
-					
+
 			// get the label of the local variable
 			BlockSymbolTable bst = (BlockSymbolTable) idStmt.getScope();
 			VariableSymbol localVarSym;
@@ -400,7 +400,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				// should never get here, already checked in Semantic part
 				e.printStackTrace();
 			}			
-			
+
 		}
 		return null;
 	}
@@ -427,11 +427,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	//edited by lior:
 	public LirReturnInfo visit(VarLocation var_loc, Environment d) {
 		String loc ="R"+ d.getCurrentRegister();
-		
+
 		if (var_loc.getLocation() != null){
 			//visit location
 			LirReturnInfo location_expr = var_loc.getLocation().accept(this, d);
-			
+
 			//move to register only if location_expr not in a register
 			if(location_expr.getRegisterLocation().charAt(0)!= 'R' || location_expr.getRegisterLocation().contains(".")){
 				d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),loc);
@@ -439,10 +439,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			}else{
 				loc = location_expr.getRegisterLocation();
 			}
-			
+
 			//runtime check
 			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc+")", "Rdummy");
-			
+
 			//field offset
 			types.Type class_type = (types.Type)(var_loc.getLocation().accept(new TypeEvaluator(globalSymTable), null));
 			String class_name = new String();
@@ -450,15 +450,15 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				class_name = class_type.getName();
 			else
 				System.err.println("Error VarLocation visit\n" );
-			
+
 			FieldSymbol f = globalSymTable.getClassSymbolTable(class_name).getFieldSymbol(var_loc.getName());
 			int offset = f.getOffset()+1;
-			
+
 			return new LirReturnInfo(MoveEnum.MOVE_FIELD,loc+"."+offset);
 		}
 		else{
 			//has no external location. location is enclosing class
-			
+
 			//field
 			if (((BlockSymbolTable)var_loc.getScope()).isField(var_loc.getName())){
 				String class_name = ((BlockSymbolTable)var_loc.getScope())
@@ -466,10 +466,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				//field offset
 				FieldSymbol f = globalSymTable.getClassSymbolTable(class_name).getFieldSymbol(var_loc.getName());
 				int offset = f.getOffset()+1;
-				
+
 				loc = ((BlockSymbolTable)var_loc.getScope()).getThisregister(d);
 				String register = loc+"."+offset;
-				
+
 				return new LirReturnInfo(MoveEnum.MOVE_FIELD,register);
 
 			} 
@@ -489,14 +489,14 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			}
 		}
 	}
-	
+
 	//edited by lior:
 	public LirReturnInfo visit(ArrLocation arr_loc, Environment d) {
 		String arrayLoc = "R" + d.getCurrentRegister();
-		
+
 		//array location
 		LirReturnInfo location_expr = arr_loc.getArrLocation().accept(this, d);
-		
+
 		//we need to transfer the location only if it is a Memory as
 		//Move array instruction supports only registers
 		if(location_expr.getRegisterLocation().charAt(0)!='R'){
@@ -505,16 +505,16 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}else{
 			arrayLoc = location_expr.getRegisterLocation();
 		}
-		
+
 		//runtime check
 		d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+arrayLoc+")","Rdummy");
-		
+
 		//index
 		//edited by lior: removed decrement optimization currently - lets make it work firstly
 		//without optimizations
 		LirReturnInfo index = arr_loc.getIndex().accept(this, d);
 		String indexLoc = "";
-		
+
 		//again we only need to make a move instruction if index location is a Memory
 		//as Move Array does not support operations on memories
 		if(index.getRegisterLocation().charAt(0) != 'R'){
@@ -527,22 +527,22 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//runtime check
 		d.addInstructionToBuilder("StaticCall", "__checkArrayAccess(a="+arrayLoc+",i="+indexLoc+")","Rdummy");
-		
+
 		return new LirReturnInfo(MoveEnum.MOVE_ARRAY,arrayLoc+"["+indexLoc+"]");
 	}
-	
+
 	//Edited by lior:
 	public LirReturnInfo visit(StaticCall static_call, Environment d) {
 
 		String code;
-		
+
 		String class_name = static_call.getClassName();
 		String method_name = static_call.getMethodName();
 		if (static_call.getClassName().equals("Library"))
 			code = "_"+method_name+"(";
 		else
 			code = "_"+class_name+"_"+method_name+"(";
-		
+
 		int i = 0;
 		int arg_num = static_call.getArguments().size();
 		for (Expr arg: static_call.getArguments()){
@@ -556,13 +556,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			}else{
 				argLoc = arg_expr.getRegisterLocation();
 			}
-			
+
 			if (!static_call.getClassName().equals("Library")){
 				code += globalSymTable.getClassSymbolTable(class_name)
 						.getMethodSymbol(method_name).getFormalNames().get(i);
 				code+="=";
 			}
-			
+
 			code+=argLoc;
 			if(i != arg_num-1){
 				code+=",";
@@ -570,21 +570,21 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			i++;
 		}
 		code += ")";
-		
-		
+
+
 		//check if return is void
 		types.Type returnType= ((types.TypeMethod)globalSymTable.getClassSymbolTable(class_name)
-		.getMethodSymbol(method_name).getType()).getReturnType();
-				
+				.getMethodSymbol(method_name).getType()).getReturnType();
+
 		//Line changed by lior:
 		String resReg = "R"+d.getCurrentRegister();
-		
+
 		if(returnType instanceof TypeVoid){
 			resReg = "Rdummy";
 		}else{
 			d.incrementRegister();
 		}
-		
+
 		//library method call
 		if (static_call.getClassName().equals("Library")){
 			d.addInstructionToBuilder("Library", code, resReg);
@@ -603,14 +603,14 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		if (obj_ref != null){
 			LirReturnInfo location = obj_ref.accept(this, d);
-			
+
 			//lior: no need for that
 			//move it only if it not register already
 			if(location.getRegisterLocation().charAt(0)!= 'R' || location.getRegisterLocation().contains("[")){
 				objLoc = "R" + d.getCurrentRegister();
 				d.incrementRegister();
 				d.addInstructionToBuilder(location.getMoveCommand().toString(),location.getRegisterLocation(),objLoc);
-				
+
 			}else{
 				objLoc = location.getRegisterLocation();
 			}
@@ -621,7 +621,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		else {
 			objLoc = ((BlockSymbolTable)virtual_call.getScope()).getThisregister(d);
 		}
-		
+
 		//get class name
 		String class_name;
 		if(obj_ref == null)
@@ -629,19 +629,19 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			.getEnclosingClassSymbolTable().getSymbol().getName();
 		else
 			class_name = ((types.TypeClass)obj_ref.accept(new TypeEvaluator(globalSymTable), null)).getName();
-		
+
 		//get method name
 		String method_name = virtual_call.getMethodName();
-		
+
 		//calculate method offset in virtul table
 		int offset = d.getMethodOffset(class_name, method_name);
-		
+
 		//add beginning of instruction
 		d.addToCurrentStringBuilder("VirtualCall "+objLoc+"."+offset);
-		
+
 		//virtual call's arguments
 		//int i = reg+1;
-		
+
 		String code = "(";
 		int arg_num = virtual_call.getArguments().size();;
 		int i=0;
@@ -669,22 +669,22 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//check if return is void
 		types.Type returnType= ((types.TypeMethod)globalSymTable.getClassSymbolTable(class_name)
-		.getMethodSymbol(method_name).getType()).getReturnType();
-		
+				.getMethodSymbol(method_name).getType()).getReturnType();
+
 		String newReg = "R" + d.getCurrentRegister();
-		
+
 		if(returnType instanceof TypeVoid){
 			newReg ="Rdummy";
 		}else{			
 			//ask for new register
 			d.incrementRegister();
 		}
-		
+
 		code += "),"+newReg+"\n";
 
 		d.addToCurrentStringBuilder(code);
-		
-		
+
+
 		return new LirReturnInfo(MoveEnum.MOVE,newReg);
 	}
 
@@ -709,19 +709,18 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	public LirReturnInfo visit(NewArray new_arr, Environment d) {
 		String loc ="R"+ d.getCurrentRegister();
 		d.incrementRegister();
-		
+
 		LirReturnInfo array_len_expr = new_arr.getArrayLength().accept(this, d);
-		
+
 		d.addInstructionToBuilder(array_len_expr.getMoveCommand().toString(),
 				array_len_expr.getRegisterLocation(),loc);
 
+		//runtime check, check size of array
+		d.addInstructionToBuilder("StaticCall","__checkSize(n="+loc+")","Rdummy");
 
 		//get the actual length in bytes (multiply register by 4, in place)
 		d.addInstructionToBuilder("Mul","4",loc);
 
-		//runtime check
-		d.addInstructionToBuilder("StaticCall","__checkSize(n="+loc+")","Rdummy");
-		
 		String resLoc = "R" + d.getCurrentRegister();
 		d.incrementRegister();
 
@@ -733,14 +732,14 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 	public LirReturnInfo visit(Length length, Environment d) {
 		LirReturnInfo array_expr = length.getExpression().accept(this, d);
-		
+
 		//runtime check
 		d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+array_expr.getRegisterLocation()+")","Rdummy");
 
 		d.addInstructionToBuilder("ArrayLength",array_expr.getRegisterLocation(),"R"+d.getCurrentRegister());	
 		String res = "R"+d.getCurrentRegister();
 		d.incrementRegister();
-		
+
 		return new LirReturnInfo(MoveEnum.MOVE,res);
 	}
 
@@ -811,22 +810,22 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	public LirReturnInfo visit(BinaryOpExpr expr, Environment d) {
 		LirReturnInfo operand1 = expr.getLeftOperand().accept(this, d);
 		LirReturnInfo operand2 = expr.getRightOperand().accept(this, d);
-		
+
 		//check if it is string concatenation
 		types.Type lhs_type = (types.Type) expr.getLeftOperand().accept(new TypeEvaluator(globalSymTable), null);
 		if (lhs_type.toString().compareTo("int") != 0){
 			d.addInstructionToBuilder("Library","__stringCat("+operand1.getRegisterLocation()+","+operand2.getRegisterLocation()
-				+")","R"+d.getCurrentRegister());
+					+")","R"+d.getCurrentRegister());
 			String res = "R"+d.getCurrentRegister();
 			d.incrementRegister();
 			return new LirReturnInfo(MoveEnum.MOVE, res);
 		}
-		
+
 		//create new register the operation will be kept in
 		String resOp = "R" + d.getCurrentRegister();
 		d.incrementRegister();
 		d.addInstructionToBuilder(operand1.getMoveCommand(), operand1.getRegisterLocation(), resOp);
-		
+
 		if(expr.hasMathematicalOp())
 			return visitMathBinaryExpr(expr, d,resOp, operand2.getRegisterLocation());
 		return visitLogicalBinaryExpr(expr, d,resOp, operand2.getRegisterLocation());
