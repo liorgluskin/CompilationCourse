@@ -424,7 +424,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		return null;
 	}
 
-	//edited by lior:
+	/**
+	 * Translate a local variable into LIR code
+	 */
 	public LirReturnInfo visit(VarLocation var_loc, Environment d) {
 		String loc ="R"+ d.getCurrentRegister();
 
@@ -490,7 +492,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}
 	}
 
-	//edited by lior:
+
+	/**
+	 * Translate array location access into LIR code
+	 */
 	public LirReturnInfo visit(ArrLocation arr_loc, Environment d) {
 		String arrayLoc = "R" + d.getCurrentRegister();
 
@@ -504,13 +509,19 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			d.incrementRegister();
 		}else{
 			arrayLoc = location_expr.getRegisterLocation();
+			// we move the array location Rm[Rn] to a new register Rk////////////
+			// so checkNullRef, checkArrayAccess get as input Reg not Reg[Reg]
+			//String temp ="R"+ d.getCurrentRegister();
+			//d.incrementRegister();
+			//d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, arrayLoc, temp);
+			//arrayLoc = temp;////////////////////
 		}
 
 		//runtime check
 		d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+arrayLoc+")","Rdummy");
 
 		//index
-		//edited by lior: removed decrement optimization currently - lets make it work firstly
+		//edited by lior: removed decrement optimization currently - lets make it work first
 		//without optimizations
 		LirReturnInfo index = arr_loc.getIndex().accept(this, d);
 		String indexLoc = "";
@@ -527,8 +538,15 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//runtime check
 		d.addInstructionToBuilder("StaticCall", "__checkArrayAccess(a="+arrayLoc+",i="+indexLoc+")","Rdummy");
-
-		return new LirReturnInfo(MoveEnum.MOVE_ARRAY,arrayLoc+"["+indexLoc+"]");
+		
+		// most operations do not accept Reg[Reg] as input,
+		// 		checkNullRef,checkArrayAccess,Add,Mul,...
+		// so we must move array-location to new register
+		String locReg ="R"+ d.getCurrentRegister(); //new Reg
+		d.incrementRegister();
+		d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, arrayLoc+"["+indexLoc+"]", locReg);
+		
+		return new LirReturnInfo(MoveEnum.MOVE_ARRAY,locReg);
 	}
 
 	//Edited by lior:
