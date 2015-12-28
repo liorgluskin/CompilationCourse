@@ -1,12 +1,14 @@
-class A {
 
-  static int foo(int y) {
-	return y;
-  }
-  
-  static void main(string[] args) {
+class MultiplyMatrices {
 
-    A.foo(5);
-  }
+	static void main(string[] args) {
+		int[][] a = new int[][10];
+		a[0] = new int[10];
+		a[0][0] = 5;
+
+
+
+		
+	}
 
 }

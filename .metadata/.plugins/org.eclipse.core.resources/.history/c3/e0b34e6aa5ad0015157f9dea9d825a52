@@ -1,0 +1,13 @@
+
+class MultiplyMatrices {
+
+	static void main(string[] args) {
+		int[][] a = new int[][10];
+		a[0] = new int[10];
+		a[0][0] = 10;
+
+
+		
+	}
+
+}
