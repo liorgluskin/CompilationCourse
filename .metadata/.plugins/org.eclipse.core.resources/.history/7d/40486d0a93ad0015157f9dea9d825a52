@@ -4,9 +4,12 @@ class A {
 	return y;
   }
   
+  int kaka(int k){
+  return k;
+  }
   static void main(string[] args) {
-
-    A.foo(5);
+    A p = new A();
+    p.foo(5);
   }
 
 }
