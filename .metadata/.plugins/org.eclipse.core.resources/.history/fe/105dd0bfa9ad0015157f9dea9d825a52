@@ -571,10 +571,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		for (Expr arg: static_call.getArguments()){
 			LirReturnInfo arg_expr = arg.accept(this, d);
 			String argLoc = "R" + d.getCurrentRegister();
-			//check if arg_expr isnt a field
+			//check if arg_expr ia a field
 			if(arg_expr.getMoveCommand() != MoveEnum.MOVE){
 				//transfer it to a new register
-				d.addInstructionToBuilder(arg_expr.getMoveCommand(), arg_expr.getRegisterLocation(), argLoc);
+				d.addInstructionToBuilder(arg_expr.getMoveCommand(, arg_expr.getRegisterLocation(), argLoc);
 				d.incrementRegister();
 			}else{
 				argLoc = arg_expr.getRegisterLocation();
