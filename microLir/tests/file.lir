@@ -36,320 +36,302 @@ MoveField R1.1,R2
 StaticCall __checkNullRef(a=R2),Rdummy
 Move p_0,R3
 StaticCall __checkArrayAccess(a=R2,i=R3),Rdummy
-MoveArray R2[R3],R4
 # line number: 19
-Move R4,v_1_pivot
+Move R2[R3],v_1_pivot
 # line number: 20
-Move p_0,R6
+Move p_0,R5
 # line number: 20
-Move R6,v_2_i
+Move R5,v_2_i
 # line number: 21
-Move p_1,R7
+Move p_1,R6
 # line number: 21
-Move R7,v_3_j
+Move R6,v_3_j
 _while_test_label0: 
-Move 0,R7
+Move 0,R6
 # line number: 24
-Compare 0,R7
+Compare 0,R6
 JumpTrue _while_end_label1
 _while_test_label2: 
-MoveField R1.1,R8
-StaticCall __checkNullRef(a=R8),Rdummy
-Move v_2_i,R9
-StaticCall __checkArrayAccess(a=R8,i=R9),Rdummy
-MoveArray R8[R9],R10
-Compare v_1_pivot,R11
+MoveField R1.1,R7
+StaticCall __checkNullRef(a=R7),Rdummy
+Move v_2_i,R8
+StaticCall __checkArrayAccess(a=R7,i=R8),Rdummy
+Compare v_1_pivot,R9
 JumpL _true_label4
-Move 0,R11
+Move 0,R9
 Jump _end_label4
 _true_label4:
-Move 1,R11
+Move 1,R9
 _end_label4:
 # line number: 25
-Compare 0,R11
+Compare 0,R9
 JumpTrue _while_end_label3
-Move 1,R12
-Move v_2_i,R13
-Add R12,R13
+Move 1,R10
+Move v_2_i,R11
+Add R10,R11
 # line number: 25
-Move R13,v_2_i
+Move R11,v_2_i
 Jump _while_test_label2
 _while_end_label3: 
 _while_test_label5: 
-MoveField R1.1,R14
-StaticCall __checkNullRef(a=R14),Rdummy
-Move v_3_j,R15
-StaticCall __checkArrayAccess(a=R14,i=R15),Rdummy
-MoveArray R14[R15],R16
-Compare v_1_pivot,R17
+MoveField R1.1,R12
+StaticCall __checkNullRef(a=R12),Rdummy
+Move v_3_j,R13
+StaticCall __checkArrayAccess(a=R12,i=R13),Rdummy
+Compare v_1_pivot,R14
 JumpG _true_label7
-Move 0,R17
+Move 0,R14
 Jump _end_label7
 _true_label7:
-Move 1,R17
+Move 1,R14
 _end_label7:
 # line number: 26
-Compare 0,R17
+Compare 0,R14
 JumpTrue _while_end_label6
-Move 1,R18
-Move v_3_j,R19
-Sub R18,R19
+Move 1,R15
+Move v_3_j,R16
+Sub R15,R16
 # line number: 26
-Move R19,v_3_j
+Move R16,v_3_j
 Jump _while_test_label5
 _while_end_label6: 
-Move v_2_i,R20
-Compare v_3_j,R20
+Move v_2_i,R17
+Compare v_3_j,R17
 JumpGE _true_label10
-Move 0,R20
+Move 0,R17
 Jump _end_label10
 _true_label10:
-Move 1,R20
+Move 1,R17
 _end_label10:
 # line number: 28
-Compare 0,R20
+Compare 0,R17
 JumpTrue _end_if_label9
 Jump _while_end_label6
 Jump _end_if_label9
 _end_if_label9: 
-MoveField R1.1,R21
-StaticCall __checkNullRef(a=R21),Rdummy
-Move v_2_i,R22
-StaticCall __checkArrayAccess(a=R21,i=R22),Rdummy
-MoveArray R21[R22],R23
+MoveField R1.1,R18
+StaticCall __checkNullRef(a=R18),Rdummy
+Move v_2_i,R19
+StaticCall __checkArrayAccess(a=R18,i=R19),Rdummy
 # line number: 30
-Move R23,v_4_tmp
+Move R18[R19],v_4_tmp
+MoveField R1.1,R20
+StaticCall __checkNullRef(a=R20),Rdummy
+Move v_3_j,R21
+StaticCall __checkArrayAccess(a=R20,i=R21),Rdummy
+MoveField R1.1,R22
+StaticCall __checkNullRef(a=R22),Rdummy
+Move v_2_i,R23
+StaticCall __checkArrayAccess(a=R22,i=R23),Rdummy
+# line number: 31
+MoveArray R20[R21],R22[R23]
 MoveField R1.1,R24
 StaticCall __checkNullRef(a=R24),Rdummy
 Move v_3_j,R25
 StaticCall __checkArrayAccess(a=R24,i=R25),Rdummy
-MoveArray R24[R25],R26
-MoveField R1.1,R27
-StaticCall __checkNullRef(a=R27),Rdummy
-Move v_2_i,R28
-StaticCall __checkArrayAccess(a=R27,i=R28),Rdummy
-MoveArray R27[R28],R29
-# line number: 31
-Move R26,R29
-MoveField R1.1,R30
-StaticCall __checkNullRef(a=R30),Rdummy
-Move v_3_j,R31
-StaticCall __checkArrayAccess(a=R30,i=R31),Rdummy
-MoveArray R30[R31],R32
 # line number: 32
-Move v_4_tmp,R32
-Move 1,R33
-Move v_2_i,R34
-Add R33,R34
+MoveArray v_4_tmp,R24[R25]
+Move 1,R26
+Move v_2_i,R27
+Add R26,R27
 # line number: 33
-Move R34,v_2_i
-Move 1,R35
-Move v_3_j,R36
-Sub R35,R36
+Move R27,v_2_i
+Move 1,R28
+Move v_3_j,R29
+Sub R28,R29
 # line number: 34
-Move R36,v_3_j
+Move R29,v_3_j
 Jump _while_test_label0
 _while_end_label1: 
 Return v_3_j
 
 ####Quicksort.quicksort####
 _Quicksort_quicksort:
-Move p_0,R37
-Compare p_1,R37
+Move p_0,R30
+Compare p_1,R30
 JumpL _true_label13
-Move 0,R37
+Move 0,R30
 Jump _end_label13
 _true_label13:
-Move 1,R37
+Move 1,R30
 _end_label13:
 # line number: 41
-Compare 0,R37
+Compare 0,R30
 JumpTrue _end_if_label12
 #virtual call to partition's location:
-Move this,R38
-VirtualCall R38.0(p_0=p_0,p_1=p_1),R39
+Move this,R31
+VirtualCall R31.0(p_0=p_0,p_1=p_1),R32
 # line number: 42
-Move R39,v_5_mid
+Move R32,v_5_mid
 #virtual call to quicksort's location:
-VirtualCall R38.3(p_0=p_0,p_1=v_5_mid),Rdummy
+VirtualCall R31.3(p_0=p_0,p_1=v_5_mid),Rdummy
 #virtual call to quicksort's location:
-Move 1,R40
-Move v_5_mid,R41
-Add R40,R41
-VirtualCall R38.3(p_0=R41,p_1=p_1),Rdummy
+Move 1,R33
+Move v_5_mid,R34
+Add R33,R34
+VirtualCall R31.3(p_0=R34,p_1=p_1),Rdummy
 Jump _end_if_label12
 _end_if_label12: 
 Return Rdummy
 
 ####Quicksort.initArray####
 _Quicksort_initArray:
-Move 77,R42
-Move this,R43
-MoveField R43.1,R44
-StaticCall __checkNullRef(a=R44),Rdummy
-Move 0,R45
-StaticCall __checkArrayAccess(a=R44,i=R45),Rdummy
-MoveArray R44[R45],R46
+Move 77,R35
+Move this,R36
+MoveField R36.1,R37
+StaticCall __checkNullRef(a=R37),Rdummy
+Move 0,R38
+StaticCall __checkArrayAccess(a=R37,i=R38),Rdummy
 # line number: 49
-Move R42,R46
-Move 99,R47
-MoveField R43.1,R48
-StaticCall __checkNullRef(a=R48),Rdummy
-Move 1,R49
-StaticCall __checkArrayAccess(a=R48,i=R49),Rdummy
-MoveArray R48[R49],R50
+MoveArray R35,R37[R38]
+Move 99,R39
+MoveField R36.1,R40
+StaticCall __checkNullRef(a=R40),Rdummy
+Move 1,R41
+StaticCall __checkArrayAccess(a=R40,i=R41),Rdummy
 # line number: 50
-Move R47,R50
-Move 44,R51
-MoveField R43.1,R52
-StaticCall __checkNullRef(a=R52),Rdummy
-Move 2,R53
-StaticCall __checkArrayAccess(a=R52,i=R53),Rdummy
-MoveArray R52[R53],R54
+MoveArray R39,R40[R41]
+Move 44,R42
+MoveField R36.1,R43
+StaticCall __checkNullRef(a=R43),Rdummy
+Move 2,R44
+StaticCall __checkArrayAccess(a=R43,i=R44),Rdummy
 # line number: 51
-Move R51,R54
-Move 55,R55
-MoveField R43.1,R56
-StaticCall __checkNullRef(a=R56),Rdummy
-Move 3,R57
-StaticCall __checkArrayAccess(a=R56,i=R57),Rdummy
-MoveArray R56[R57],R58
+MoveArray R42,R43[R44]
+Move 55,R45
+MoveField R36.1,R46
+StaticCall __checkNullRef(a=R46),Rdummy
+Move 3,R47
+StaticCall __checkArrayAccess(a=R46,i=R47),Rdummy
 # line number: 52
-Move R55,R58
-Move 22,R59
-MoveField R43.1,R60
-StaticCall __checkNullRef(a=R60),Rdummy
-Move 4,R61
-StaticCall __checkArrayAccess(a=R60,i=R61),Rdummy
-MoveArray R60[R61],R62
+MoveArray R45,R46[R47]
+Move 22,R48
+MoveField R36.1,R49
+StaticCall __checkNullRef(a=R49),Rdummy
+Move 4,R50
+StaticCall __checkArrayAccess(a=R49,i=R50),Rdummy
 # line number: 53
-Move R59,R62
-Move 88,R63
-MoveField R43.1,R64
-StaticCall __checkNullRef(a=R64),Rdummy
-Move 5,R65
-StaticCall __checkArrayAccess(a=R64,i=R65),Rdummy
-MoveArray R64[R65],R66
+MoveArray R48,R49[R50]
+Move 88,R51
+MoveField R36.1,R52
+StaticCall __checkNullRef(a=R52),Rdummy
+Move 5,R53
+StaticCall __checkArrayAccess(a=R52,i=R53),Rdummy
 # line number: 54
-Move R63,R66
-Move 11,R67
-MoveField R43.1,R68
-StaticCall __checkNullRef(a=R68),Rdummy
-Move 6,R69
-StaticCall __checkArrayAccess(a=R68,i=R69),Rdummy
-MoveArray R68[R69],R70
+MoveArray R51,R52[R53]
+Move 11,R54
+MoveField R36.1,R55
+StaticCall __checkNullRef(a=R55),Rdummy
+Move 6,R56
+StaticCall __checkArrayAccess(a=R55,i=R56),Rdummy
 # line number: 55
-Move R67,R70
-Move 100,R71
-MoveField R43.1,R72
-StaticCall __checkNullRef(a=R72),Rdummy
-Move 7,R73
-StaticCall __checkArrayAccess(a=R72,i=R73),Rdummy
-MoveArray R72[R73],R74
+MoveArray R54,R55[R56]
+Move 0,R57
+MoveField R36.1,R58
+StaticCall __checkNullRef(a=R58),Rdummy
+Move 7,R59
+StaticCall __checkArrayAccess(a=R58,i=R59),Rdummy
 # line number: 56
-Move R71,R74
-Move 66,R75
-MoveField R43.1,R76
-StaticCall __checkNullRef(a=R76),Rdummy
-Move 8,R77
-StaticCall __checkArrayAccess(a=R76,i=R77),Rdummy
-MoveArray R76[R77],R78
+MoveArray R57,R58[R59]
+Move 66,R60
+MoveField R36.1,R61
+StaticCall __checkNullRef(a=R61),Rdummy
+Move 8,R62
+StaticCall __checkArrayAccess(a=R61,i=R62),Rdummy
 # line number: 57
-Move R75,R78
-Move 33,R79
-MoveField R43.1,R80
-StaticCall __checkNullRef(a=R80),Rdummy
-Move 9,R81
-StaticCall __checkArrayAccess(a=R80,i=R81),Rdummy
-MoveArray R80[R81],R82
+MoveArray R60,R61[R62]
+Move 33,R63
+MoveField R36.1,R64
+StaticCall __checkNullRef(a=R64),Rdummy
+Move 9,R65
+StaticCall __checkArrayAccess(a=R64,i=R65),Rdummy
 # line number: 58
-Move R79,R82
+MoveArray R63,R64[R65]
 Return Rdummy
 
 ####Quicksort.printArray####
 _Quicksort_printArray:
-Move 0,R83
+Move 0,R66
 # line number: 62
-Move R83,v_6_i
-Move str1,R84
-Library __print(R84),Rdummy
+Move R66,v_6_i
+Move str1,R67
+Library __print(R67),Rdummy
 _while_test_label14: 
-Move this,R85
-StaticCall __checkNullRef(a=R85),Rdummy
-ArrayLength R85,R86
-Move v_6_i,R87
-Compare R86,R87
+Move this,R68
+StaticCall __checkNullRef(a=R68),Rdummy
+ArrayLength R68,R69
+Move v_6_i,R70
+Compare R69,R70
 JumpL _true_label16
-Move 0,R87
+Move 0,R70
 Jump _end_label16
 _true_label16:
-Move 1,R87
+Move 1,R70
 _end_label16:
 # line number: 65
-Compare 0,R87
+Compare 0,R70
 JumpTrue _while_end_label15
-MoveField R85.1,R88
-StaticCall __checkNullRef(a=R88),Rdummy
-Move v_6_i,R89
-StaticCall __checkArrayAccess(a=R88,i=R89),Rdummy
-MoveArray R88[R89],R90
-Library __printi(R90),Rdummy
-Move str2,R91
-Library __print(R91),Rdummy
-Move 1,R92
-Move v_6_i,R93
-Add R92,R93
+MoveField R68.1,R71
+StaticCall __checkNullRef(a=R71),Rdummy
+Move v_6_i,R72
+StaticCall __checkArrayAccess(a=R71,i=R72),Rdummy
+Library __printi(R71[R72]),Rdummy
+Move str2,R73
+Library __print(R73),Rdummy
+Move 1,R74
+Move v_6_i,R75
+Add R74,R75
 # line number: 68
-Move R93,v_6_i
+Move R75,v_6_i
 Jump _while_test_label14
 _while_end_label15: 
-Move str3,R94
-Library __println(R94),Rdummy
+Move str3,R76
+Library __println(R76),Rdummy
 Return Rdummy
 
 ####main in Quicksort####
 _ic_main:
-Move 10,R95
+Move 10,R77
 # line number: 76
-Move R95,v_7_n
-Library __allocateObject(8),R96
-MoveField _DV_Quicksort,R96.0
+Move R77,v_7_n
+Library __allocateObject(8),R78
+MoveField _DV_Quicksort,R78.0
 # line number: 77
-Move R96,v_8_s
-Move v_7_n,R97
-StaticCall __checkSize(n=R97),Rdummy
-Move R97,R98
-Mul 4,R97
-Library __allocateArray(R97),R99
+Move R78,v_8_s
+Move v_7_n,R79
+StaticCall __checkSize(n=R79),Rdummy
+Move R79,R80
+Mul 4,R79
+Library __allocateArray(R79),R81
 _array_init_start17: 
-Dec R98
-Compare 0,R98
+Dec R80
+Compare 0,R80
 JumpL _array_init_end18
-MoveArray 0,R99[R98]
+MoveArray 0,R81[R80]
 JumpL _array_init_start17
 _array_init_end18: 
-Move v_8_s,R100
-StaticCall __checkNullRef(a=R100),Rdummy
+Move v_8_s,R82
+StaticCall __checkNullRef(a=R82),Rdummy
 # line number: 78
-MoveField R99,R100.1
+MoveField R81,R82.1
 #virtual call to initArray's location:
-Move v_8_s,R101
+Move v_8_s,R83
 StaticCall __checkNullRef(a=v_8_s),Rdummy
-VirtualCall R101.2(),Rdummy
+VirtualCall R83.2(),Rdummy
 #virtual call to printArray's location:
-Move v_8_s,R102
+Move v_8_s,R84
 StaticCall __checkNullRef(a=v_8_s),Rdummy
-VirtualCall R102.1(),Rdummy
+VirtualCall R84.1(),Rdummy
 #virtual call to quicksort's location:
-Move v_8_s,R103
+Move v_8_s,R85
 StaticCall __checkNullRef(a=v_8_s),Rdummy
-Move 0,R104
-Move 1,R105
-Move v_7_n,R106
-Sub R105,R106
-VirtualCall R103.3(p_0=R104,p_1=R106),Rdummy
+Move 0,R86
+Move 1,R87
+Move v_7_n,R88
+Sub R87,R88
+VirtualCall R85.3(p_0=R86,p_1=R88),Rdummy
 #virtual call to printArray's location:
-Move v_8_s,R107
+Move v_8_s,R89
 StaticCall __checkNullRef(a=v_8_s),Rdummy
-VirtualCall R107.1(),Rdummy
+VirtualCall R89.1(),Rdummy
 
