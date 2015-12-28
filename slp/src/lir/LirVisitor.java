@@ -441,8 +441,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			}else{
 				loc = location_expr.getRegisterLocation();
 			}
-
+			
 			//runtime check
+			//keren - for array fields
+			if(loc.contains("."))
+				loc = loc.substring(0, loc.indexOf("."));
 			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc+")", "Rdummy");
 
 			//field offset
@@ -470,6 +473,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				int offset = f.getOffset()+1;
 
 				loc = ((BlockSymbolTable)var_loc.getScope()).getThisregister(d);
+				
 				String register = loc+"."+offset;
 
 				return new LirReturnInfo(MoveEnum.MOVE_FIELD,register);
@@ -501,7 +505,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//array location
 		LirReturnInfo location_expr = arr_loc.getArrLocation().accept(this, d);
-
+		
 		//we need to transfer the location only if it is a Memory as
 		//Move array instruction supports only registers
 		if(location_expr.getRegisterLocation().charAt(0)!='R'){
@@ -510,7 +514,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}else{
 			arrayLoc = location_expr.getRegisterLocation();
 		}
-
+		
 		// if location is a field = Reg.Reg, 
 		// we move it to new Reg, since runtime functions only get Reg as input
 		if(arrayLoc.contains(".")){
@@ -519,8 +523,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, arrayLoc, fieldReg);
 			arrayLoc = fieldReg;
 		}
-
+		
 		//runtime check
+		//keren - for array fields
+		if(arrayLoc.contains("."))
+			arrayLoc = arrayLoc.substring(0, arrayLoc.indexOf("."));
 		d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+arrayLoc+")","Rdummy");
 
 		//index
@@ -615,6 +622,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		else{
 			d.addInstructionToBuilder("StaticCall", code, resReg);
 		}
+		
 		return new LirReturnInfo(MoveEnum.MOVE,resReg);
 	}
 
@@ -639,7 +647,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			}
 
 			//runtime check
-			d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+location.getRegisterLocation()+")","Rdummy");
+			//keren - for array fields
+			String loc_str = location.getRegisterLocation();
+			if(loc_str.contains("."))
+				loc_str = loc_str.substring(0, loc_str.indexOf("."));
+			d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc_str+")","Rdummy");
 		} 
 		else {
 			objLoc = ((BlockSymbolTable)virtual_call.getScope()).getThisregister(d);
@@ -783,9 +795,14 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		LirReturnInfo array_expr = length.getExpression().accept(this, d);
 
 		//runtime check
-		d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+array_expr.getRegisterLocation()+")","Rdummy");
-
-		d.addInstructionToBuilder("ArrayLength",array_expr.getRegisterLocation(),"R"+d.getCurrentRegister());	
+		//keren - for array fields
+		String loc_str = array_expr.getRegisterLocation();
+		if(loc_str.contains("."))
+			loc_str = loc_str.substring(0, loc_str.indexOf("."));
+		d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc_str+")","Rdummy");
+		
+		
+		d.addInstructionToBuilder("ArrayLength",loc_str,"R"+d.getCurrentRegister());	
 		String res = "R"+d.getCurrentRegister();
 		d.incrementRegister();
 
