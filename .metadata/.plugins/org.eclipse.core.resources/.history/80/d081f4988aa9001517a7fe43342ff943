@@ -1,5 +1,0 @@
-package lir;
-
-public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>{
-
-}

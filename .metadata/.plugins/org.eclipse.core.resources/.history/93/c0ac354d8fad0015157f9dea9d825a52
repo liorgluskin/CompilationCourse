@@ -1,0 +1,34 @@
+
+############################################
+# String literals
+str_null_ref: "Runtime Error: Null pointer dereference!"
+str_array_access: "Runtime Error: Array index out of bounds!"
+str_size: "Runtime Error: Array allocation with negative array size!"
+str_zero: "Runtime Error: Division by zero!"
+############################################
+
+############################################
+# Dispatch vectors
+_DV_A: [_A_foo]
+############################################
+
+############################################
+# Runtime Checks
+__checkNullRef:
+__checkArrayAccess:
+__checkSize:
+__checkZero:
+############################################
+
+
+
+
+####A.foo####
+_A_foo:
+Library __printi(5),Rdummy
+Return 6
+
+
+####main in A####
+_ic_main:
+Library __exit(0),Rdummy

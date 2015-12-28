@@ -1,5 +1,12 @@
-class Hello {
-    static void main(string[] args) {
-		Library.println("5");
-    }
+class A {
+
+  static int foo(int y) {
+	return y;
+  }
+  
+  static void main(string[] args) {
+
+    A.foo(5);
+  }
+
 }

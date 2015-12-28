@@ -1,5 +1,4 @@
 eclipse.preferences.version=1
-org.eclipse.jdt.core.builder.resourceCopyExclusionFilter=
 org.eclipse.jdt.core.classpathVariable.CUP_JAR=C\:/Compilation/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/java-cup-0.11a-beta-20060608.jar
 org.eclipse.jdt.core.classpathVariable.CUP_RUNTIME_JAR=C\:/Compilation/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/java-cup-0.11a-beta-20060608-runtime.jar
 org.eclipse.jdt.core.classpathVariable.LEX_JAR=C\:/Compilation/eclipse/configuration/org.eclipse.osgi/922/0/.cp/lib/jflex-1.4.3.jar

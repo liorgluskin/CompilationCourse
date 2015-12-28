@@ -118,7 +118,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		method.getStatementList().accept(this, d);
 
 		//return Rdummy if function return type is void
-		if(method.getType().getFullName().equals("void")){
+		if(method.getType().getFullName().equals("void") && !isMain){
 			strb.append("Return Rdummy\n");
 		}
 		environment.setCurrentStringBuilder(environment.getLirStringBuilder());

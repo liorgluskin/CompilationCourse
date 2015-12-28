@@ -250,11 +250,11 @@ public class Environment {
 
 		//add run time check functions implementation
 		codeGeneration.append("\n############################################\n");
-		codeGeneration.append("# Runtime Checks\n");
-		codeGeneration.append("__checkNullRef:\n");
-		codeGeneration.append("__checkArrayAccess:\n");
-		codeGeneration.append("__checkSize:\n");
-		codeGeneration.append("__checkZero:\n");
+		codeGeneration.append("# Runtime Checks\n");		
+		codeGeneration.append("__checkNullRef:\nReturn Rdummy\n");
+		codeGeneration.append("__checkArrayAccess:\nReturn Rdummy\n");
+		codeGeneration.append("__checkSize:\nReturn Rdummy\n");
+		codeGeneration.append("__checkZero:\nReturn Rdummy\n");
 
 		codeGeneration.append("############################################\n");
 

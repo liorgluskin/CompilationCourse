@@ -1,22 +1,2 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="java.util.Iterator"/>
-<fullyQualifiedTypeName name="com.sun.glass.ui.CommonDialogs.Type"/>
-<fullyQualifiedTypeName name="java.util.HashMap"/>
-<fullyQualifiedTypeName name="java.util.Map"/>
-<fullyQualifiedTypeName name="symbolTableHandler.ClassSymbol"/>
-<fullyQualifiedTypeName name="slp.ClassDecl"/>
-<fullyQualifiedTypeName name="slp.Visitor"/>
-<fullyQualifiedTypeName name="symbolTableHandler.SymbolTable"/>
-<fullyQualifiedTypeName name="com.sun.org.apache.bcel.internal.classfile.FieldOrMethod"/>
-<fullyQualifiedTypeName name="slp.DataTypes"/>
-<fullyQualifiedTypeName name="slp.BinOperator"/>
-<fullyQualifiedTypeName name="types.TypeTable"/>
-<fullyQualifiedTypeName name="types.TypeInt"/>
-<fullyQualifiedTypeName name="java.util.List"/>
-<fullyQualifiedTypeName name="symbolTableHandler.BlockSymbolTable"/>
-<fullyQualifiedTypeName name="symbolTableHandler.GlobalSymbolTable"/>
-<fullyQualifiedTypeName name="symbolTableHandler.ClassSymbolTable"/>
-<fullyQualifiedTypeName name="semantic.SemanticError"/>
-<fullyQualifiedTypeName name="semantic.TypeEvaluator"/>
-</qualifiedTypeNameHistroy>
+<qualifiedTypeNameHistroy/>

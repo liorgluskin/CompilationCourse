@@ -1,9 +1,0 @@
-
-class B {
-	static void main(string[] args) {
-	
-		int s = "" +"l";
-	 }
-
-
-}
