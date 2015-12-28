@@ -339,7 +339,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.addInstructionToBuilder(testLabel+":", "", whileStmt.getLineNum()); // while_test_label:
 		LirReturnInfo condInfo = whileStmt.getCond().accept(this, d);
 		String condResRegister = condInfo.getRegisterLocation();
-		
+
 		// check if the condition holds
 		d.addInstructionToBuilder("Compare", "0", condResRegister, whileStmt.getLineNum());
 		// if condition does not hold, end the while loop
@@ -519,6 +519,14 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, arrayLoc, fieldReg);
 			arrayLoc = fieldReg;
 		}
+		// if location is a field = Reg[Reg], 
+		// we move it to new Reg, since runtime functions only get Reg as input
+		else if(arrayLoc.contains("[")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, arrayLoc, fieldReg);
+			arrayLoc = fieldReg;
+		}
 
 		//runtime check
 		d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+arrayLoc+")","Rdummy");
@@ -554,7 +562,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		String class_name = static_call.getClassName();
 		String method_name = static_call.getMethodName();
 		if (static_call.getClassName().equals("Library"))
-			code = "_"+method_name+"(";
+			code = "__"+method_name+"(";
 		else
 			code = "_"+class_name+"_"+method_name+"(";
 
@@ -810,7 +818,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			code = literal.getValue().toString();
 			break;
 		}
-		
+
 		// store literal value in register
 		String reg = "R"+d.getCurrentRegister();
 		d.incrementRegister();
@@ -831,9 +839,29 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	public LirReturnInfo visit(UnaryOpExpr expr, Environment d) {
 		LirReturnInfo operand = expr.getOperand().accept(this, d);
 
-		if(expr.hasMathematicalOp())
-			return visitMathUnaryExpr(expr, d, operand.getRegisterLocation());
-		return visitLogicalUnaryExpr(expr, d, operand.getRegisterLocation());
+		String operandReg = operand.getRegisterLocation();
+		
+		// If one of the operand is Reg[Reg]
+		if(operandReg.contains("[")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, operandReg, fieldReg);
+			operandReg = fieldReg;
+		}
+
+		// If one of the operand is Reg.Reg
+		if(operandReg.contains(".")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, operandReg, fieldReg);
+			operandReg = fieldReg;
+		}
+
+
+		if(expr.hasMathematicalOp()){
+			return visitMathUnaryExpr(expr, d, operandReg);
+		}
+		return visitLogicalUnaryExpr(expr, d, operandReg);
 	}
 
 	public LirReturnInfo visitMathUnaryExpr(UnaryOpExpr expr, Environment d, String operand_reg) {
@@ -883,11 +911,41 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		if(!operandB.getMoveCommand().equals(MoveEnum.MOVE_ARRAY)){
 			d.addInstructionToBuilder(operandB.getMoveCommand(), operandB.getRegisterLocation(), resOp);
 		}
-				
-		if(expr.hasMathematicalOp()){
-			return visitMathBinaryExpr(expr, d,resOp, operandA.getRegisterLocation());
+
+		String opAreg = operandA.getRegisterLocation();
+
+		// If one of the operands is Reg[Reg]
+		if(opAreg.contains("[")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, opAreg, fieldReg);
+			opAreg = fieldReg;
 		}
-		return visitLogicalBinaryExpr(expr, d,resOp, operandA.getRegisterLocation());
+		if(resOp.contains("[")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, resOp, fieldReg);
+			resOp = fieldReg;
+		}
+
+		// If one of the operands is Reg.Reg
+		if(opAreg.contains(".")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, opAreg, fieldReg);
+			opAreg = fieldReg;
+		}
+		if(resOp.contains(".")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, resOp, fieldReg);
+			resOp = fieldReg;
+		}
+
+		if(expr.hasMathematicalOp()){
+			return visitMathBinaryExpr(expr, d,resOp, opAreg);
+		}
+		return visitLogicalBinaryExpr(expr, d,resOp, opAreg);
 	}
 
 	public LirReturnInfo visitMathBinaryExpr(BinaryOpExpr expr, Environment d, String operandB_reg, String operandA_reg ){		
