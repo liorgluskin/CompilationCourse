@@ -86,18 +86,7 @@ public class Main {
 			
 			lir.LirVisitor lirVisitor = new lir.LirVisitor(global_st);
 			String lirCode = lirVisitor.getLirCode(root);
-			
-			File file = new File("output.lir");
-			
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(lirCode);
-			bw.close();
-
-			System.out.println("Done");
-			
-			
-			
+			System.out.println(lirCode);
 
 
 		} catch (Exception e) {

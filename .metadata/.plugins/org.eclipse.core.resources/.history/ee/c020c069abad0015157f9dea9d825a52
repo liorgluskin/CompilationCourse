@@ -922,7 +922,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//create new register the operation will be kept in
 		String resOp = "R" + d.getCurrentRegister();
 		d.incrementRegister();
-		
 
 		// Tomer commented - if we have 'move array' then array is already in Reg
 		// we cannot perform MoveArray(Reg, Reg), only: MoveArray(Reg, Reg[Reg]), MoveArray(Reg[Reg], Reg)

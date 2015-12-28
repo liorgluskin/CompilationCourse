@@ -91,7 +91,7 @@ public class Main {
 			
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write(lirCode);
+			bw.write(content);
 			bw.close();
 
 			System.out.println("Done");

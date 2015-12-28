@@ -7,14 +7,6 @@
 <listEntry value="1"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="slp.Main"/>
-<<<<<<< HEAD
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="test/test1.slp"/>
-=======
-<<<<<<< HEAD
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="test/test2.slp"/>
-=======
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="tests/test1.lir"/>
->>>>>>> 4e4eccbb853268f82ee9eb1793ef11d2fdb56fbf
->>>>>>> a9bf17823e7d035628192c9300496551d573e465
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="slp"/>
 </launchConfiguration>
