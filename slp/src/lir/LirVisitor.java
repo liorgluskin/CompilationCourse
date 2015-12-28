@@ -569,8 +569,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			}
 
 			if (!static_call.getClassName().equals("Library")){
-				code += globalSymTable.getClassSymbolTable(class_name)
-						.getMethodSymbol(method_name).getFormalNames().get(i);
+				//code += globalSymTable.getClassSymbolTable(class_name)
+				//		.getMethodSymbol(method_name).getFormalNames().get(i);
+				
+				/*Tomer added**/
+				code += "p_"+i;
 				code+="=";
 			}
 
@@ -668,8 +671,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			}else{
 				argLoc = arg_expr.getRegisterLocation();
 			}
-			code += globalSymTable.getClassSymbolTable(class_name)
-					.getMethodSymbol(method_name).getFormalNames().get(i)+"="+argLoc;
+			//code += globalSymTable.getClassSymbolTable(class_name)
+			//		.getMethodSymbol(method_name).getFormalNames().get(i)+"="+argLoc;
+			/*Tomer added**/
+			code += "p_"+i+"="+argLoc;
+			
 			if(i != arg_num-1)
 				code+=",";
 			//d.addLirInstruction(arg_expr.getMoveCommand().toString(),arg_expr.getRegisterLocation(),"R"+i);
