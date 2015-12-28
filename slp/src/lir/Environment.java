@@ -3,6 +3,7 @@ package lir;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class Environment {
 	//represents the virtual table map
 	//Note: It uses ArrayList because of the importance of the order
 	//as we will be using its index as offset in Lir Code generation
-	protected Map<String,ArrayList<String>> dispatchTables = new HashMap<String,ArrayList<String>>();
+	protected Map<String,LinkedList<String>> dispatchTables = new HashMap<String,LinkedList<String>>();
 
 	//this array is responsible for keeping the order of classes seen till
 	//current moment, to be able to print later the dispatch table in the right order
@@ -124,7 +125,7 @@ public class Environment {
 		//order keeper
 		classOrderKeeper.add(className);
 
-		ArrayList<String> methods = new ArrayList<String>();
+		LinkedList<String> methods = new LinkedList<String>();
 		for(String rawMethod : rawMethodsNames){
 			String method = "_"+className +"_"+ rawMethod;
 			methods.add(method);
@@ -144,7 +145,7 @@ public class Environment {
 		classOrderKeeper.add(className);
 
 		//get parent virtual table
-		ArrayList<String> superClassVirtualTable = dispatchTables.get(superClassName);
+		LinkedList<String> superClassVirtualTable = dispatchTables.get(superClassName);
 
 		//should never enter this if statement
 		if(superClassVirtualTable == null){
@@ -154,7 +155,7 @@ public class Environment {
 		}
 
 		//Init current class virtual table by adding to it all parents functions
-		ArrayList<String> classVirtualTable = new ArrayList<String>();
+		LinkedList<String> classVirtualTable = new LinkedList<String>();
 		classVirtualTable.addAll(superClassVirtualTable);
 
 		//looping over all rawMethods
@@ -225,7 +226,7 @@ public class Environment {
 		}
 		codeGeneration.append("############################################\n");
 
-		
+
 		//generate dispatch table
 		codeGeneration.append("\n############################################\n");
 		codeGeneration.append("# Dispatch vectors\n");
@@ -256,7 +257,7 @@ public class Environment {
 		codeGeneration.append("__checkZero:\n");
 
 		codeGeneration.append("############################################\n");
-		
+
 
 		//add lirCode
 		codeGeneration.append("\n\n");
@@ -267,8 +268,7 @@ public class Environment {
 
 	public int getMethodOffset(String className,String methodName){
 
-
-		ArrayList<String> methods = dispatchTables.get(className);
+		LinkedList<String> methods = dispatchTables.get(className);
 
 		if(methods == null){
 			System.out.println("==BUG==");
@@ -277,22 +277,20 @@ public class Environment {
 		}
 
 		for(String method : methods ){
-			String originalMethodName = method
-					.substring(method.length() - methodName.length());
+			String originalMethodName = method.substring(method.length() - methodName.length());
 
 			if(methodName.equals(originalMethodName)){
+				System.out.println("methodName = "+methodName);////////////
+				System.out.println("methods.indexOf(method) = "+methods.indexOf(method));//////////////
 				return methods.indexOf(method);
-
 			}
 		}
 
-		//shuld not come here
+		//should not come here
 		System.out.println("==BUG==");
 		System.out.println(methodName + " is not in "+className+ " dispatch table.");
 		System.exit(-1);
 		return -1;
-
-
 	}
 
 	/**
