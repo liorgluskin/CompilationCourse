@@ -253,7 +253,7 @@ public class Environment {
 		codeGeneration.append("__checkNullRef:\n");
 		codeGeneration.append("__checkArrayAccess:\n");
 		codeGeneration.append("__checkSize:\n");
-		codeGeneration.append("__checkZero\n");
+		codeGeneration.append("__checkZero:\n");
 
 		codeGeneration.append("############################################\n");
 		
