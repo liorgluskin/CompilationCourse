@@ -340,7 +340,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.addInstructionToBuilder(testLabel+":", "", whileStmt.getLineNum()); // while_test_label:
 		LirReturnInfo condInfo = whileStmt.getCond().accept(this, d);
 		String condResRegister = condInfo.getRegisterLocation();
-
+		
 		// check if the condition holds
 		d.addInstructionToBuilder("Compare", "0", condResRegister, whileStmt.getLineNum());
 		// if condition does not hold, end the while loop
@@ -511,6 +511,15 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			arrayLoc = location_expr.getRegisterLocation();
 		}
 
+		// if location is a field = Reg.Reg, 
+		// we move it to new Reg, since runtime functions only get Reg as input
+		if(arrayLoc.contains(".")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, arrayLoc, fieldReg);
+			arrayLoc = fieldReg;
+		}
+
 		//runtime check
 		d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+arrayLoc+")","Rdummy");
 
@@ -571,7 +580,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			if (!static_call.getClassName().equals("Library")){
 				//code += globalSymTable.getClassSymbolTable(class_name)
 				//		.getMethodSymbol(method_name).getFormalNames().get(i);
-				
+
 				/*Tomer added**/
 				code += "p_"+i;
 				code+="=";
@@ -651,12 +660,12 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		int offset = d.getMethodOffset(class_name, method_name);
 
 		//add beginning of instruction
-		d.addToCurrentStringBuilder("VirtualCall "+objLoc+"."+offset);
+		String code = "VirtualCall "+objLoc+"."+offset;
 
 		//virtual call's arguments
 		//int i = reg+1;
 
-		String code = "(";
+		code += "(";
 		int arg_num = virtual_call.getArguments().size();;
 		int i=0;
 		for (Expr arg: virtual_call.getArguments()){
@@ -675,7 +684,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			//		.getMethodSymbol(method_name).getFormalNames().get(i)+"="+argLoc;
 			/*Tomer added**/
 			code += "p_"+i+"="+argLoc;
-			
+
 			if(i != arg_num-1)
 				code+=",";
 			//d.addLirInstruction(arg_expr.getMoveCommand().toString(),arg_expr.getRegisterLocation(),"R"+i);
@@ -805,8 +814,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			code = literal.getValue().toString();
 			break;
 		}
+		
+		// store literal value in register
+		String reg = "R"+d.getCurrentRegister();
+		d.incrementRegister();
+		d.addInstructionToBuilder(MoveEnum.MOVE, code, reg);
 
-		return new LirReturnInfo(MoveEnum.MOVE, code);
+		return new LirReturnInfo(MoveEnum.MOVE, reg);
 	}
 
 	//abstract class Expr, will never get here
@@ -848,13 +862,16 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	}
 
 	public LirReturnInfo visit(BinaryOpExpr expr, Environment d) {
-		LirReturnInfo operand1 = expr.getLeftOperand().accept(this, d);
-		LirReturnInfo operand2 = expr.getRightOperand().accept(this, d);
+		// according to LIR spec:
+		// OP(a,b) means b:= b OP a
+		// for example: x+y --> b=x, a=y
+		LirReturnInfo operandB = expr.getLeftOperand().accept(this, d);
+		LirReturnInfo operandA = expr.getRightOperand().accept(this, d);
 
 		//check if it is string concatenation
 		types.Type lhs_type = (types.Type) expr.getLeftOperand().accept(new TypeEvaluator(globalSymTable), null);
 		if (lhs_type.toString().compareTo("int") != 0){
-			d.addInstructionToBuilder("Library","__stringCat("+operand1.getRegisterLocation()+","+operand2.getRegisterLocation()
+			d.addInstructionToBuilder("Library","__stringCat("+operandB.getRegisterLocation()+","+operandA.getRegisterLocation()
 					+")","R"+d.getCurrentRegister());
 			String res = "R"+d.getCurrentRegister();
 			d.incrementRegister();
@@ -867,33 +884,36 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		// Tomer commented - if we have 'move array' then array is already in Reg
 		// we cannot perform MoveArray(Reg, Reg), only: MoveArray(Reg, Reg[Reg]), MoveArray(Reg[Reg], Reg)
-		if(!operand1.getMoveCommand().equals(MoveEnum.MOVE_ARRAY)){
-			d.addInstructionToBuilder(operand1.getMoveCommand(), operand1.getRegisterLocation(), resOp);
+		if(!operandB.getMoveCommand().equals(MoveEnum.MOVE_ARRAY)){
+			d.addInstructionToBuilder(operandB.getMoveCommand(), operandB.getRegisterLocation(), resOp);
 		}
-		if(expr.hasMathematicalOp())
-			return visitMathBinaryExpr(expr, d,resOp, operand2.getRegisterLocation());
-		return visitLogicalBinaryExpr(expr, d,resOp, operand2.getRegisterLocation());
+				
+		if(expr.hasMathematicalOp()){
+			return visitMathBinaryExpr(expr, d,resOp, operandA.getRegisterLocation());
+		}
+		return visitLogicalBinaryExpr(expr, d,resOp, operandA.getRegisterLocation());
 	}
 
-	public LirReturnInfo visitMathBinaryExpr(BinaryOpExpr expr, Environment d, String operand1_reg, String operand2_reg ){		
-		String res = operand1_reg;
+	public LirReturnInfo visitMathBinaryExpr(BinaryOpExpr expr, Environment d, String operandB_reg, String operandA_reg ){		
+		String res = operandB_reg;
+
 		switch (expr.getOp()){
 		case PLUS:
-			d.addInstructionToBuilder("Add",operand2_reg,operand1_reg);			
+			d.addInstructionToBuilder("Add",operandA_reg,operandB_reg);			
 			break;
 		case MINUS:
-			d.addInstructionToBuilder("Sub",operand2_reg,operand1_reg);
+			d.addInstructionToBuilder("Sub",operandA_reg,operandB_reg);
 			break;
 		case MULTIPLY:
-			d.addInstructionToBuilder("Mul",operand2_reg,operand1_reg);
+			d.addInstructionToBuilder("Mul",operandA_reg,operandB_reg);
 			break;
 		case DIVIDE:
 			//runtime check
-			d.addInstructionToBuilder("StaticCall","__checkZero(b="+operand2_reg+")","Rdummy");
-			d.addInstructionToBuilder("Div",operand2_reg,operand1_reg);
+			d.addInstructionToBuilder("StaticCall","__checkZero(b="+operandA_reg+")","Rdummy");
+			d.addInstructionToBuilder("Div",operandA_reg,operandB_reg);
 			break;
 		case MOD:
-			d.addInstructionToBuilder("Mod",operand2_reg,operand1_reg);
+			d.addInstructionToBuilder("Mod",operandA_reg,operandB_reg);
 			break;
 		default:
 			System.err.println("error");//will not get here
@@ -902,30 +922,29 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		return new LirReturnInfo(MoveEnum.MOVE,res);
 	}
 
-	public LirReturnInfo visitLogicalBinaryExpr(BinaryOpExpr expr, Environment d, String operand1_reg, String operand2_reg){
+	public LirReturnInfo visitLogicalBinaryExpr(BinaryOpExpr expr, Environment d, String operandB_reg, String operandA_reg){
 		String true_label = "_true_label"+d.getLabelIndex();
 		String false_label = "_false_label"+d.getLabelIndex();
 		String end_label = "_end_label"+d.getLabelIndex();
 		d.incrementLabelIndex();
-
 		//for relational operators
 		if (expr.getOp() != BinOperator.LAND && expr.getOp() != BinOperator.LOR){
-			d.addInstructionToBuilder("Compare",operand2_reg,operand1_reg);
+			d.addInstructionToBuilder("Compare",operandA_reg,operandB_reg);
 		}
 
 		switch (expr.getOp()){
 		case LAND:
-			d.addInstructionToBuilder("Compare","0",operand1_reg);
+			d.addInstructionToBuilder("Compare","0",operandB_reg);
 			d.addInstructionToBuilder("JumpTrue",false_label);
-			d.addInstructionToBuilder("Compare","0",operand2_reg);
+			d.addInstructionToBuilder("Compare","0",operandA_reg);
 			d.addInstructionToBuilder("JumpTrue",false_label);
 			d.addInstructionToBuilder("Jump",true_label);
 			d.addToCurrentStringBuilder(false_label+":\n");
 			break;
 		case LOR:
-			d.addInstructionToBuilder("Compare","0",operand1_reg);
+			d.addInstructionToBuilder("Compare","0",operandB_reg);
 			d.addInstructionToBuilder("JumpFalse",true_label);
-			d.addInstructionToBuilder("Compare","0","R"+operand2_reg);
+			d.addInstructionToBuilder("Compare","0","R"+operandA_reg);
 			d.addInstructionToBuilder("JumpFalse",true_label);
 			break;
 		case LT:
@@ -951,13 +970,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}
 
 		//false label
-		d.addInstructionToBuilder("Move","0",operand1_reg);	
+		d.addInstructionToBuilder("Move","0",operandB_reg);	
 		d.addInstructionToBuilder("Jump",end_label);
 
 		d.addToCurrentStringBuilder(true_label+":\n");
-		d.addInstructionToBuilder("Move","1",operand1_reg);
+		d.addInstructionToBuilder("Move","1",operandB_reg);
 		d.addToCurrentStringBuilder(end_label+":\n");
 
-		return new LirReturnInfo(MoveEnum.MOVE,operand1_reg);
+		return new LirReturnInfo(MoveEnum.MOVE,operandB_reg);
 	}
 }
