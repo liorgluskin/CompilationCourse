@@ -718,6 +718,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//runtime check, check size of array
 		d.addInstructionToBuilder("StaticCall","__checkSize(n="+loc+")","Rdummy");
 
+		// save register with original array size, for array init loop
+		String arrLenReg = "R" + d.getCurrentRegister();
+		d.incrementRegister();
+		d.addInstructionToBuilder(MoveEnum.MOVE, loc, arrLenReg);
+
 		//get the actual length in bytes (multiply register by 4, in place)
 		d.addInstructionToBuilder("Mul","4",loc);
 
@@ -726,6 +731,24 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//library function - allocate memory for a new array
 		d.addInstructionToBuilder("Library","__allocateArray("+loc+")",resLoc);
+
+		// make labels for array initialization loop
+		String initStartLabel = d.addLabel("array_init_start");
+		String initEndLabel = d.addLabel("array_init_end");
+		// initialize the array elements, written in IC specification:
+		// object fields and array elements are initialized with default values,
+		// 0 for integers, false for booleans, and null for references
+		d.addInstructionToBuilder(initStartLabel+":", "", new_arr.getLineNum());
+		d.addInstructionToBuilder("Dec",arrLenReg);
+		// if finished initializing, jump to the end-label
+		d.addInstructionToBuilder("Compare","0",arrLenReg);
+		d.addInstructionToBuilder("JumpL",initEndLabel);
+		// else, initialize the current array cell, and jump back to loop
+		// 0 represents : zero (integers), false (booleans), null (objects)
+		d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, "0", resLoc+"["+arrLenReg+"]");
+		d.addInstructionToBuilder("JumpL",initStartLabel);
+		// end-label we jump to when done initializing array cells
+		d.addInstructionToBuilder(initEndLabel+":", "", new_arr.getLineNum());
 
 		return new LirReturnInfo(MoveEnum.MOVE,resLoc);
 	}
