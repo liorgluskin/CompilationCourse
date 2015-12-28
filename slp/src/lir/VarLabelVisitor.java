@@ -52,6 +52,7 @@ import symbolTableHandler.VariableSymbol;
  */
 public class VarLabelVisitor implements Visitor{
 	private int uniqueID = 0; // unique id for var labels
+	private int formalID = 0; // unique id for parameters labels
 
 	public void visit(Program program) {
 		//visit all classes apart from Library
@@ -70,9 +71,11 @@ public class VarLabelVisitor implements Visitor{
 
 	public void visit(ClassMethod method) {
 		// visit method type, formals and statements
+		formalID = 0; //init formal counter
 		method.getType().accept(this);
 		for(Formal f : method.getFormals()){
 			f.accept(this);
+			formalID++;
 		}
 		for(Stmt s : method.getStatementList().getStatements()){
 			s.accept(this);
@@ -81,9 +84,11 @@ public class VarLabelVisitor implements Visitor{
 
 	public void visit(StaticMethod method) {
 		// visit method type, formals and statements
+		formalID = 0; //init formal counter
 		method.getType().accept(this);
 		for(Formal f : method.getFormals()){
 			f.accept(this);
+			formalID++;
 		}
 		for(Stmt s : method.getStatementList().getStatements()){
 			s.accept(this);
@@ -115,7 +120,7 @@ public class VarLabelVisitor implements Visitor{
 			MethodSymbolTable mst = (MethodSymbolTable) formal.getScope();
 			VariableSymbol varSym = mst.getVarParamSymbol(formal.getName());
 			// set parameter label accordingly
-			varSym.setLabel("p_"+ (uniqueID++)+"_" + formal.getName());	
+			varSym.setLabel("p_" + formalID);	
 		} catch (SemanticError e) {
 			// in case method symbol table does not contain parameter
 			// should never get here, already checked in Semantic part
