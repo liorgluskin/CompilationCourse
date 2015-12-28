@@ -280,8 +280,6 @@ public class Environment {
 			String originalMethodName = method.substring(method.length() - methodName.length());
 
 			if(methodName.equals(originalMethodName)){
-				System.out.println("methodName = "+methodName);////////////
-				System.out.println("methods.indexOf(method) = "+methods.indexOf(method));//////////////
 				return methods.indexOf(method);
 			}
 		}
