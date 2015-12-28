@@ -53,6 +53,7 @@ import types.TypeBoolean;
 import types.TypeInt;
 import types.TypeString;
 import types.TypeTable;
+import types.TypeVoid;
 
 /**
  * Class creates an evaluator that traverses the program,
@@ -488,9 +489,22 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// validate static method's enclosing class exists
 		symbolTableHandler.ClassSymbolTable classSymTable = null;
 		classSymTable = globaSymlTable.getClassSymbolTable(static_call.getClassName());
+		if(classSymTable == null){
+			SemanticError error = new SemanticError("Invalid static method call, method class is undefined",
+					static_call.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
 
-		// validate called method is defined in enclosing class, as static method
+		// validate called method is defined in enclosing class
 		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(static_call.getMethodName());
+		if(methodSym == null){
+			SemanticError error = new SemanticError("Invalid static method call, method is undefined",
+					static_call.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
+		// validate method is defined as static
 		if (!methodSym.isStatic()){
 			SemanticError error = new SemanticError("Invalid static method call, method is not static",
 					static_call.getLineNum());
@@ -854,6 +868,15 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				System.out.println(error);
 				System.exit(1);
 			}
+
+			// no binary operations between void types
+			if(rightParamType.extendsType(new TypeVoid())){
+				SemanticError error = new SemanticError("Invalid binary operation, operands are of type void", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+
 			// if successful return boolean type
 			return new TypeBoolean();
 		}
@@ -899,6 +922,14 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				System.exit(1);
 			}
 
+			// no binary operations between void types
+			if(rightParamType.extendsType(new TypeVoid())){
+				SemanticError error = new SemanticError("Invalid binary operation, operands are of type void", 
+						expr.getLineNum());
+				System.out.println(error);
+				System.exit(1);
+			}
+
 			// all checks are valid return the higher type of the operands
 			if(leftParamType.extendsType(rightParamType)){
 				return rightParamType;
@@ -928,11 +959,25 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 			// all checks are valid return type boolean
 			if(leftParamType.extendsType(rightParamType)){
+				// no binary operations between void types
+				if(rightParamType.extendsType(new TypeVoid())){
+					SemanticError error = new SemanticError("Invalid binary operation, operands are of type void", 
+							expr.getLineNum());
+					System.out.println(error);
+					System.exit(1);
+				}
+
 				return new TypeBoolean();
 			}
 		}
 
-
+		// no binary operations between void types
+		if(rightParamType.extendsType(new TypeVoid())){
+			SemanticError error = new SemanticError("Invalid binary operation, operands are of type void", 
+					expr.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
 		return leftParamType;
 	}
 
