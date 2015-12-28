@@ -109,7 +109,8 @@ public class Environment {
 	 * @return: the LIR label representation
 	 * */
 	public String addLabel(String labelName){
-		String labelRep = "_"+labelName+incrementLabelIndex();
+		String labelRep = "_"+labelName+currentLabelIndex;
+		incrementLabelIndex();
 		labels.add(labelRep);
 		return labelRep;
 	}
