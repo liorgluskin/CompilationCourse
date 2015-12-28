@@ -1,0 +1,15 @@
+class A {
+
+  int foo(int y) {
+	return y;
+  }
+  
+  int kaka(int k){
+  return k;
+  }
+  static void main(string[] args) {
+    A p = new A();
+    p.foo(5);
+  }
+
+}

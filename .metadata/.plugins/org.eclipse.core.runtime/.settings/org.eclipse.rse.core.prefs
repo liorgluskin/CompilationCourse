@@ -1,3 +1,4 @@
 activeuserprofiles=LIOR-E450;Team
 eclipse.preferences.version=1
 org.eclipse.rse.systemtype.local.systemType.defaultUserId=lior
+useridperkey=LIOR-E450.Local\=lior;

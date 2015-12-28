@@ -1,0 +1,11 @@
+class A {
+
+  int foo(int y) {
+	return y;
+  }
+  static void main(string[] args) {
+    A p = new A();
+    p.foo(5);
+  }
+
+}
