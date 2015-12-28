@@ -247,8 +247,16 @@ public class Environment {
 		codeGeneration.append("############################################\n");
 
 
-		//add runTimeCheckFunctions
-		//TO DO: run time checks
+		//add run time check functions implementation
+		codeGeneration.append("\n############################################\n");
+		codeGeneration.append("# Runtime Checks\n");
+		codeGeneration.append("__checkNullRef:\n");
+		codeGeneration.append("__checkArrayAccess:\n");
+		codeGeneration.append("__checkSize:\n");
+		codeGeneration.append("__checkZero\n");
+
+		codeGeneration.append("############################################\n");
+		
 
 		//add lirCode
 		codeGeneration.append("\n\n");
