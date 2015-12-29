@@ -505,38 +505,24 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		LirReturnInfo location_expr = arr_loc.getArrLocation().accept(this, d);
 		String arrayLoc = "R" + d.getCurrentRegister();
 
-		//we need to transfer the location only if it is a Memory as
+		//we need to transfer the location only if it is a Memory||reg[reg] || reg.reg as
 		//Move array instruction supports only registers
-		if(location_expr.getRegisterLocation().charAt(0)!='R'){
+		if(location_expr.getRegisterLocation().charAt(0)!='R' || location_expr.getMoveCommand() != MoveEnum.MOVE){
 			d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),arrayLoc);
 			d.incrementRegister();
 		}else{
 			arrayLoc = location_expr.getRegisterLocation();
 		}
 		
-		// if location is a field = Reg.Reg, 
-		// we move it to new Reg, since runtime functions only get Reg as input
-		if(arrayLoc.contains(".")){
-			String fieldReg = "R" + d.getCurrentRegister();
-			d.incrementRegister();
-			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, arrayLoc, fieldReg);
-			arrayLoc = fieldReg;
-		}
-		
-		// if location is a field = Reg[Reg], 
-		// we move it to new Reg, since runtime functions only get Reg as input
-		else if(arrayLoc.contains("[")){
-			String fieldReg = "R" + d.getCurrentRegister();
-			d.incrementRegister();
-			d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, arrayLoc, fieldReg);
-			arrayLoc = fieldReg;
-		}
 		
 		//runtime check
 		//keren - for array fields
-		if(arrayLoc.contains("."))
-			arrayLoc = arrayLoc.substring(0, arrayLoc.indexOf("."));
-		d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+arrayLoc+")","Rdummy");
+		//another fix by lior: location_expr is of type R1.R2 check that R2 != 0
+		if(location_expr.getRegisterLocation().contains(".")){
+			String field = location_expr.getRegisterLocation().
+					substring(0, location_expr.getRegisterLocation().indexOf("."));
+			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+field+")","Rdummy");
+		}
 
 		//index
 		//edited by lior: removed decrement optimization currently - lets make it work first
@@ -544,9 +530,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		LirReturnInfo index = arr_loc.getIndex().accept(this, d);
 		String indexLoc = "";
 
-		//again we only need to make a move instruction if index location is a Memory
-		//as Move Array does not support operations on memories
-		if(index.getRegisterLocation().charAt(0) != 'R'){
+		//again we only need to make a move instruction if index isnt allready a register
+		
+		if(index.getRegisterLocation().charAt(0) != 'R' || index.getMoveCommand() != MoveEnum.MOVE){
 			indexLoc = "R" + d.getCurrentRegister();
 			d.incrementRegister();
 			d.addInstructionToBuilder(index.getMoveCommand().toString(), index.getRegisterLocation(),indexLoc);		
@@ -908,12 +894,31 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		// for example: x+y --> b=x, a=y
 		LirReturnInfo operandB = expr.getLeftOperand().accept(this, d);
 		LirReturnInfo operandA = expr.getRightOperand().accept(this, d);
+		
+		//Moving operandB anyway for doing calculations if not a register
+		//even if its a memory and we make a string concatatntion
+		String OperandBLoc = "R"+d.getCurrentRegister();
+		d.incrementRegister();
+		d.addInstructionToBuilder(operandB.getMoveCommand(), operandB.getRegisterLocation(),OperandBLoc);			
+		
+		
+		//handle operand A:
+		//move only if field or array
+		String OperandALoc = operandA.getRegisterLocation();
+		if(operandA.getMoveCommand() != MoveEnum.MOVE ){
+			String res = "R"+d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(operandA.getMoveCommand(), OperandALoc,res);
+			OperandALoc = res;			
+		}
+		
 
 		//check if it is string concatenation
 		types.Type lhs_type = (types.Type) expr.getLeftOperand().accept(new TypeEvaluator(globalSymTable), null);
 		if (lhs_type.toString().compareTo("int") != 0){
 			d.addInstructionToBuilder("Library","__stringCat("+operandB.getRegisterLocation()+","+operandA.getRegisterLocation()
 					+")","R"+d.getCurrentRegister());
+			
 			String res = "R"+d.getCurrentRegister();
 			d.incrementRegister();
 			return new LirReturnInfo(MoveEnum.MOVE, res);
@@ -924,46 +929,12 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.incrementRegister();
 		
 
-		// Tomer commented - if we have 'move array' then array is already in Reg
-		// we cannot perform MoveArray(Reg, Reg), only: MoveArray(Reg, Reg[Reg]), MoveArray(Reg[Reg], Reg)
-		if(!operandB.getMoveCommand().equals(MoveEnum.MOVE_ARRAY)){
-			d.addInstructionToBuilder(operandB.getMoveCommand(), operandB.getRegisterLocation(), resOp);
-		}
 
-		String opAreg = operandA.getRegisterLocation();
-
-		// If one of the operands is Reg[Reg]
-		if(opAreg.contains("[")){
-			String fieldReg = "R" + d.getCurrentRegister();
-			d.incrementRegister();
-			d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, opAreg, fieldReg);
-			opAreg = fieldReg;
-		}
-		if(resOp.contains("[")){
-			String fieldReg = "R" + d.getCurrentRegister();
-			d.incrementRegister();
-			d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, resOp, fieldReg);
-			resOp = fieldReg;
-		}
-
-		// If one of the operands is Reg.Reg
-		if(opAreg.contains(".")){
-			String fieldReg = "R" + d.getCurrentRegister();
-			d.incrementRegister();
-			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, opAreg, fieldReg);
-			opAreg = fieldReg;
-		}
-		if(resOp.contains(".")){
-			String fieldReg = "R" + d.getCurrentRegister();
-			d.incrementRegister();
-			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, resOp, fieldReg);
-			resOp = fieldReg;
-		}
 
 		if(expr.hasMathematicalOp()){
-			return visitMathBinaryExpr(expr, d,resOp, opAreg);
+			return visitMathBinaryExpr(expr, d,OperandBLoc, OperandALoc);
 		}
-		return visitLogicalBinaryExpr(expr, d,resOp, opAreg);
+		return visitLogicalBinaryExpr(expr, d,OperandBLoc, OperandALoc);
 	}
 
 	public LirReturnInfo visitMathBinaryExpr(BinaryOpExpr expr, Environment d, String operandB_reg, String operandA_reg ){		

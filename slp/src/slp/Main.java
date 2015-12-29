@@ -87,6 +87,7 @@ public class Main {
 			lir.LirVisitor lirVisitor = new lir.LirVisitor(global_st);
 			String lirCode = lirVisitor.getLirCode(root);
 			
+			System.out.println(lirCode);
 			File file = new File("output.lir");
 			
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());

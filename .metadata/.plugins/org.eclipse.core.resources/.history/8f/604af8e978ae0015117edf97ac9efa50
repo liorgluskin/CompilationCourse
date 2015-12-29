@@ -1,0 +1,57 @@
+
+############################################
+# String literals
+str_null_ref: "Runtime Error: Null pointer dereference!"
+str_array_access: "Runtime Error: Array index out of bounds!"
+str_size: "Runtime Error: Array allocation with negative array size!"
+str_zero: "Runtime Error: Division by zero!"
+############################################
+
+############################################
+# Dispatch vectors
+_DV_MultiplyMatrices: []
+############################################
+
+############################################
+# Runtime Checks
+__checkNullRef:
+Return Rdummy
+__checkArrayAccess:
+Return Rdummy
+__checkSize:
+Return Rdummy
+__checkZero:
+Return Rdummy
+############################################
+
+
+
+####main in MultiplyMatrices####
+_ic_main:
+Move 5,R1
+Move R1,R2
+StaticCall __checkSize(n=R2),Rdummy
+Move R2,R3
+Mul 4,R3
+Library __allocateArray(R3),R4
+_array_init_start0: 
+Dec R2
+Compare 0,R2
+JumpL _array_init_end1
+MoveArray 0,R4[R2]
+JumpL _array_init_start0
+_array_init_end1: 
+# line number: 5
+Move R4,v_0_a
+Move v_0_a,R5
+StaticCall __checkNullRef(a=R5),Rdummy
+Move 0,R6
+StaticCall __checkArrayAccess(a=R5,i=R6),Rdummy
+Move v_0_a,R7
+StaticCall __checkNullRef(a=R7),Rdummy
+Move 0,R8
+StaticCall __checkArrayAccess(a=R7,i=R8),Rdummy
+MoveArray R7[R8],R10
+Mul R10,R9
+# line number: 6
+Move R9,v_1_c

@@ -1,0 +1,10 @@
+
+class MultiplyMatrices {
+
+	static void main(string[] args) {
+		int[] a =new int[5];
+		a[0] = 6;
+		int c = a[0]*a[0];
+		}
+
+}

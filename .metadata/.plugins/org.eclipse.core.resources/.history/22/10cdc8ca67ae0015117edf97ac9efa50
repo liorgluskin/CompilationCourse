@@ -1,0 +1,11 @@
+_ic_main:
+Move 5,R1
+# line number: 5
+Move R1,v_0_a
+Move 6,R2
+# line number: 6
+Move R2,v_1_b
+Move v_0_a,R3
+Mul v_1_b,R3
+# line number: 7
+Move R3,v_2_c
