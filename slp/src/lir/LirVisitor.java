@@ -204,55 +204,63 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	 * @param lineNum - line number in translated code
 	 * @param d - the current LIR environment
 	 */
-	private void lirAssignHandler(String location, String value, int lineNum, Environment d){
-		//edited by lior: can be also R1.2 which is a field
-		// handle a move to a register
-		if(location.startsWith("R") && /*added by lior */!location.contains(".") && !location.contains("]")){
-			d.addInstructionToBuilder(MoveEnum.MOVE, value, location, lineNum);
-		}
-
-		// handle a move to memory
-		else if(isMemoryVar(location)){
-			String register = value;
-			// attempting to move from memory to memory, illegal in LIR
-			// must first move value to register, then move register value to location
-			if(isMemoryVar(value)){
-				register = d.makeNewRegister();
-				// move value to register
-				d.addInstructionToBuilder(MoveEnum.MOVE, value, register, lineNum);				
+	private void lirAssignHandler(LirReturnInfo locationInfo, LirReturnInfo valueInfo, Environment d){
+		//different storage situations:
+		
+		//1)store in array or field:
+		if(locationInfo.getMoveCommand() != MoveEnum.MOVE){		
+			String rightValueLoc = valueInfo.getRegisterLocation();
+			//check if right value is a register. if not transfer it to
+			//a register and make a MOVE_ARRAY command
+			if(valueInfo.getMoveCommand() !=MoveEnum.MOVE ||
+					valueInfo.getRegisterLocation().charAt(0) !='R'){
+				String newLeftValueReg = "R" + d.getCurrentRegister();
+				d.incrementRegister();
+				d.addInstructionToBuilder(valueInfo.getMoveCommand(),
+						valueInfo.getRegisterLocation(), newLeftValueReg);
+				
+				rightValueLoc = newLeftValueReg;
 			}
-			// move from register to location
-			d.addInstructionToBuilder(MoveEnum.MOVE, register, location, lineNum);
+			d.addInstructionToBuilder(locationInfo.getMoveCommand(),
+					rightValueLoc,locationInfo.getRegisterLocation());			
 		}
-
-		// handle a move to a field
-		// field is of format 'Reg.Reg' or 'Reg.Immediate'
-		else if(location.contains(".")){
-			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, value, location, lineNum);
+		//2) store array or field in memory:
+		else if(locationInfo.getRegisterLocation().charAt(0) != 'R' &&
+				valueInfo.getMoveCommand() !=MoveEnum.MOVE){
+			
+			//store field or array loc in new reg
+			String storeTmpReg = "R"+d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(valueInfo.getMoveCommand(), valueInfo.getRegisterLocation(),
+					storeTmpReg);
+			
+			//move reg to memory
+			d.addInstructionToBuilder(locationInfo.getMoveCommand(), storeTmpReg,
+					locationInfo.getRegisterLocation());			
 		}
-
-		// handle a move to an array-location
-		// only array ends with ']'
-		else if(location.endsWith("]")){ 
-			d.addInstructionToBuilder(MoveEnum.MOVE_ARRAY, value, location, lineNum);
+		//3)store field/memory/immidiate in memory
+		else{
+			d.addInstructionToBuilder(locationInfo.getMoveCommand(),valueInfo.getRegisterLocation(),
+					locationInfo.getRegisterLocation());
 		}
 	}
+	
 
 	/**
 	 * Translate Assignment statement into LIR code
 	 */
 	public LirReturnInfo visit(AssignStmt stmt, Environment d) {
+		
+		
 
 		// get the assignment right-hand-side info first
 		LirReturnInfo valueInfo = stmt.getRhs().accept(this, d);
-		String valueReg = valueInfo.getRegisterLocation(); // register where value is stored
+		
 
 		// get the label of the assignment location
 		LirReturnInfo locationInfo = stmt.getLocation().accept(this, d);
-		String locationReg = locationInfo.getRegisterLocation(); // register where location is stored
-
-		// handle the assignment
-		lirAssignHandler(locationReg, valueReg, stmt.getLineNum(), d);
+		
+		lirAssignHandler(locationInfo,valueInfo,d);
 		return null;
 	}
 
@@ -393,7 +401,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			try {
 				localVarSym = bst.getVarSymbolLocal(idStmt.getName());
 				String varLabel = localVarSym.getLabel();
-				lirAssignHandler(varLabel, reg, idStmt.getLineNum(), d);
+				lirAssignHandler(new LirReturnInfo(MoveEnum.MOVE, varLabel), initialValueInfo, d);
 			} catch (SemanticError e) {
 				// in case method symbol table does not contain parameter
 				// should never get here, already checked in Semantic part

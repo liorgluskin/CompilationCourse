@@ -1,0 +1,297 @@
+
+############################################
+# String literals
+str_null_ref: "Runtime Error: Null pointer dereference!"
+str_array_access: "Runtime Error: Array index out of bounds!"
+str_size: "Runtime Error: Array allocation with negative array size!"
+str_zero: "Runtime Error: Division by zero!"
+str2: ""
+str1: " "
+############################################
+
+############################################
+# Dispatch vectors
+_DV_ArrayBub: [_ArrayBub_init,_ArrayBub_bubbleSort,_ArrayBub_test,_ArrayBub_swap,_ArrayBub_display,_ArrayBub_insert]
+############################################
+
+############################################
+# Runtime Checks
+__checkNullRef:
+Return Rdummy
+__checkArrayAccess:
+Return Rdummy
+__checkSize:
+Return Rdummy
+__checkZero:
+Return Rdummy
+############################################
+
+
+
+####ArrayBub.init####
+_ArrayBub_init:
+Move 10,R1
+Move R1,R2
+StaticCall __checkSize(n=R2),Rdummy
+Move R2,R3
+Mul 4,R3
+Library __allocateArray(R3),R4
+_array_init_start0: 
+Dec R2
+Compare 0,R2
+JumpL _array_init_end1
+MoveArray 0,R4[R2]
+JumpL _array_init_start0
+_array_init_end1: 
+Move this,R5
+# line number: 12
+MoveField R4,R5.1
+Move 0,R6
+# line number: 13
+MoveField R6,R5.2
+Return Rdummy
+
+####ArrayBub.insert####
+_ArrayBub_insert:
+Move this,R7
+MoveField R7.1,R8
+StaticCall __checkNullRef(a=R7),Rdummy
+MoveField R7.2,R9
+StaticCall __checkArrayAccess(a=R8,i=R9),Rdummy
+# line number: 18
+MoveArray p_0,R8[R9]
+Move 1,R10
+MoveField R7.2,R11
+Add R10,R11
+# line number: 19
+MoveField R11,R7.2
+Return Rdummy
+
+####ArrayBub.display####
+_ArrayBub_display:
+Move 0,R13
+# line number: 24
+Move R13,v_2_i
+_while_test_label2: 
+Move this,R14
+Move v_2_i,R15
+MoveField R14.2,R16
+Compare R16,R15
+JumpL _true_label4
+Move 0,R15
+Jump _end_label4
+_true_label4:
+Move 1,R15
+_end_label4:
+# line number: 25
+Compare 0,R15
+JumpTrue _while_end_label3
+MoveField R14.1,R18
+StaticCall __checkNullRef(a=R14),Rdummy
+Move v_2_i,R19
+StaticCall __checkArrayAccess(a=R18,i=R19),Rdummy
+MoveArray R18[R19],R20
+Library __printi(R20),Rdummy
+Move str1,R21
+Library __print(R21),Rdummy
+Move 1,R22
+Move v_2_i,R23
+Add R22,R23
+# line number: 28
+Move R23,v_2_i
+Jump _while_test_label2
+_while_end_label3: 
+Move str2,R25
+Library __println(R25),Rdummy
+Return Rdummy
+
+####ArrayBub.bubbleSort####
+_ArrayBub_bubbleSort:
+Move this,R26
+Move 1,R27
+MoveField R26.2,R28
+Sub R27,R28
+# line number: 34
+Move R28,v_3_out
+_while_test_label5: 
+Move 1,R30
+Move v_3_out,R31
+Compare R30,R31
+JumpG _true_label7
+Move 0,R31
+Jump _end_label7
+_true_label7:
+Move 1,R31
+_end_label7:
+# line number: 37
+Compare 0,R31
+JumpTrue _while_end_label6
+Move 0,R33
+# line number: 38
+Move R33,v_4_in
+_while_test_label8: 
+Move v_4_in,R34
+Compare v_3_out,R34
+JumpL _true_label10
+Move 0,R34
+Jump _end_label10
+_true_label10:
+Move 1,R34
+_end_label10:
+# line number: 39
+Compare 0,R34
+JumpTrue _while_end_label9
+MoveField R26.1,R36
+StaticCall __checkNullRef(a=R26),Rdummy
+Move v_4_in,R37
+StaticCall __checkArrayAccess(a=R36,i=R37),Rdummy
+MoveField R26.1,R38
+StaticCall __checkNullRef(a=R26),Rdummy
+Move 1,R39
+Move v_4_in,R40
+Add R39,R40
+StaticCall __checkArrayAccess(a=R38,i=R40),Rdummy
+MoveArray R36[R37],R42
+MoveArray R38[R40],R43
+Compare R43,R42
+JumpG _true_label13
+Move 0,R42
+Jump _end_label13
+_true_label13:
+Move 1,R42
+_end_label13:
+# line number: 40
+Compare 0,R42
+JumpTrue _end_if_label12
+#virtual call to swap's location:
+Move 1,R45
+Move v_4_in,R46
+Add R45,R46
+VirtualCall R26.3(p_0=v_4_in,p_1=R46),Rdummy
+Jump _end_if_label12
+_end_if_label12: 
+Move 1,R48
+Move v_4_in,R49
+Add R48,R49
+# line number: 42
+Move R49,v_4_in
+Jump _while_test_label8
+_while_end_label9: 
+Move 1,R51
+Move v_3_out,R52
+Sub R51,R52
+# line number: 44
+Move R52,v_3_out
+Jump _while_test_label5
+_while_end_label6: 
+Return Rdummy
+
+####ArrayBub.swap####
+_ArrayBub_swap:
+Move this,R54
+MoveField R54.1,R55
+StaticCall __checkNullRef(a=R54),Rdummy
+Move p_0,R56
+StaticCall __checkArrayAccess(a=R55,i=R56),Rdummy
+# line number: 49
+Move R55[R56],v_5_temp
+MoveField R54.1,R57
+StaticCall __checkNullRef(a=R54),Rdummy
+Move p_1,R58
+StaticCall __checkArrayAccess(a=R57,i=R58),Rdummy
+MoveField R54.1,R59
+StaticCall __checkNullRef(a=R54),Rdummy
+Move p_0,R60
+StaticCall __checkArrayAccess(a=R59,i=R60),Rdummy
+# line number: 50
+MoveArray R57[R58],R59[R60]
+MoveField R54.1,R61
+StaticCall __checkNullRef(a=R54),Rdummy
+Move p_1,R62
+StaticCall __checkArrayAccess(a=R61,i=R62),Rdummy
+# line number: 51
+MoveArray v_5_temp,R61[R62]
+Return Rdummy
+
+####ArrayBub.test####
+_ArrayBub_test:
+Library __allocateObject(12),R64
+MoveField _DV_ArrayBub,R64.0
+# line number: 61
+Move R64,v_6_arr
+#virtual call to init's location:
+Move v_6_arr,R65
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+VirtualCall R65.0(),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R66
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 77,R67
+VirtualCall R66.5(p_0=R67),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R68
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 99,R69
+VirtualCall R68.5(p_0=R69),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R70
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 44,R71
+VirtualCall R70.5(p_0=R71),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R72
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 55,R73
+VirtualCall R72.5(p_0=R73),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R74
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 22,R75
+VirtualCall R74.5(p_0=R75),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R76
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 88,R77
+VirtualCall R76.5(p_0=R77),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R78
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 11,R79
+VirtualCall R78.5(p_0=R79),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R80
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 0,R81
+VirtualCall R80.5(p_0=R81),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R82
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 66,R83
+VirtualCall R82.5(p_0=R83),Rdummy
+#virtual call to insert's location:
+Move v_6_arr,R84
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+Move 33,R85
+VirtualCall R84.5(p_0=R85),Rdummy
+#virtual call to display's location:
+Move v_6_arr,R86
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+VirtualCall R86.4(),Rdummy
+#virtual call to bubbleSort's location:
+Move v_6_arr,R87
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+VirtualCall R87.1(),Rdummy
+#virtual call to display's location:
+Move v_6_arr,R88
+StaticCall __checkNullRef(a=v_6_arr),Rdummy
+VirtualCall R88.4(),Rdummy
+Return Rdummy
+
+####main in ArrayBub####
+_ic_main:
+#virtual call to test's location:
+Library __allocateObject(12),R63
+MoveField _DV_ArrayBub,R63.0
+StaticCall __checkNullRef(a=R63),Rdummy
+VirtualCall R63.2(),Rdummy
+
