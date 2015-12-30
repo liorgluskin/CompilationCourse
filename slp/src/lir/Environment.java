@@ -9,6 +9,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class Environment {
+	
+	//indicates if result should be stored in register or not
+	private boolean storeInReg = false;
 
 	//represents the index of str literal
 	private int currentStringLiteralIndex = 0;
@@ -368,4 +371,12 @@ public class Environment {
 		addInstructionToBuilder(move.toString(), opA, opB, -1);	
 	}
 
+	
+	public void setStoreInReg(boolean choice){
+		this.storeInReg = choice;
+	}
+	public boolean storeInReg(){
+		return this.storeInReg;
+	}
+	
 }
