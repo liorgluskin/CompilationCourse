@@ -119,7 +119,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//return Rdummy if function return type is void
 		if(method.getType().getFullName().equals("void") && !isMain){
-			strb.append("Return Rdummy\n");
+			//check if method already doesnt have an emty return
+			if(strb.lastIndexOf("Return Rdummy\n") != strb.length() - "Return Rdummy\n".length()){
+				strb.append("Return Rdummy\n");				
+			}
 		}
 		environment.setCurrentStringBuilder(environment.getLirStringBuilder());
 
@@ -284,6 +287,16 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			// get register the return expression is in
 			LirReturnInfo returnInfo = returnStmt.getExpr().accept(this, d);
 			currentReg = returnInfo.getRegisterLocation();
+			
+			//transfer to a new register if its field or array
+			if(returnInfo.getMoveCommand() != MoveEnum.MOVE){
+				String newReturnReg = "R"+d.getCurrentRegister();
+				d.incrementRegister();
+				d.addInstructionToBuilder(returnInfo.getMoveCommand(), currentReg, newReturnReg);
+				currentReg = newReturnReg;
+			}
+			
+			
 		}
 		// a return void statement, we return dummy
 		else{
@@ -442,18 +455,26 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			LirReturnInfo location_expr = var_loc.getLocation().accept(this, d);
 
 			//move to register only if location_expr not in a register
-			if(location_expr.getRegisterLocation().charAt(0)!= 'R' || location_expr.getRegisterLocation().contains(".")){
+			if(location_expr.getRegisterLocation().charAt(0)!= 'R' || location_expr.getMoveCommand() != MoveEnum.MOVE){
+				
+				//runtime check
+				//keren - for array fields
+				String loc_str = location_expr.getRegisterLocation();
+				if(loc_str.contains("."))
+				{
+					loc_str = loc_str.substring(0, loc_str.indexOf("."));
+				}else if(loc_str.contains("[")){
+					loc_str = loc_str.substring(0, loc_str.indexOf("["));
+				}
+				d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc_str+")", "Rdummy");
+				
 				d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),loc);
 				d.incrementRegister();
 			}else{
 				loc = location_expr.getRegisterLocation();
 			}
 			
-			//runtime check
-			//keren - for array fields
-			if(loc.contains("."))
-				loc = loc.substring(0, loc.indexOf("."));
-			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc+")", "Rdummy");
+
 
 			//field offset
 			types.Type class_type = (types.Type)(var_loc.getLocation().accept(new TypeEvaluator(globalSymTable), null));
@@ -516,6 +537,19 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//we need to transfer the location only if it is a Memory||reg[reg] || reg.reg as
 		//Move array instruction supports only registers
 		if(location_expr.getRegisterLocation().charAt(0)!='R' || location_expr.getMoveCommand() != MoveEnum.MOVE){
+			
+			//runtime check
+			//keren - for array fields
+			//another fix by lior: location_expr is of type R1.R2 check that R2 != 0
+			String loc_str = location_expr.getRegisterLocation();
+			if(loc_str.contains("."))
+			{
+				loc_str = loc_str.substring(0, loc_str.indexOf("."));
+			}else if(loc_str.contains("[")){
+				loc_str = loc_str.substring(0, loc_str.indexOf("["));
+			}
+			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc_str+")","Rdummy");
+			
 			d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),arrayLoc);
 			d.incrementRegister();
 		}else{
@@ -523,14 +557,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}
 		
 		
-		//runtime check
-		//keren - for array fields
-		//another fix by lior: location_expr is of type R1.R2 check that R2 != 0
-		if(location_expr.getRegisterLocation().contains(".")){
-			String field = location_expr.getRegisterLocation().
-					substring(0, location_expr.getRegisterLocation().indexOf("."));
-			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+field+")","Rdummy");
-		}
 
 		//index
 		//edited by lior: removed decrement optimization currently - lets make it work first
@@ -634,7 +660,17 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 			//lior: no need for that
 			//move it only if it not register already
-			if(location.getRegisterLocation().charAt(0)!= 'R' || location.getRegisterLocation().contains("[")){
+			if(location.getRegisterLocation().charAt(0)!= 'R' || location.getMoveCommand() != MoveEnum.MOVE){
+				
+				//runtime check
+				//keren - for array fields
+				String loc_str = location.getRegisterLocation();
+				if(loc_str.contains("."))
+				{
+					loc_str = loc_str.substring(0, loc_str.indexOf("."));
+					d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc_str+")","Rdummy");
+				}				
+				
 				objLoc = "R" + d.getCurrentRegister();
 				d.incrementRegister();
 				d.addInstructionToBuilder(location.getMoveCommand().toString(),location.getRegisterLocation(),objLoc);
@@ -643,12 +679,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				objLoc = location.getRegisterLocation();
 			}
 
-			//runtime check
-			//keren - for array fields
-			String loc_str = location.getRegisterLocation();
-			if(loc_str.contains("."))
-				loc_str = loc_str.substring(0, loc_str.indexOf("."));
-			d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc_str+")","Rdummy");
 		} 
 		else {
 			objLoc = ((BlockSymbolTable)virtual_call.getScope()).getThisregister(d);
@@ -681,10 +711,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			//d.incrementRegister();
 			LirReturnInfo arg_expr = arg.accept(this, d);
 			String argLoc = "R" + d.getCurrentRegister();
-			//check if arg_expr ia a field
-			if(arg_expr.getMoveCommand() == MoveEnum.MOVE_FIELD){
+			//check if arg_expr is a field or array
+			if(arg_expr.getMoveCommand() != MoveEnum.MOVE){
 				//transfer it to a new register
-				d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, arg_expr.getRegisterLocation(), argLoc);
+				d.addInstructionToBuilder(arg_expr.getMoveCommand(), arg_expr.getRegisterLocation(), argLoc);
 				d.incrementRegister();
 			}else{
 				argLoc = arg_expr.getRegisterLocation();
@@ -796,7 +826,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//keren - for array fields
 		String loc_str = array_expr.getRegisterLocation();
 		if(loc_str.contains("."))
+		{
 			loc_str = loc_str.substring(0, loc_str.indexOf("."));
+		}else if(loc_str.contains("[")){
+			loc_str = loc_str.substring(0, loc_str.indexOf("["));
+		}
 		d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc_str+")","Rdummy");
 		
 		
@@ -829,13 +863,15 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			code = literal.getValue().toString();
 			break;
 		}
-
+		
+		
+		//WHY????? Double Work
 		// store literal value in register
-		String reg = "R"+d.getCurrentRegister();
-		d.incrementRegister();
-		d.addInstructionToBuilder(MoveEnum.MOVE, code, reg);
+		//String reg = "R"+d.getCurrentRegister();
+		//d.incrementRegister();
+		//d.addInstructionToBuilder(MoveEnum.MOVE, code, reg);
 
-		return new LirReturnInfo(MoveEnum.MOVE, reg);
+		return new LirReturnInfo(MoveEnum.MOVE, code);
 	}
 
 	//abstract class Expr, will never get here

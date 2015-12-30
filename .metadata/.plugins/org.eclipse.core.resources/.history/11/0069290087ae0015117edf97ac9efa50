@@ -1,0 +1,302 @@
+
+############################################
+# String literals
+str_null_ref: "Runtime Error: Null pointer dereference!"
+str_array_access: "Runtime Error: Array index out of bounds!"
+str_size: "Runtime Error: Array allocation with negative array size!"
+str_zero: "Runtime Error: Division by zero!"
+str2: "MooooOoOo!"
+str1: "Miao!"
+str3: "Old McDonald"
+str5: "(After sunset)"
+str4: "(before sunrise)"
+############################################
+
+############################################
+# Dispatch vectors
+_DV_Farmer: [_Farmer_milkCow,_Farmer_feedCats]
+_DV_Cow: [_Cow_squeezeMilk,_Cow_sleep,_Cow_hasMilk]
+_DV_Farm: [_Farm_test]
+############################################
+
+############################################
+# Runtime Checks
+__checkNullRef:
+Return Rdummy
+__checkArrayAccess:
+Return Rdummy
+__checkSize:
+Return Rdummy
+__checkZero:
+Return Rdummy
+############################################
+
+
+
+####Farmer.milkCow####
+_Farmer_milkCow:
+_while_test_label0: 
+#virtual call to hasMilk's location:
+Move p_0,R1
+StaticCall __checkNullRef(a=p_0),Rdummy
+VirtualCall R1.2(),R2
+# line number: 13
+Compare 0,R2
+JumpTrue _while_end_label1
+Move this,R3
+#virtual call to squeezeMilk's location:
+Move p_0,R4
+StaticCall __checkNullRef(a=p_0),Rdummy
+VirtualCall R4.0(),R5
+MoveField R3.3,R6
+Add R5,R6
+MoveField R6,R3.3
+Jump _while_test_label0
+_while_end_label1: 
+Return Rdummy
+
+####Farmer.feedCats####
+_Farmer_feedCats:
+Move 0,R8
+Move R8,v_3_i
+_while_test_label2: 
+Move this,R9
+Move v_3_i,R10
+MoveField R9.2,R11
+Compare R11,R10
+JumpL _true_label4
+Move 0,R10
+Jump _end_label4
+_true_label4:
+Move 1,R10
+_end_label4:
+Move 0,R13
+MoveField R9.3,R14
+Compare R13,R14
+JumpG _true_label5
+Move 0,R14
+Jump _end_label5
+_true_label5:
+Move 1,R14
+_end_label5:
+Move R10,R16
+Library __stringCat(R10,R14),R17
+# line number: 20
+Compare 0,R17
+JumpTrue _while_end_label3
+Move str1,R18
+Library __println(R18),Rdummy
+Move 1,R19
+MoveField R9.3,R20
+Sub R19,R20
+MoveField R20,R9.3
+Move 1,R22
+Move v_3_i,R23
+Add R22,R23
+Move R23,v_3_i
+Jump _while_test_label2
+_while_end_label3: 
+Return Rdummy
+
+####Cow.hasMilk####
+_Cow_hasMilk:
+Move this,R25
+Move 0,R26
+MoveField R25.1,R27
+Compare R26,R27
+JumpG _true_label8
+Move 0,R27
+Jump _end_label8
+_true_label8:
+Move 1,R27
+_end_label8:
+# line number: 33
+Compare 0,R27
+JumpTrue _else_label6
+Move 0,R29
+Return R29
+Jump _end_if_label7
+_else_label6: 
+Move 0,R30
+Return R30
+_end_if_label7: 
+
+####Cow.squeezeMilk####
+_Cow_squeezeMilk:
+#virtual call to hasMilk's location:
+Move this,R31
+VirtualCall R31.2(),R32
+# line number: 40
+Compare 0,R32
+JumpTrue _end_if_label10
+Move 1,R33
+MoveField R31.1,R34
+Sub R33,R34
+MoveField R34,R31.1
+Move str2,R36
+Library __println(R36),Rdummy
+MoveField R31.1, R37
+Return R37
+Jump _end_if_label10
+_end_if_label10: 
+Move 0,R37
+Return R37
+
+####Cow.sleep####
+_Cow_sleep:
+Move this,R38
+Move 10,R39
+MoveField R38.1,R40
+Add R39,R40
+MoveField R40,R38.1
+Return Rdummy
+
+####Farm.test####
+_Farm_test:
+Move 10,R43
+Move R43,R44
+StaticCall __checkSize(n=R44),Rdummy
+Move R44,R45
+Mul 4,R45
+Library __allocateArray(R45),R46
+_array_init_start11: 
+Dec R44
+Compare 0,R44
+JumpL _array_init_end12
+MoveArray 0,R46[R44]
+JumpL _array_init_start11
+_array_init_end12: 
+Move this,R47
+MoveField R46,R47.2
+Move 0,R48
+Move R48,v_7_i
+_while_test_label13: 
+StaticCall __checkNullRef(a=R47),Rdummy
+ArrayLength R47,R49
+Move v_7_i,R50
+Compare R49,R50
+JumpL _true_label15
+Move 0,R50
+Jump _end_label15
+_true_label15:
+Move 1,R50
+_end_label15:
+# line number: 69
+Compare 0,R50
+JumpTrue _while_end_label14
+Library __allocateObject(8),R52
+MoveField _DV_Cow,R52.0
+MoveField R47.2,R53
+StaticCall __checkNullRef(a=R47),Rdummy
+Move v_7_i,R54
+StaticCall __checkArrayAccess(a=R53,i=R54),Rdummy
+MoveArray R52,R53[R54]
+Move 2,R55
+Move v_7_i,R56
+Mod R55,R56
+Move 10,R58
+Move R56,R59
+Mul R58,R59
+MoveField R47.2,R61
+StaticCall __checkNullRef(a=R47),Rdummy
+Move v_7_i,R62
+StaticCall __checkArrayAccess(a=R61,i=R62),Rdummy
+StaticCall __checkNullRef(a=R61[R62]),Rdummy
+MoveField R59,R61[R62].1
+Move 1,R63
+Move v_7_i,R64
+Add R63,R64
+Move R64,v_7_i
+Jump _while_test_label13
+_while_end_label14: 
+Library __allocateObject(16),R66
+MoveField _DV_Farmer,R66.0
+MoveField R66,R47.1
+Move str3,R67
+MoveField R47.1,R68
+StaticCall __checkNullRef(a=R68),Rdummy
+MoveField R67,R68.1
+Move 0,R69
+MoveField R47.1,R70
+StaticCall __checkNullRef(a=R70),Rdummy
+MoveField R69,R70.3
+Move 20,R71
+MoveField R47.1,R72
+StaticCall __checkNullRef(a=R72),Rdummy
+MoveField R71,R72.2
+Move str4,R73
+Library __println(R73),Rdummy
+Move 0,R74
+Move R74,v_7_i
+_while_test_label16: 
+StaticCall __checkNullRef(a=R47),Rdummy
+ArrayLength R47,R75
+Move v_7_i,R76
+Compare R75,R76
+JumpL _true_label18
+Move 0,R76
+Jump _end_label18
+_true_label18:
+Move 1,R76
+_end_label18:
+# line number: 84
+Compare 0,R76
+JumpTrue _while_end_label17
+#virtual call to milkCow's location:
+StaticCall __checkNullRef(a=R47),Rdummy
+MoveField R47.2,R78
+StaticCall __checkNullRef(a=R47),Rdummy
+Move v_7_i,R79
+StaticCall __checkArrayAccess(a=R78,i=R79),Rdummy
+VirtualCall R47.1.0(p_0=R78[R79]),Rdummy
+Move 1,R80
+Move v_7_i,R81
+Add R80,R81
+Move R81,v_7_i
+Jump _while_test_label16
+_while_end_label17: 
+Move str5,R83
+Library __println(R83),Rdummy
+Move 0,R84
+Move R84,v_7_i
+_while_test_label19: 
+StaticCall __checkNullRef(a=R47),Rdummy
+ArrayLength R47,R85
+Move v_7_i,R86
+Compare R85,R86
+JumpL _true_label21
+Move 0,R86
+Jump _end_label21
+_true_label21:
+Move 1,R86
+_end_label21:
+# line number: 90
+Compare 0,R86
+JumpTrue _while_end_label20
+#virtual call to sleep's location:
+MoveField R47.2,R88
+StaticCall __checkNullRef(a=R47),Rdummy
+Move v_7_i,R89
+StaticCall __checkArrayAccess(a=R88,i=R89),Rdummy
+MoveArray R88[R89],R90
+StaticCall __checkNullRef(a=R88[R89]),Rdummy
+VirtualCall R90.1(),Rdummy
+Move 1,R91
+Move v_7_i,R92
+Add R91,R92
+Move R92,v_7_i
+Jump _while_test_label19
+_while_end_label20: 
+#virtual call to feedCats's location:
+StaticCall __checkNullRef(a=R47),Rdummy
+VirtualCall R47.1.1(),Rdummy
+Return Rdummy
+
+####main in Farm####
+_ic_main:
+#virtual call to test's location:
+Library __allocateObject(12),R42
+MoveField _DV_Farm,R42.0
+StaticCall __checkNullRef(a=R42),Rdummy
+VirtualCall R42.0(),Rdummy
+

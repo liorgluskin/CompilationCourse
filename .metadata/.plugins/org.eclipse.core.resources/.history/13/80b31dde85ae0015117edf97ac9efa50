@@ -1,0 +1,491 @@
+
+############################################
+# String literals
+str_null_ref: "Runtime Error: Null pointer dereference!"
+str_array_access: "Runtime Error: Array index out of bounds!"
+str_size: "Runtime Error: Array allocation with negative array size!"
+str_zero: "Runtime Error: Division by zero!"
+str2: " "
+str1: "    "
+############################################
+
+############################################
+# Dispatch vectors
+_DV_MatrixMultiplier: [_MatrixMultiplier_multMatrix,_MatrixMultiplier_printMatrix,_MatrixMultiplier_runTest]
+_DV_OptimizedMatrixMultiplier: [_OptimizedMatrixMultiplier_multMatrix,_MatrixMultiplier_printMatrix,_MatrixMultiplier_runTest]
+_DV_MultiplyMatrices: []
+############################################
+
+############################################
+# Runtime Checks
+__checkNullRef:
+Return Rdummy
+__checkArrayAccess:
+Return Rdummy
+__checkSize:
+Return Rdummy
+__checkZero:
+Return Rdummy
+############################################
+
+
+
+####MatrixMultiplier.runTest####
+_MatrixMultiplier_runTest:
+Move p_0,R1
+StaticCall __checkSize(n=R1),Rdummy
+Move R1,R2
+Mul 4,R2
+Library __allocateArray(R2),R3
+_array_init_start0: 
+Dec R1
+Compare 0,R1
+JumpL _array_init_end1
+MoveArray 0,R3[R1]
+JumpL _array_init_start0
+_array_init_end1: 
+Move R3,v_0_a
+Move p_0,R4
+StaticCall __checkSize(n=R4),Rdummy
+Move R4,R5
+Mul 4,R5
+Library __allocateArray(R5),R6
+_array_init_start2: 
+Dec R4
+Compare 0,R4
+JumpL _array_init_end3
+MoveArray 0,R6[R4]
+JumpL _array_init_start2
+_array_init_end3: 
+Move R6,v_1_b
+Move p_0,R7
+StaticCall __checkSize(n=R7),Rdummy
+Move R7,R8
+Mul 4,R8
+Library __allocateArray(R8),R9
+_array_init_start4: 
+Dec R7
+Compare 0,R7
+JumpL _array_init_end5
+MoveArray 0,R9[R7]
+JumpL _array_init_start4
+_array_init_end5: 
+Move R9,v_2_c
+Move 0,R10
+Move R10,v_3_i
+_while_test_label6: 
+Move v_3_i,R11
+Compare p_0,R11
+JumpL _true_label8
+Move 0,R11
+Jump _end_label8
+_true_label8:
+Move 1,R11
+_end_label8:
+# line number: 9
+Compare 0,R11
+JumpTrue _while_end_label7
+Move 0,R13
+Move R13,v_4_j
+Move p_0,R14
+StaticCall __checkSize(n=R14),Rdummy
+Move R14,R15
+Mul 4,R15
+Library __allocateArray(R15),R16
+_array_init_start9: 
+Dec R14
+Compare 0,R14
+JumpL _array_init_end10
+MoveArray 0,R16[R14]
+JumpL _array_init_start9
+_array_init_end10: 
+Move v_0_a,R17
+Move v_3_i,R18
+StaticCall __checkArrayAccess(a=R17,i=R18),Rdummy
+MoveArray R16,R17[R18]
+Move p_0,R19
+StaticCall __checkSize(n=R19),Rdummy
+Move R19,R20
+Mul 4,R20
+Library __allocateArray(R20),R21
+_array_init_start11: 
+Dec R19
+Compare 0,R19
+JumpL _array_init_end12
+MoveArray 0,R21[R19]
+JumpL _array_init_start11
+_array_init_end12: 
+Move v_1_b,R22
+Move v_3_i,R23
+StaticCall __checkArrayAccess(a=R22,i=R23),Rdummy
+MoveArray R21,R22[R23]
+Move p_0,R24
+StaticCall __checkSize(n=R24),Rdummy
+Move R24,R25
+Mul 4,R25
+Library __allocateArray(R25),R26
+_array_init_start13: 
+Dec R24
+Compare 0,R24
+JumpL _array_init_end14
+MoveArray 0,R26[R24]
+JumpL _array_init_start13
+_array_init_end14: 
+Move v_2_c,R27
+Move v_3_i,R28
+StaticCall __checkArrayAccess(a=R27,i=R28),Rdummy
+MoveArray R26,R27[R28]
+_while_test_label15: 
+Move v_4_j,R29
+Compare p_0,R29
+JumpL _true_label17
+Move 0,R29
+Jump _end_label17
+_true_label17:
+Move 1,R29
+_end_label17:
+# line number: 15
+Compare 0,R29
+JumpTrue _while_end_label16
+Move v_3_i,R31
+Mul v_4_j,R31
+Move v_0_a,R33
+Move v_3_i,R34
+StaticCall __checkArrayAccess(a=R33,i=R34),Rdummy
+MoveArray R33[R34],R35
+Move v_4_j,R36
+StaticCall __checkArrayAccess(a=R35,i=R36),Rdummy
+MoveArray R31,R35[R36]
+Move v_3_i,R37
+Add v_4_j,R37
+Move v_1_b,R39
+Move v_3_i,R40
+StaticCall __checkArrayAccess(a=R39,i=R40),Rdummy
+MoveArray R39[R40],R41
+Move v_4_j,R42
+StaticCall __checkArrayAccess(a=R41,i=R42),Rdummy
+MoveArray R37,R41[R42]
+Move 1,R43
+Move v_4_j,R44
+Add R43,R44
+Move R44,v_4_j
+Jump _while_test_label15
+_while_end_label16: 
+Move 1,R46
+Move v_3_i,R47
+Add R46,R47
+Move R47,v_3_i
+Jump _while_test_label6
+_while_end_label7: 
+#virtual call to printMatrix's location:
+Move this,R49
+VirtualCall R49.1(p_0=v_0_a,p_1=p_0),Rdummy
+#virtual call to printMatrix's location:
+VirtualCall R49.1(p_0=v_1_b,p_1=p_0),Rdummy
+#virtual call to multMatrix's location:
+VirtualCall R49.0(p_0=v_0_a,p_1=v_1_b,p_2=v_2_c,p_3=p_0),Rdummy
+#virtual call to printMatrix's location:
+VirtualCall R49.1(p_0=v_2_c,p_1=p_0),Rdummy
+Return Rdummy
+
+####MatrixMultiplier.multMatrix####
+_MatrixMultiplier_multMatrix:
+Move 0,R50
+Move R50,v_5_i
+_while_test_label18: 
+Move v_5_i,R51
+Compare p_3,R51
+JumpL _true_label20
+Move 0,R51
+Jump _end_label20
+_true_label20:
+Move 1,R51
+_end_label20:
+# line number: 31
+Compare 0,R51
+JumpTrue _while_end_label19
+Move 0,R53
+Move R53,v_6_j
+_while_test_label21: 
+Move v_6_j,R54
+Compare p_3,R54
+JumpL _true_label23
+Move 0,R54
+Jump _end_label23
+_true_label23:
+Move 1,R54
+_end_label23:
+# line number: 34
+Compare 0,R54
+JumpTrue _while_end_label22
+Move 0,R56
+Move R56,v_7_k
+_while_test_label24: 
+Move v_7_k,R57
+Compare p_3,R57
+JumpL _true_label26
+Move 0,R57
+Jump _end_label26
+_true_label26:
+Move 1,R57
+_end_label26:
+# line number: 37
+Compare 0,R57
+JumpTrue _while_end_label25
+Move p_2,R59
+Move v_5_i,R60
+StaticCall __checkArrayAccess(a=R59,i=R60),Rdummy
+MoveArray R59[R60],R61
+Move v_6_j,R62
+StaticCall __checkArrayAccess(a=R61,i=R62),Rdummy
+Move p_0,R63
+Move v_5_i,R64
+StaticCall __checkArrayAccess(a=R63,i=R64),Rdummy
+MoveArray R63[R64],R65
+Move v_7_k,R66
+StaticCall __checkArrayAccess(a=R65,i=R66),Rdummy
+Move p_1,R67
+Move v_7_k,R68
+StaticCall __checkArrayAccess(a=R67,i=R68),Rdummy
+MoveArray R67[R68],R69
+Move v_6_j,R70
+StaticCall __checkArrayAccess(a=R69,i=R70),Rdummy
+MoveArray R65[R66],R71
+MoveArray R69[R70],R72
+Mul R72,R71
+MoveArray R61[R62],R74
+Add R71,R74
+Move p_2,R76
+Move v_5_i,R77
+StaticCall __checkArrayAccess(a=R76,i=R77),Rdummy
+MoveArray R76[R77],R78
+Move v_6_j,R79
+StaticCall __checkArrayAccess(a=R78,i=R79),Rdummy
+MoveArray R74,R78[R79]
+Move 1,R80
+Move v_7_k,R81
+Add R80,R81
+Move R81,v_7_k
+Jump _while_test_label24
+_while_end_label25: 
+Move 1,R83
+Move v_6_j,R84
+Add R83,R84
+Move R84,v_6_j
+Jump _while_test_label21
+_while_end_label22: 
+Move 1,R86
+Move v_5_i,R87
+Add R86,R87
+Move R87,v_5_i
+Jump _while_test_label18
+_while_end_label19: 
+Return Rdummy
+
+####MatrixMultiplier.printMatrix####
+_MatrixMultiplier_printMatrix:
+Move 0,R89
+Move R89,v_8_i
+_while_test_label27: 
+Move v_8_i,R90
+Compare p_1,R90
+JumpL _true_label29
+Move 0,R90
+Jump _end_label29
+_true_label29:
+Move 1,R90
+_end_label29:
+# line number: 50
+Compare 0,R90
+JumpTrue _while_end_label28
+Move 0,R92
+Move R92,v_9_j
+_while_test_label30: 
+Move v_9_j,R93
+Compare p_1,R93
+JumpL _true_label32
+Move 0,R93
+Jump _end_label32
+_true_label32:
+Move 1,R93
+_end_label32:
+# line number: 53
+Compare 0,R93
+JumpTrue _while_end_label31
+Move p_0,R95
+Move v_8_i,R96
+StaticCall __checkArrayAccess(a=R95,i=R96),Rdummy
+MoveArray R95[R96],R97
+Move v_9_j,R98
+StaticCall __checkArrayAccess(a=R97,i=R98),Rdummy
+MoveArray R97[R98],R99
+Library __itos(R99),R100
+Move str1,R101
+Move R100,R102
+Library __stringCat(R100,R101),R103
+Library __print(R103),Rdummy
+Move 1,R104
+Move v_9_j,R105
+Add R104,R105
+Move R105,v_9_j
+Jump _while_test_label30
+_while_end_label31: 
+Move str2,R107
+Library __println(R107),Rdummy
+Move 1,R108
+Move v_8_i,R109
+Add R108,R109
+Move R109,v_8_i
+Jump _while_test_label27
+_while_end_label28: 
+Move str2,R111
+Library __println(R111),Rdummy
+Return Rdummy
+
+####OptimizedMatrixMultiplier.multMatrix####
+_OptimizedMatrixMultiplier_multMatrix:
+Move 0,R112
+Move R112,v_10_i
+Move 0,R113
+Move R113,v_15_r
+_while_test_label33: 
+Move v_10_i,R114
+Compare p_3,R114
+JumpL _true_label35
+Move 0,R114
+Jump _end_label35
+_true_label35:
+Move 1,R114
+_end_label35:
+# line number: 75
+Compare 0,R114
+JumpTrue _while_end_label34
+Move 0,R116
+Move R116,v_11_j
+Move 0,R117
+Move R117,v_13_nj
+_while_test_label36: 
+Move v_11_j,R118
+Compare p_3,R118
+JumpL _true_label38
+Move 0,R118
+Jump _end_label38
+_true_label38:
+Move 1,R118
+_end_label38:
+# line number: 78
+Compare 0,R118
+JumpTrue _while_end_label37
+Move 0,R120
+Move R120,v_12_k
+Move 0,R121
+Move R121,v_14_nk
+_while_test_label39: 
+Move v_12_k,R122
+Compare p_3,R122
+JumpL _true_label41
+Move 0,R122
+Jump _end_label41
+_true_label41:
+Move 1,R122
+_end_label41:
+# line number: 81
+Compare 0,R122
+JumpTrue _while_end_label40
+Move p_0,R124
+Move v_10_i,R125
+StaticCall __checkArrayAccess(a=R124,i=R125),Rdummy
+MoveArray R124[R125],R126
+Move v_12_k,R127
+StaticCall __checkArrayAccess(a=R126,i=R127),Rdummy
+Move p_1,R128
+Move v_12_k,R129
+StaticCall __checkArrayAccess(a=R128,i=R129),Rdummy
+MoveArray R128[R129],R130
+Move v_11_j,R131
+StaticCall __checkArrayAccess(a=R130,i=R131),Rdummy
+MoveArray R126[R127],R132
+MoveArray R130[R131],R133
+Mul R133,R132
+Move v_15_r,R135
+Add R132,R135
+Move p_0,R137
+Move v_10_i,R138
+StaticCall __checkArrayAccess(a=R137,i=R138),Rdummy
+MoveArray R137[R138],R139
+Move 1,R140
+Move v_12_k,R141
+Add R140,R141
+StaticCall __checkArrayAccess(a=R139,i=R141),Rdummy
+Move p_1,R143
+Move 1,R144
+Move v_12_k,R145
+Add R144,R145
+StaticCall __checkArrayAccess(a=R143,i=R145),Rdummy
+MoveArray R143[R145],R147
+Move v_11_j,R148
+StaticCall __checkArrayAccess(a=R147,i=R148),Rdummy
+MoveArray R139[R141],R149
+MoveArray R147[R148],R150
+Mul R150,R149
+Move R135,R152
+Add R149,R152
+Move R152,v_15_r
+Move 2,R154
+Move v_12_k,R155
+Add R154,R155
+Move R155,v_12_k
+Move 2,R157
+Move R157,R158
+Mul p_3,R158
+Move v_14_nk,R160
+Add R158,R160
+Move R160,v_14_nk
+Jump _while_test_label39
+_while_end_label40: 
+Move p_2,R162
+Move v_10_i,R163
+StaticCall __checkArrayAccess(a=R162,i=R163),Rdummy
+MoveArray R162[R163],R164
+Move v_11_j,R165
+StaticCall __checkArrayAccess(a=R164,i=R165),Rdummy
+Move v_15_r,R166
+MoveArray R166,R164[R165]
+Move 1,R167
+Move v_11_j,R168
+Add R167,R168
+Move R168,v_11_j
+Move v_13_nj,R170
+Add p_3,R170
+Move R170,v_13_nj
+Move 0,R172
+Move R172,v_15_r
+Jump _while_test_label36
+_while_end_label37: 
+Move 1,R173
+Move v_10_i,R174
+Add R173,R174
+Move R174,v_10_i
+Jump _while_test_label33
+_while_end_label34: 
+Return Rdummy
+
+####main in MultiplyMatrices####
+_ic_main:
+Library __allocateObject(4),R176
+MoveField _DV_MatrixMultiplier,R176.0
+Move R176,v_16_matrixMultiplier
+Library __allocateObject(4),R177
+MoveField _DV_OptimizedMatrixMultiplier,R177.0
+Move R177,v_17_optimizedMatrixMultiplier
+#virtual call to runTest's location:
+Move v_16_matrixMultiplier,R178
+StaticCall __checkNullRef(a=v_16_matrixMultiplier),Rdummy
+Move 4,R179
+VirtualCall R178.2(p_0=R179),Rdummy
+#virtual call to runTest's location:
+Move v_17_optimizedMatrixMultiplier,R180
+StaticCall __checkNullRef(a=v_17_optimizedMatrixMultiplier),Rdummy
+Move 4,R181
+VirtualCall R180.2(p_0=R181),Rdummy
+
