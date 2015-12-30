@@ -40,7 +40,7 @@ class Sieve {
   }
 
   void printPrimes() {
-    int i = 2;
+    int i = 100;
     Library.print("Primes less than ");
     Library.printi(num.length);
     Library.print(": ");

@@ -253,7 +253,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				d.addInstructionToBuilder(locationInfo.getMoveCommand(), valLoc, memToReg);
 				valLoc = memToReg;
 			}
-			d.addInstructionToBuilder(locationInfo.getMoveCommand(),valLoc,
+			d.addInstructionToBuilder(locationInfo.getMoveCommand(),valueInfo.getRegisterLocation(),
 					locationInfo.getRegisterLocation());
 		}
 	}

@@ -125,7 +125,7 @@ Return Rdummy
 
 ####Sieve.printPrimes####
 _Sieve_printPrimes:
-Move 100,R29
+Move 2,R29
 Move R29,v_4_i
 Library __print(str1),Rdummy
 Move this,R30
@@ -212,3 +212,4 @@ _ic_main:
 Library __allocateObject(8),R44
 MoveField _DV_Sieve,R44.0
 VirtualCall R44.1(),Rdummy
+

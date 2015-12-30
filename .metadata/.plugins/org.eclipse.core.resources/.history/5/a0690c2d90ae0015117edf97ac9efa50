@@ -244,16 +244,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//3)store field/memory/immidiate in memory
 		else{
 			
-			String valLoc = valueInfo.getRegisterLocation();
 			//case: memory to memory:
 			if(valueInfo.getRegisterLocation().charAt(0)!= 'R'){
 				//move it to a new register
 				String memToReg = "R" + d.getCurrentRegister();
 				d.incrementRegister();
-				d.addInstructionToBuilder(locationInfo.getMoveCommand(), valLoc, memToReg);
-				valLoc = memToReg;
 			}
-			d.addInstructionToBuilder(locationInfo.getMoveCommand(),valLoc,
+			d.addInstructionToBuilder(locationInfo.getMoveCommand(),valueInfo.getRegisterLocation(),
 					locationInfo.getRegisterLocation());
 		}
 	}
