@@ -232,7 +232,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			if(valueInfo.getMoveCommand() != MoveEnum.MOVE){
 				// first, store value in register 
 				valueReg = "R"+d.getCurrentRegister();
-				d.incrementRegister();
 				d.addInstructionToBuilder(valueInfo.getMoveCommand(), value, valueReg);
 				// then assign the value in the register to location
 				d.addInstructionToBuilder(locationInfo.getMoveCommand(), valueReg, locationReg);
