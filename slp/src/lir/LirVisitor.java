@@ -242,7 +242,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			return new LirReturnInfo(locationInfo.getMoveCommand(), locationReg);
 		}
 
-		// location is not an array-location or a field
+		// location is a register or memory
 		// assign an immediate/field/memory to location
 		else{
 			String valueReg = value;
@@ -268,8 +268,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				d.addInstructionToBuilder(MoveEnum.MOVE, valueReg, locationReg);
 				return new LirReturnInfo(MoveEnum.MOVE, locationReg);
 			}
+			// assigning register to memory/register,
+			//	 or assigning memory to register
+			else{
+				d.addInstructionToBuilder(MoveEnum.MOVE, value, locationReg);
+				return new LirReturnInfo(MoveEnum.MOVE, locationReg);
+			}
 		}
-		return null;
 	}
 
 
