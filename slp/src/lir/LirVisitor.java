@@ -209,7 +209,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	 */
 	private void lirAssignHandler(LirReturnInfo locationInfo, LirReturnInfo valueInfo, Environment d){
 		//different storage situations:
-		
+
 		//1)store in array or field:
 		if(locationInfo.getMoveCommand() != MoveEnum.MOVE){		
 			String rightValueLoc = valueInfo.getRegisterLocation();
@@ -221,7 +221,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				d.incrementRegister();
 				d.addInstructionToBuilder(valueInfo.getMoveCommand(),
 						valueInfo.getRegisterLocation(), newLeftValueReg);
-				
+
 				rightValueLoc = newLeftValueReg;
 			}
 			d.addInstructionToBuilder(locationInfo.getMoveCommand(),
@@ -230,20 +230,20 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//2) store array or field in memory:
 		else if(locationInfo.getRegisterLocation().charAt(0) != 'R' &&
 				valueInfo.getMoveCommand() !=MoveEnum.MOVE){
-			
+
 			//store field or array loc in new reg
 			String storeTmpReg = "R"+d.getCurrentRegister();
 			d.incrementRegister();
 			d.addInstructionToBuilder(valueInfo.getMoveCommand(), valueInfo.getRegisterLocation(),
 					storeTmpReg);
-			
+
 			//move reg to memory
 			d.addInstructionToBuilder(locationInfo.getMoveCommand(), storeTmpReg,
 					locationInfo.getRegisterLocation());			
 		}
 		//3)store field/memory/immidiate in memory
 		else{
-			
+
 			String valLoc = valueInfo.getRegisterLocation();
 			//case: memory to memory:
 			if(valueInfo.getRegisterLocation().charAt(0)!= 'R'){
@@ -257,22 +257,22 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 					locationInfo.getRegisterLocation());
 		}
 	}
-	
+
 
 	/**
 	 * Translate Assignment statement into LIR code
 	 */
 	public LirReturnInfo visit(AssignStmt stmt, Environment d) {
-		
-		
+
+
 
 		// get the assignment right-hand-side info first
 		LirReturnInfo valueInfo = stmt.getRhs().accept(this, d);
-		
+
 
 		// get the label of the assignment location
 		LirReturnInfo locationInfo = stmt.getLocation().accept(this, d);
-		
+
 		lirAssignHandler(locationInfo,valueInfo,d);
 		return null;
 	}
@@ -297,7 +297,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			// get register the return expression is in
 			LirReturnInfo returnInfo = returnStmt.getExpr().accept(this, d);
 			currentReg = returnInfo.getRegisterLocation();
-			
+
 			//transfer to a new register if its field or array
 			if(returnInfo.getMoveCommand() != MoveEnum.MOVE){
 				String newReturnReg = "R"+d.getCurrentRegister();
@@ -305,8 +305,8 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				d.addInstructionToBuilder(returnInfo.getMoveCommand(), currentReg, newReturnReg);
 				currentReg = newReturnReg;
 			}
-			
-			
+
+
 		}
 		// a return void statement, we return dummy
 		else{
@@ -466,7 +466,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 			//move to register only if location_expr not in a register
 			if(location_expr.getRegisterLocation().charAt(0)!= 'R' || location_expr.getMoveCommand() != MoveEnum.MOVE){
-				
+
 				//runtime check
 				//keren - for array fields
 				String loc_str = location_expr.getRegisterLocation();
@@ -477,13 +477,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 					loc_str = loc_str.substring(0, loc_str.indexOf("["));
 				}
 				d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc_str+")", "Rdummy");
-				
+
 				d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),loc);
 				d.incrementRegister();
 			}else{
 				loc = location_expr.getRegisterLocation();
 			}
-			
+
 
 
 			//field offset
@@ -511,7 +511,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				int offset = f.getOffset()+1;
 
 				loc = ((BlockSymbolTable)var_loc.getScope()).getThisregister(d);
-				
+
 				String register = loc+"."+offset;
 
 				return new LirReturnInfo(MoveEnum.MOVE_FIELD,register);
@@ -547,7 +547,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//we need to transfer the location only if it is a Memory||reg[reg] || reg.reg as
 		//Move array instruction supports only registers
 		if(location_expr.getRegisterLocation().charAt(0)!='R' || location_expr.getMoveCommand() != MoveEnum.MOVE){
-			
+
 			//runtime check
 			//keren - for array fields
 			//another fix by lior: location_expr is of type R1.R2 check that R2 != 0
@@ -559,14 +559,14 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				loc_str = loc_str.substring(0, loc_str.indexOf("["));
 			}
 			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc_str+")","Rdummy");
-			
+
 			d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),arrayLoc);
 			d.incrementRegister();
 		}else{
 			arrayLoc = location_expr.getRegisterLocation();
 		}
-		
-		
+
+
 
 		//index
 		//edited by lior: removed decrement optimization currently - lets make it work first
@@ -575,7 +575,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		String indexLoc = "";
 
 		//again we only need to make a move instruction if index isnt allready a register
-		
+
 		if(index.getRegisterLocation().charAt(0) != 'R' || index.getMoveCommand() != MoveEnum.MOVE){
 			indexLoc = "R" + d.getCurrentRegister();
 			d.incrementRegister();
@@ -655,7 +655,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		else{
 			d.addInstructionToBuilder("StaticCall", code, resReg);
 		}
-		
+
 		return new LirReturnInfo(MoveEnum.MOVE,resReg);
 	}
 
@@ -671,7 +671,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			//lior: no need for that
 			//move it only if it not register already
 			if(location.getRegisterLocation().charAt(0)!= 'R' || location.getMoveCommand() != MoveEnum.MOVE){
-				
+
 				//runtime check
 				//keren - for array fields
 				String loc_str = location.getRegisterLocation();
@@ -680,7 +680,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 					loc_str = loc_str.substring(0, loc_str.indexOf("."));
 					d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc_str+")","Rdummy");
 				}				
-				
+
 				objLoc = "R" + d.getCurrentRegister();
 				d.incrementRegister();
 				d.addInstructionToBuilder(location.getMoveCommand().toString(),location.getRegisterLocation(),objLoc);
@@ -784,7 +784,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	public LirReturnInfo visit(NewArray new_arr, Environment d) {
 
 		LirReturnInfo array_len_expr = new_arr.getArrayLength().accept(this, d);
-		
+
 		String loc ="R"+ d.getCurrentRegister();
 		d.incrementRegister();
 
@@ -842,8 +842,8 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			loc_str = loc_str.substring(0, loc_str.indexOf("["));
 		}
 		d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc_str+")","Rdummy");
-		
-		
+
+
 		d.addInstructionToBuilder("ArrayLength",loc_str,"R"+d.getCurrentRegister());	
 		String res = "R"+d.getCurrentRegister();
 		d.incrementRegister();
@@ -873,8 +873,8 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			code = literal.getValue().toString();
 			break;
 		}
-		
-		
+
+
 		//WHY????? Double Work
 		// store literal value in register
 		//String reg = "R"+d.getCurrentRegister();
@@ -897,8 +897,8 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		LirReturnInfo operand = expr.getOperand().accept(this, d);
 
 		String operandReg = operand.getRegisterLocation();
-		
-		// If one of the operand is Reg[Reg]
+
+		// If the operand is Reg[Reg]
 		if(operandReg.contains("[")){
 			String fieldReg = "R" + d.getCurrentRegister();
 			d.incrementRegister();
@@ -906,11 +906,19 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			operandReg = fieldReg;
 		}
 
-		// If one of the operand is Reg.Reg
+		// If the operand is Reg.Reg
 		if(operandReg.contains(".")){
 			String fieldReg = "R" + d.getCurrentRegister();
 			d.incrementRegister();
 			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, operandReg, fieldReg);
+			operandReg = fieldReg;
+		}
+
+		// If the operand is not in Reg
+		if(!operandReg.contains("R")){
+			String fieldReg = "R" + d.getCurrentRegister();
+			d.incrementRegister();
+			d.addInstructionToBuilder(MoveEnum.MOVE, operandReg, fieldReg);
 			operandReg = fieldReg;
 		}
 
@@ -926,20 +934,21 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		return new LirReturnInfo(MoveEnum.MOVE,operand_reg);
 	}
 
+
+	/**
+	 * Translating logical unary operator expression to LIR code
+	 * */
 	public LirReturnInfo visitLogicalUnaryExpr(UnaryOpExpr expr, Environment d, String operand_reg) {
-		String true_label = "_true_label"+d.getLabelIndex();
-		String end_label = "_end_label"+d.getLabelIndex();
-		d.incrementLabelIndex();
 
-		d.addInstructionToBuilder("Compare","0",operand_reg);
-		d.addInstructionToBuilder("JumpTrue",true_label);
-		d.addInstructionToBuilder("Move","0",operand_reg);
-		d.addInstructionToBuilder("Jump",end_label);
-		d.addToCurrentStringBuilder(true_label+":\n");
-		d.addInstructionToBuilder("Move","1",operand_reg);
-		d.addToCurrentStringBuilder(end_label+":\n");
-
-		return new LirReturnInfo(MoveEnum.MOVE, operand_reg);
+		// Only logical unary operation is negation '!'
+		// to negate the expression we XOR the operand register with 1
+		// XOR(1,1) = 0, XOR(0,1) = 1
+		if(expr.getOp().name().equals(UnOperator.UMINUS)){
+			// Xor operand register with 1
+			// operand register now contains the negation
+			d.addInstructionToBuilder("Xor ", "1", operand_reg);
+		}
+		return new LirReturnInfo(null, operand_reg);
 	}
 
 	public LirReturnInfo visit(BinaryOpExpr expr, Environment d) {
@@ -948,14 +957,14 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		// for example: x+y --> b=x, a=y
 		LirReturnInfo operandB = expr.getLeftOperand().accept(this, d);
 		LirReturnInfo operandA = expr.getRightOperand().accept(this, d);
-		
+
 		//Moving operandB anyway for doing calculations if not a register
 		//even if its a memory and we make a string concatatntion
 		String OperandBLoc = "R"+d.getCurrentRegister();
 		d.incrementRegister();
 		d.addInstructionToBuilder(operandB.getMoveCommand(), operandB.getRegisterLocation(),OperandBLoc);			
-		
-		
+
+
 		//handle operand A:
 		//move only if field or array
 		String OperandALoc = operandA.getRegisterLocation();
@@ -965,14 +974,14 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			d.addInstructionToBuilder(operandA.getMoveCommand(), OperandALoc,res);
 			OperandALoc = res;			
 		}
-		
+
 
 		//check if it is string concatenation
 		types.Type lhs_type = (types.Type) expr.getLeftOperand().accept(new TypeEvaluator(globalSymTable), null);
 		if (lhs_type.toString().compareTo("int") != 0){
 			d.addInstructionToBuilder("Library","__stringCat("+operandB.getRegisterLocation()+","+operandA.getRegisterLocation()
 					+")","R"+d.getCurrentRegister());
-			
+
 			String res = "R"+d.getCurrentRegister();
 			d.incrementRegister();
 			return new LirReturnInfo(MoveEnum.MOVE, res);
@@ -981,7 +990,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//create new register the operation will be kept in
 		String resOp = "R" + d.getCurrentRegister();
 		d.incrementRegister();
-		
+
 
 
 
