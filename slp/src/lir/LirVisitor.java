@@ -229,7 +229,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		if(locationInfo.getMoveCommand() != MoveEnum.MOVE){
 			String valueReg = value;
 			// check if value is a field or array-location
-			if(valueInfo.getMoveCommand() != MoveEnum.MOVE){
+			if(valueInfo.getMoveCommand()!=MoveEnum.MOVE && !inMemory(value)){
 				// first, store value in register 
 				valueReg = "R"+d.getCurrentRegister();
 				d.addInstructionToBuilder(valueInfo.getMoveCommand(), value, valueReg);
@@ -237,7 +237,8 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				d.addInstructionToBuilder(locationInfo.getMoveCommand(), valueReg, locationReg);
 				return new LirReturnInfo(locationInfo.getMoveCommand(), locationReg);				
 			}
-			// then assign the value in the register to location
+			// value is a register or an immediate,
+			// assign the value in the register to location
 			d.addInstructionToBuilder(locationInfo.getMoveCommand(), value, locationReg);
 			return new LirReturnInfo(locationInfo.getMoveCommand(), locationReg);
 		}
@@ -285,7 +286,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	public LirReturnInfo visit(AssignStmt stmt, Environment d) {
 
 		// get the assignment right-hand-side info first
+		// if assignment value is literal, make sure it is not returned in a register
+		boolean prevStoreInReg = d.storeInReg();
+		d.setStoreInReg(false);
 		LirReturnInfo valueInfo = stmt.getRhs().accept(this, d);
+		d.setStoreInReg(prevStoreInReg);
 
 		// get the label of the assignment location
 		LirReturnInfo locationInfo = stmt.getLocation().accept(this, d);
@@ -502,10 +507,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			FieldSymbol f = globalSymTable.getClassSymbolTable(class_name).getFieldSymbol(var_loc.getName());
 			int offset = f.getOffset()+1;
 
-			// move the field to a register
-			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc+")", "Rdummy", var_loc.getLineNum());///////
-			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, loc+"."+offset, loc, var_loc.getLineNum());
-			return new LirReturnInfo(MoveEnum.MOVE_FIELD, loc+"."+offset);/////////////
+			
+			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc+")", "Rdummy", var_loc.getLineNum());
+			// move the field to a register if necessary
+			//d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, loc+"."+offset, loc, var_loc.getLineNum());
+			return new LirReturnInfo(MoveEnum.MOVE_FIELD, loc+"."+offset);
 		}
 
 
@@ -523,15 +529,17 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 				// get the register where location is in
 				String loc ="R"+ d.getCurrentRegister();	
+				d.incrementRegister();
 				// move 'this' into loc register 
 				d.addInstructionToBuilder(MoveEnum.MOVE, "this", loc);
 				// runtime check 
 				d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc+")","Rdummy");
 
-				// move the field (this+offset) to loc
+				// move the field (this+offset) to a new register
+				String fieldReg = "R"+ d.getCurrentRegister();	
 				String register = loc+"."+offset;
-				d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, register, loc, var_loc.getLineNum());
-				return new LirReturnInfo(MoveEnum.MOVE_FIELD,register);////////////
+				//d.addInstructionToBuilder(MoveEnum.MOVE_FIELD+"11111111", register, fieldReg, var_loc.getLineNum());
+				return new LirReturnInfo(MoveEnum.MOVE_FIELD,register);
 			} 
 
 			// var location is a local variable, not a field
@@ -573,7 +581,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		}
 		// moving field
 		else if(target.contains(".")){
-			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, target, currReg);
+			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD+"2222222", target, currReg);
 		}
 		// regular move
 		else{
