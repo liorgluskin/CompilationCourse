@@ -491,28 +491,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			// get the register where location is stored
 			String loc ="R"+ d.getCurrentRegister();
 
-			//			////////////////////////////////////////
-			//			//move to register only if location_expr not in a register
-			//			if(location_expr.getRegisterLocation().charAt(0)!= 'R' || location_expr.getMoveCommand() != MoveEnum.MOVE){
-			//				//check if field is array
-			//				//////////// is this necessary, the accept should already return it in register, in case of array??
-			//				String loc_str = location_expr.getRegisterLocation();
-			//				if(loc_str.contains(".")){
-			//					loc_str = loc_str.substring(0, loc_str.indexOf("."));
-			//				}else if(loc_str.contains("[")){
-			//					loc_str = loc_str.substring(0, loc_str.indexOf("["));
-			//				}
-			//				//runtime check
-			//				d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+loc_str+")", "Rdummy", var_loc.getLineNum());
-			//				d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),loc);
-			//				d.incrementRegister();
-			//			}
-			//			// location is already in a register
-			//			else{
-			//				loc = location_expr.getRegisterLocation();
-			//			}
-			//			//////////////////////////////
-
 			//get the field offset
 			types.Type class_type = (types.Type)(var_loc.getLocation().accept(new TypeEvaluator(globalSymTable), null));
 			String class_name = new String();
@@ -819,13 +797,22 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		String reg = "R" + d.getCurrentRegister();
 		d.incrementRegister();
 
+		// set object dispatch vector
 		String class_name = new_obj.getClassName();
-		int size = 4 * globalSymTable.getClassSymbolTable(class_name).getCurrentClassFieldOffset() + 4;
+		int numFields = globalSymTable.getClassSymbolTable(class_name).getCurrentClassFieldOffset();
+		int size = 4*numFields + 4;
 		d.addInstructionToBuilder("Library","__allocateObject("+size + ")",reg);
 		d.addInstructionToBuilder(MoveEnum.MOVE_FIELD,"_DV_" + class_name,reg+".0");
-
+		
+		// initialize object fields
+		for(int i = 1; i <= numFields; i++){
+			d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, "0", reg+"."+i);
+		}
+		
 		return new LirReturnInfo(MoveEnum.MOVE,reg);
 	}
+	
+	
 	//edited by lior:
 	public LirReturnInfo visit(NewArray new_arr, Environment d) {
 
