@@ -119,11 +119,12 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		//visit all statements
 		method.getStatementList().accept(this, d);
 
-		//return Rdummy if function return type is void
+		//return Rdummy if method return type is void,
+		// the last instruction of function should be Return 9999
 		if(method.getType().getFullName().equals("void") && !isMain){
 			//check if method already does not have an empty return
-			if(strb.lastIndexOf("Return Rdummy\n") != strb.length() - "Return Rdummy\n".length()){
-				strb.append("Return Rdummy\n");				
+			if(strb.lastIndexOf("Return 9999\n") != strb.length() - "Return 9999\n".length()){
+				strb.append("Return 9999\n");				
 			}
 		}
 		//exit program after the end of main
@@ -328,7 +329,8 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				currentReg = newReturnReg;
 			}
 		}
-		// a return 'void' statement, we return dummy
+		//When a function with void return type is called,
+		//a designated 'Rdummy' register is used as the last operand of the call instruction
 		else{
 			currentReg = "Rdummy";
 		}
@@ -709,7 +711,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	public LirReturnInfo visit(VirtualCall virtual_call, Environment d) {
 		d.addToCurrentStringBuilder("#virtual call to "+virtual_call.getMethodName()+"'s location:\n");
 		Expr obj_ref = virtual_call.getObjectReference();
-		String objLoc = ""; //added by lior
+		String objLoc = ""; 
 
 		// call is of type: 'object.call()'
 		if (obj_ref != null){
@@ -723,6 +725,8 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			else{
 				objLoc = location.getRegisterLocation();
 			}
+			// check that 'object' is not null
+			d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+objLoc+")","Rdummy");
 		} 
 
 		// call is of type: 'this.call()'
@@ -755,7 +759,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		code += "(";
 
 		for (Expr arg: virtual_call.getArguments()){
-			//d.incrementRegister();//////////
 			LirReturnInfo arg_expr = arg.accept(this, d);
 			String argLoc = "R" + d.getCurrentRegister();
 			//check if arg_expr is a field or array
