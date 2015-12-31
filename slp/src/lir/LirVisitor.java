@@ -894,10 +894,10 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 	public LirReturnInfo visit(Literal literal, Environment d) {
 		String code = "";
-
 		switch (literal.getType()){
 		case TRUE:
 			code = "1";
+			break;
 		case FALSE:
 			code = "0";
 			break;
