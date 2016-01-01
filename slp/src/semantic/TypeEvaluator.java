@@ -582,9 +582,9 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				if(methodSym.isStatic()){
 					// accept the inner static method call
 					StaticCall innerStaticCall = 
-							new StaticCall(virtual_call.getLineNum(), classSymTable.getClass().getName(), 
+							new StaticCall(virtual_call.getLineNum(), classSymTable.getSymbol().getName(), 
 									virtual_call.getMethodName(), virtual_call.getArguments());
-					innerStaticCall.accept(this, o);				
+					return innerStaticCall.accept(this, o);		
 				}
 			}
 
