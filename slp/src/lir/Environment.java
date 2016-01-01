@@ -279,9 +279,14 @@ public class Environment {
 			System.exit(-1);
 		}
 
-		for(String method : methods ){
+		for(String method : methods){
+			System.out.println("method="+method+"\t\tmethodName="+methodName);///////////////////
+			// method is obviously not what we are looking for
+			if(method.length() - methodName.length() < 1){
+				continue;
+			}
+			// cut from the method name '_CLASSNAME_'
 			String originalMethodName = method.substring(method.length() - methodName.length());
-
 			if(methodName.equals(originalMethodName)){
 				return methods.indexOf(method);
 			}
