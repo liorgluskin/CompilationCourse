@@ -491,10 +491,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 			//visit location and store result in register			
 			LirReturnInfo location_expr = var_loc.getLocation().accept(this, d);
-			// if location an array-location/field
+			// if location an array-location/field/immediate
 			// store location in array
 			if(location_expr.getMoveCommand().equals(MoveEnum.MOVE_ARRAY) ||
-					location_expr.getMoveCommand().equals(MoveEnum.MOVE_FIELD)){
+					location_expr.getMoveCommand().equals(MoveEnum.MOVE_FIELD)
+					|| location_expr.getMoveCommand().equals(MoveEnum.MOVE)){
 				String temp = "R"+ d.getCurrentRegister();
 				d.addInstructionToBuilder(location_expr.getMoveCommand(), location_expr.getRegisterLocation(), temp);
 			}
