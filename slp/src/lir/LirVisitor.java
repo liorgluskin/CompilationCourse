@@ -732,6 +732,20 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.addToCurrentStringBuilder("#virtual call to "+virtual_call.getMethodName()+"'s location:\n");
 		Expr obj_ref = virtual_call.getObjectReference();
 		String objLoc = ""; 
+		
+		// deal with inner static call - static call without class name
+		ClassSymbolTable classSymTable = ((BlockSymbolTable)virtual_call.getScope()).getEnclosingClassSymbolTable();
+		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(virtual_call.getMethodName());
+		// call is actually of static method defined in the same class: static()
+		if(methodSym != null){
+			if(methodSym.isStatic()){
+				// accept the inner static method call
+				StaticCall innerStaticCall = 
+						new StaticCall(virtual_call.getLineNum(), classSymTable.getSymbol().getName(), 
+								virtual_call.getMethodName(), virtual_call.getArguments());
+				return innerStaticCall.accept(this, d);		
+			}
+		}
 
 		// call is of type: 'object.call()'
 		if (obj_ref != null){
