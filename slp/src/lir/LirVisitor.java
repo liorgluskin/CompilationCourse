@@ -384,6 +384,8 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		String testLabel = d.addLabel("while_test_label"); //label for while condition test
 		String endLabel = d.addLabel("while_end_label"); //label to jump to when while loop over
+		String prevEndLabel = d.getLoopEndLabel();// for break statement
+		String prevTestLabel = d.getLoopTestLabel();// for continue statement		
 		//for break, continue statements:
 		d.setLoopTestLabel(testLabel);
 		d.setLoopEndLabel(endLabel);
@@ -406,6 +408,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		// add while statement end_label
 		d.addInstructionToBuilder(endLabel+":", "", whileStmt.getLineNum()); 
+
+		d.setLoopEndLabel(prevEndLabel);// for break statement
+		d.setLoopTestLabel(prevTestLabel);// for continue statement
 		return null;
 	}
 
@@ -548,14 +553,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				d.addInstructionToBuilder(MoveEnum.MOVE, "this", loc);
 				// runtime check 
 				d.addInstructionToBuilder("StaticCall","__checkNullRef(a="+loc+")","Rdummy");
-				/////////////////
+
 				// move the field (this+offset) to a new register
 				d.incrementRegister();
 				String fieldReg = "R"+ d.getCurrentRegister();	
 				d.incrementRegister();
 				String register = loc+"."+offset;
 				d.addInstructionToBuilder(MoveEnum.MOVE_FIELD, register, fieldReg, var_loc.getLineNum());
-				////////////////////////////
 				return new LirReturnInfo(MoveEnum.MOVE_FIELD,register);
 			} 
 
@@ -576,17 +580,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				// check if variable should be returned in a register
 				// if not, we return the label
 				String ret = label;
-				/////////////////
-//				if(d.storeInReg()){
-//					regMoveHandler(label, d);
-//					ret = "R"+ d.getCurrentRegister();
-//				}					
-				//////////////
 				if(label.startsWith("R") || label.contains(".") || label.endsWith("]")){
 					regMoveHandler(label, d);
 					ret = "R"+ d.getCurrentRegister();
 				}	
-				
+
 				return new LirReturnInfo(MoveEnum.MOVE,ret);
 			}
 		}
@@ -638,9 +636,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			}
 			d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),arrayLoc);
 			d.addInstructionToBuilder("StaticCall", "__checkNullRef(a="+arrayLoc+")","Rdummy");
-
-			///	d.addInstructionToBuilder("StaticCall", "33333333333__checkNullRef(a="+loc_str+")","Rdummy");
-			///	d.addInstructionToBuilder(location_expr.getMoveCommand().toString(), location_expr.getRegisterLocation(),arrayLoc);
 			d.incrementRegister();
 		}
 		else{
@@ -765,12 +760,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		//get class name
 		String class_name;
-		if(obj_ref == null)
+		if(obj_ref == null){
 			class_name = ((symbolTableHandler.BlockSymbolTable)virtual_call.getScope())
-			.getEnclosingClassSymbolTable().getSymbol().getName();
-		else
+					.getEnclosingClassSymbolTable().getSymbol().getName();
+		}
+		else{
 			class_name = ((types.TypeClass)obj_ref.accept(new TypeEvaluator(globalSymTable), null)).getName();
-
+		}
 		//get method name
 		String method_name = virtual_call.getMethodName();
 
@@ -1016,16 +1012,19 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	 * Translating logical unary operator expression to LIR code
 	 * */
 	public LirReturnInfo visitLogicalUnaryExpr(UnaryOpExpr expr, Environment d, String operand_reg) {
-
 		// Only logical unary operation is negation '!'
 		// to negate the expression we XOR the operand register with 1
 		// XOR(1,1) = 0, XOR(0,1) = 1
-		if(expr.getOp().name().equals(UnOperator.UMINUS)){
+		switch(expr.getOp()){
+		case LNEG:
 			// Xor operand register with 1
 			// operand register now contains the negation
 			d.addInstructionToBuilder("Xor ", "1", operand_reg);
+			break;
+		default:
+			System.out.println("--BUG-- visitLogicalUnaryExpr - visited unary expr that is not 'LNEG'");
 		}
-		return new LirReturnInfo(null, operand_reg);
+		return new LirReturnInfo(MoveEnum.MOVE, operand_reg);
 	}
 
 	public LirReturnInfo visit(BinaryOpExpr expr, Environment d) {
