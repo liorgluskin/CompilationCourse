@@ -576,10 +576,21 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// virtual call without object instance
 		else{		
 			classSymTable = ((BlockSymbolTable)virtual_call.getScope()).getEnclosingClassSymbolTable();
+			symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(virtual_call.getMethodName());
+			// call is actually of static method defined in the same class: static()
+			if(methodSym != null){
+				if(methodSym.isStatic()){
+					// accept the inner static method call
+					StaticCall innerStaticCall = 
+							new StaticCall(virtual_call.getLineNum(), classSymTable.getClass().getName(), 
+									virtual_call.getMethodName(), virtual_call.getArguments());
+					innerStaticCall.accept(this, o);				
+				}
+			}
 
-			// validate call is not from static method body
+			// validate virtual-call is not from static method body
 			if(inStaticMethod){
-				SemanticError error = new SemanticError("Invalid virutal method call, non-refernce call from a static method",
+				SemanticError error = new SemanticError("Invalid virutal method call, non-reference call from a static method",
 						virtual_call.getLineNum());
 				System.out.println(error);
 				System.exit(1);
@@ -595,12 +606,15 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			System.exit(1);
 		}
 
-		else if (methodSym.isStatic()){
-			SemanticError error = new SemanticError("Invalid virtual method call, method '"+virtual_call.getMethodName()+"' is not virtual",
-					virtual_call.getLineNum());
-			System.out.println(error);
-			System.exit(1);
-		}
+		/////////////////
+		//when static method called from Class scope where it is declared: 
+		// just foo() instead of Class.foo()
+		//		else if (methodSym.isStatic()){
+		//			SemanticError error = new SemanticError("Invalid virtual method call, method '"+virtual_call.getMethodName()+"' is not virtual",
+		//					virtual_call.getLineNum());
+		//			System.out.println(error);
+		//			System.exit(1);
+		//		}
 
 
 		// validate call parameters are subtypes of the method's formals types
