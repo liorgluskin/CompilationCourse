@@ -995,5 +995,5 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		return leftParamType;
 	}
 
-
+ 
 }
