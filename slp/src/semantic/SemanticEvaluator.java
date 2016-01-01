@@ -13,7 +13,7 @@ public class SemanticEvaluator implements Visitor{
 	private Boolean isLibraryClassVisiting = false;
 	private types.TypeTable programTypeTable;
 	private GlobalSymbolTable globaSymlTable = null;
-	
+
 	/**
 	 * Construct new Semantic Evaluator
 	 * initialize the program type table
@@ -21,38 +21,38 @@ public class SemanticEvaluator implements Visitor{
 	public SemanticEvaluator(){	
 		this.programTypeTable = TypeTable.getTypeTable();
 	}
-	
+
 	public GlobalSymbolTable getSymbolTable(Program program){
 		program.accept(this);
 		return globaSymlTable;
 	}
-	
+
 	/**
 	 * Checks whether the given method is the main method.
 	 */
 	private static boolean isMain(Method method){
-		
+
 		//main must be static
 		if (!(method instanceof StaticMethod)) return false;
 		if (method.getName().compareTo("main") != 0) return false;
-		
+
 		//return type must be void
 		if (!(method.getType() instanceof PrimitiveType) ||
 				method.getType().getName().compareTo("void") != 0) return false;
-		
+
 		//no parameters or too many
 		if (method.getFormals().size() != 1) return false; 
-		
+
 		//parameter is not of type string[]
 		slp.Type param_type = method.getFormals().get(0).getType();
 		if (param_type.getFullName().compareTo("string[]") != 0) return false;
-		
+
 		//paramer name has to be 'args'
 		if(!method.getFormals().get(0).getName().equals("args")) return false;
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Should be done before starting visit.
 	 * Adds Library class to the program.
@@ -60,70 +60,75 @@ public class SemanticEvaluator implements Visitor{
 	private void addStaticLibraryClass(Program program){
 		//creating all methods
 		List<FieldOrMethod> methodsLst = new ArrayList<FieldOrMethod>();
-		
+
 		//println added
 		List<Formal> printlnFormals = new ArrayList<Formal>(); 
 		printlnFormals.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"println",printlnFormals,new StmtList()));
-		
+
 		//print added
 		List<Formal> printFormals = new ArrayList<Formal>(); 
 		printFormals.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"print",printFormals,new StmtList()));
-		
+
 		//printi added
 		List<Formal> printiFormals = new ArrayList<Formal>(); 
 		printiFormals.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"printi",printiFormals,new StmtList()));
-		
+
+		//printb added
+		List<Formal> printbFormals = new ArrayList<Formal>(); 
+		printbFormals.add(new Formal(new PrimitiveType(-1, DataTypes.BOOLEAN), "b"));
+		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"printb",printbFormals,new StmtList()));
+
 		//readi
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"readi",new ArrayList<Formal>(),new StmtList()));
-		
+
 		//readln
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"readln",new ArrayList<Formal>(),new StmtList()));
-		
+
 		//eof
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.BOOLEAN),"eof",new ArrayList<Formal>(),new StmtList()));
-		
+
 		//stoi
 		List<Formal> stoi = new ArrayList<Formal>(); 
 		stoi.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		stoi.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "n"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"stoi",stoi,new StmtList()));
-		
+
 		//itos
 		List<Formal> itos = new ArrayList<Formal>(); 
 		itos.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"itos",itos,new StmtList()));
-		
-		
+
+
 		//stoa
 		List<Formal> stoa = new ArrayList<Formal>(); 
 		stoa.add(new Formal(new PrimitiveType(-1, DataTypes.STRING), "s"));
 		PrimitiveType t = new PrimitiveType(-1, DataTypes.INT);
 		t.incrementDimension();
 		methodsLst.add(new StaticMethod(t,"stoa",stoa,new StmtList()));
-		
+
 		//atos
 		List<Formal> atos = new ArrayList<Formal>();
 		PrimitiveType t_atos = new PrimitiveType(-1, DataTypes.INT);
 		t_atos.incrementDimension();
 		atos.add(new Formal(t_atos, "a"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.STRING),"atos",atos,new StmtList()));
-		
+
 		//random
 		List<Formal> random = new ArrayList<Formal>();
 		random.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"random",random,new StmtList()));
-		
+
 		//random
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.VOID),"time",new ArrayList<Formal>(),new StmtList()));
-		
+
 		//exit
 		List<Formal> exit = new ArrayList<Formal>();
 		exit.add(new Formal(new PrimitiveType(-1, DataTypes.INT), "i"));
 		methodsLst.add(new StaticMethod(new PrimitiveType(-1, DataTypes.INT),"exit",exit,new StmtList()));
-		
+
 		//declaring class
 		ClassDecl libraryClass = new ClassDecl(-2, "Library",methodsLst);
 		libraryClass.setScope(globaSymlTable);
@@ -138,12 +143,12 @@ public class SemanticEvaluator implements Visitor{
 		addStaticLibraryClass(program);
 		int i = 0; //to get the first class which is Library
 		for (ClassDecl c: program.getClasses()){
-			
+
 			if(c.getName().equals("Library") && i != 0){
 				System.out.println(new SemanticError("Invalid class declaration, can't declare 'Library' class", c.getLineNum()));
 				System.exit(-1);
 			}
-			
+
 			try{
 				globaSymlTable.addClass(c);
 			} 
@@ -153,7 +158,7 @@ public class SemanticEvaluator implements Visitor{
 			}
 			i++;
 		}
-		
+
 		for (ClassDecl c: program.getClasses()){
 			c.setScope(globaSymlTable);
 			c.accept(this);
@@ -169,7 +174,7 @@ public class SemanticEvaluator implements Visitor{
 		if(class_decl.getName() == "Library"){
 			isLibraryClassVisiting = true;
 		}
-		
+
 
 		ClassSymbolTable cst;		
 		if (class_decl.getSuperClassName() != null) {
@@ -179,17 +184,17 @@ public class SemanticEvaluator implements Visitor{
 				System.exit(-1);
 			}
 
-			
+
 			ClassSymbolTable scst = globaSymlTable.getClassSymbolTable(class_decl.getSuperClassName());
 			if(scst == null){
 				//double check should be here
 				System.out.println(new SemanticError("Invalid class declaration, superclass was not previously defined '"+
-			class_decl.getSuperClassName()+"'",
+						class_decl.getSuperClassName()+"'",
 						class_decl.getLineNum()));
 			}
 			cst = new ClassSymbolTable( scst, globaSymlTable.getClass(class_decl.getName()) );
 			scst.addClassSymbolTable(cst);
-			
+
 		} 
 		else { // no superclass
 			cst = new ClassSymbolTable(globaSymlTable,globaSymlTable.getClass(class_decl.getName()));
@@ -201,19 +206,19 @@ public class SemanticEvaluator implements Visitor{
 			fom.setScope(cst);
 			if(fom instanceof Field){
 				Field f = (Field) fom;
-				
+
 				//check if type is already defined
 				if(cst.getFieldSymbol(f.getName()) != null){
 					System.out.println(new SemanticError(f.getName() +" field is already defined.",f.getLineNum()));
 					System.exit(-1);
 				}
-				
+
 				//check if there a method with the same name
 				if(cst.getMethodSymbol(f.getName()) != null){
 					System.out.println(new SemanticError(f.getName() +" field is already defined as method", f.getLineNum()));
 					System.exit(-1);
 				}
-				
+
 				try{
 					cst.addFieldSymbol(f.getName(), f.getType().getFullName());						
 				}
@@ -227,7 +232,7 @@ public class SemanticEvaluator implements Visitor{
 				//method instatnce
 				//check if type is already defined
 				Method m = (Method) fom;
-				
+
 				//check if there isn't field with the same name declared before.
 				if(cst.getFieldSymbol(m.getName()) != null){
 					System.out.println(new SemanticError(m.getName() +" method is already defined as field.",m.getLineNum()));
@@ -237,7 +242,7 @@ public class SemanticEvaluator implements Visitor{
 					System.out.println(new SemanticError(m.getName() +" method is already defined in class.",m.getLineNum()));
 					System.exit(-1);
 				}
-				
+
 				//check if method is main
 				if(isMain(m)){
 					if(hasMain){
@@ -250,8 +255,8 @@ public class SemanticEvaluator implements Visitor{
 					System.out.println(new SemanticError(m.getName() + " wrong definition of main method, must be: 'static void main(string[] args).", m.getLineNum()));
 					System.exit(-1);
 				}
-				
-				
+
+
 				//check override or overload
 				MethodSymbol upperMethodSymbol = cst.getMethodSymbol(m.getName());
 				MethodSymbol currentMethodSymbol = null;
@@ -264,9 +269,9 @@ public class SemanticEvaluator implements Visitor{
 					System.out.println(new SemanticError("'"+m.getName() + "' method type is undefined",m.getLineNum()));
 					System.exit(-1);
 				}
-				
-				
-				
+
+
+
 				//a method with the same name exists
 				//now we want to check if it is an override 
 				if(upperMethodSymbol != null){
@@ -276,15 +281,15 @@ public class SemanticEvaluator implements Visitor{
 						System.exit(-1);
 					}
 				}
-				
+
 				//method is legal here
 				cst.addMethodSymbol(currentMethodSymbol);
-				
+
 			}
 			//method or field passed semantic check so we can continue here
 			fom.accept(this);			
 		}
-		
+
 		//reset LibraryClassVisit
 		isLibraryClassVisiting = false;
 	}
@@ -295,7 +300,7 @@ public class SemanticEvaluator implements Visitor{
 	 */
 	private void methodVisit(Method method){
 		//create symbol table for method scope
-		
+
 		MethodSymbolTable method_scope = new MethodSymbolTable(method.getName(),(ClassSymbolTable)method.getScope());
 		((ClassSymbolTable)method.getScope()).addMethodSymbolTable(method_scope);
 
@@ -322,11 +327,11 @@ public class SemanticEvaluator implements Visitor{
 				}
 				f.accept(this);
 			}
-			
+
 			//method statements
 			method.getStatementList().setScope(method_scope);
 			method.getStatementList().accept(this);
-			
+
 			//return variable
 			try{
 				method_scope.setReturnVarSymbol(method.getType().getFullName());
@@ -338,10 +343,10 @@ public class SemanticEvaluator implements Visitor{
 				System.exit(-1);
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	public void visit(ClassMethod method) {
 		methodVisit(method);	
 	}
@@ -404,7 +409,7 @@ public class SemanticEvaluator implements Visitor{
 	public void visit(AssignStmt stmt) {
 		stmt.getLocation().setScope(stmt.getScope());
 		stmt.getLocation().accept(this);
-		
+
 		stmt.getRhs().setScope(stmt.getScope());
 		stmt.getRhs().accept(this);
 	}
@@ -436,7 +441,7 @@ public class SemanticEvaluator implements Visitor{
 	public void visit(IfStmt stmt) {
 		stmt.getCond().setScope(stmt.getScope());
 		stmt.getCond().accept(this);
-		
+
 		Stmt if_stmt = stmt.getBody();
 		if (if_stmt instanceof IDStmt){
 			BlockSymbolTable block_st = new BlockSymbolTable(stmt.getScope());
@@ -445,7 +450,7 @@ public class SemanticEvaluator implements Visitor{
 		} 
 		else if_stmt.setScope(stmt.getScope());
 		if_stmt.accept(this);
-		
+
 		if (stmt.hasElse()){
 			Stmt else_stmt = stmt.getElseStmt();
 			if (else_stmt instanceof IDStmt){
@@ -465,7 +470,7 @@ public class SemanticEvaluator implements Visitor{
 	public void visit(WhileStmt stmt) {
 		stmt.getCond().setScope(stmt.getScope());
 		stmt.getCond().accept(this);
-		
+
 		Stmt body = stmt.getBody();
 		if (body instanceof IDStmt){
 			BlockSymbolTable block_st = new BlockSymbolTable(stmt.getScope());
@@ -491,10 +496,10 @@ public class SemanticEvaluator implements Visitor{
 	 */
 	public void visit(BlockStmt stmt) {
 		BlockSymbolTable block_st = new BlockSymbolTable(stmt.getScope());
-		
+
 		stmt.getStatementList().setScope(block_st);
 		stmt.getStatementList().accept(this);
-		
+
 		BlockSymbolTable block_parent = (BlockSymbolTable) stmt.getScope();
 		block_parent.addStack(block_st);
 	}
@@ -506,7 +511,7 @@ public class SemanticEvaluator implements Visitor{
 	public void visit(IDStmt stmt) {
 		stmt.getType().setScope(stmt.getScope());
 		stmt.getType().accept(this);
-		
+
 		BlockSymbolTable block_st = (BlockSymbolTable)stmt.getScope();
 		try{
 			block_st.getVarSymbolLocal(stmt.getName());
@@ -524,7 +529,7 @@ public class SemanticEvaluator implements Visitor{
 				System.exit(-1);
 			}
 		}
-		
+
 		if (stmt.hasValue()){
 			stmt.getValue().setScope(stmt.getScope());
 			stmt.getValue().accept(this);
@@ -546,11 +551,11 @@ public class SemanticEvaluator implements Visitor{
 				//Check if variable defined
 				((BlockSymbolTable)var_loc.getScope()).getVarSymbol(var_loc.getName());
 			} 
-			catch (SemanticError e){
-				e.setLineNum(var_loc.getLineNum());
-				System.out.println(e);
-				System.exit(-1);
-			}
+		catch (SemanticError e){
+			e.setLineNum(var_loc.getLineNum());
+			System.out.println(e);
+			System.exit(-1);
+		}
 	}
 
 	/**
@@ -560,7 +565,7 @@ public class SemanticEvaluator implements Visitor{
 	public void visit(ArrLocation arr_loc) {
 		arr_loc.getArrLocation().setScope(arr_loc.getScope());
 		arr_loc.getArrLocation().accept(this);
-		
+
 		arr_loc.getIndex().setScope(arr_loc.getScope());
 		arr_loc.getIndex().accept(this);
 	}
@@ -592,7 +597,7 @@ public class SemanticEvaluator implements Visitor{
 	 * This visitor - does nothing.
 	 */
 	public void visit(This t) {}
-	
+
 	/**
 	 * New class visitor - does nothing.
 	 */
@@ -611,7 +616,7 @@ public class SemanticEvaluator implements Visitor{
 	public void visit(NewArray new_arr) {
 		new_arr.getType().setScope(new_arr.getScope());
 		new_arr.getType().accept(this);
-		
+
 		new_arr.getArrayLength().setScope(new_arr.getScope());
 		new_arr.getArrayLength().accept(this);
 	}
@@ -640,7 +645,7 @@ public class SemanticEvaluator implements Visitor{
 		expr.getExpression().setScope(expr.getScope());
 		expr.getExpression().accept(this);
 	}
-	
+
 	/**
 	 * Sets the scope of the expression's operand, and visits its AST nodes.
 	 *
@@ -649,7 +654,7 @@ public class SemanticEvaluator implements Visitor{
 		expr.getOperand().setScope(expr.getScope());
 		expr.getOperand().accept(this);
 	}
-	
+
 	/**
 	 * Sets the scope of both of the expression's operands, and visits their AST nodes.
 	 *
@@ -657,7 +662,7 @@ public class SemanticEvaluator implements Visitor{
 	public void visit(BinaryOpExpr expr) {
 		expr.getLeftOperand().setScope(expr.getScope());
 		expr.getLeftOperand().accept(this);
-		
+
 		expr.getRightOperand().setScope(expr.getScope());
 		expr.getRightOperand().accept(this);
 	}
