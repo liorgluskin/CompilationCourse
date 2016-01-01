@@ -1008,7 +1008,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		LirReturnInfo operandA = expr.getRightOperand().accept(this, d);
 
 		//Moving operandB anyway for doing calculations if not a register
-		//even if its a memory and we make a string concatatntion
+		//even if its a memory and we perform a string concatenation
 		String OperandBLoc = "R"+d.getCurrentRegister();
 		d.incrementRegister();
 		d.addInstructionToBuilder(operandB.getMoveCommand(), operandB.getRegisterLocation(),OperandBLoc);			
@@ -1026,8 +1026,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 
 		//check if it is string concatenation
+		// operator '+' on a non integer operand
 		types.Type lhs_type = (types.Type) expr.getLeftOperand().accept(new TypeEvaluator(globalSymTable), null);
-		if (lhs_type.toString().compareTo("int") != 0){
+		if (lhs_type.toString().compareTo("int")!=0 && expr.getOp().equals(BinOperator.PLUS)){
 			d.addInstructionToBuilder("Library","__stringCat("+operandB.getRegisterLocation()+","+operandA.getRegisterLocation()
 					+")","R"+d.getCurrentRegister());
 
@@ -1082,18 +1083,28 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		switch (expr.getOp()){
 		case LAND:
+			// check if left operand is false (equals 0)
+			// if it is false, the AND expression is false
 			d.addInstructionToBuilder("Compare","0",operandB_reg);
 			d.addInstructionToBuilder("JumpTrue",false_label);
+			// else, check if right operand is false
 			d.addInstructionToBuilder("Compare","0",operandA_reg);
 			d.addInstructionToBuilder("JumpTrue",false_label);
+			// if both operands are true
 			d.addInstructionToBuilder("Jump",true_label);
 			d.addToCurrentStringBuilder(false_label+":\n");
 			break;
 		case LOR:
+			// check if left operand is false (equals 0)
+			// if it is true, the OR expression is true
 			d.addInstructionToBuilder("Compare","0",operandB_reg);
 			d.addInstructionToBuilder("JumpFalse",true_label);
+			// else, check if right operand is false
 			d.addInstructionToBuilder("Compare","0","R"+operandA_reg);
 			d.addInstructionToBuilder("JumpFalse",true_label);
+			// if both operands are false
+			d.addInstructionToBuilder("Jump",false_label);
+			d.addToCurrentStringBuilder(false_label+":\n");			
 			break;
 		case LT:
 			d.addInstructionToBuilder("JumpL",true_label);
