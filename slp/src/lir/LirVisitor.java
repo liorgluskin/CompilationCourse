@@ -204,7 +204,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			return true;
 		}
 		// is immediate
-		if(!var.contains("R")){
+		if(!var.startsWith("R")){
 			return true;
 		}
 
@@ -350,6 +350,12 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		LirReturnInfo condLirInfo = ifStmt.getCond().accept(this, d);
 		String condResRegister = condLirInfo.getRegisterLocation();
 
+		// transfer condition value to a register
+		// since compare must receive register as op2
+		String tempReg = "R"+d.getCurrentRegister();
+		d.addInstructionToBuilder(condLirInfo.getMoveCommand(), condResRegister, tempReg);
+		condResRegister = tempReg;
+
 		// check if the condition holds
 		d.addInstructionToBuilder("Compare", "0", condResRegister, ifStmt.getLineNum());
 		// if condition is false jump directly to else/end label
@@ -398,6 +404,13 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.setStoreInReg(temp);
 
 		String condResRegister = condInfo.getRegisterLocation();
+
+		// transfer condition value to a register
+		// since compare must receive register as op2
+		String tempReg = "R"+d.getCurrentRegister();
+		d.addInstructionToBuilder(condInfo.getMoveCommand(), condResRegister, tempReg);
+		condResRegister = tempReg;
+
 		// check if the condition holds
 		d.addInstructionToBuilder("Compare", "0", condResRegister, whileStmt.getLineNum());
 		// if condition does not hold, end the while loop
@@ -732,7 +745,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.addToCurrentStringBuilder("#virtual call to "+virtual_call.getMethodName()+"'s location:\n");
 		Expr obj_ref = virtual_call.getObjectReference();
 		String objLoc = ""; 
-		
+
 		// deal with inner static call - static call without class name
 		ClassSymbolTable classSymTable = ((BlockSymbolTable)virtual_call.getScope()).getEnclosingClassSymbolTable();
 		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(virtual_call.getMethodName());
@@ -1139,7 +1152,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			d.addInstructionToBuilder("Compare","0",operandB_reg);
 			d.addInstructionToBuilder("JumpFalse",true_label);
 			// else, check if right operand is false
-			d.addInstructionToBuilder("Compare","0","R"+operandA_reg);
+			d.addInstructionToBuilder("Compare","0",operandA_reg);
 			d.addInstructionToBuilder("JumpFalse",true_label);
 			// if both operands are false
 			d.addInstructionToBuilder("Jump",false_label);
