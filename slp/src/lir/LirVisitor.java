@@ -576,10 +576,17 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 				// check if variable should be returned in a register
 				// if not, we return the label
 				String ret = label;
-				if(d.storeInReg()){
+				/////////////////
+//				if(d.storeInReg()){
+//					regMoveHandler(label, d);
+//					ret = "R"+ d.getCurrentRegister();
+//				}					
+				//////////////
+				if(label.startsWith("R") || label.contains(".") || label.endsWith("]")){
 					regMoveHandler(label, d);
 					ret = "R"+ d.getCurrentRegister();
-				}							
+				}	
+				
 				return new LirReturnInfo(MoveEnum.MOVE,ret);
 			}
 		}
@@ -1034,8 +1041,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		d.incrementRegister();
 		d.addInstructionToBuilder(operandB.getMoveCommand(), operandB.getRegisterLocation(),OperandBLoc);			
 
-
-		//handle operand A:
+		//handle right side operand:
 		//move only if field or array
 		String OperandALoc = operandA.getRegisterLocation();
 		if(operandA.getMoveCommand() != MoveEnum.MOVE ){
@@ -1044,7 +1050,6 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			d.addInstructionToBuilder(operandA.getMoveCommand(), OperandALoc,res);
 			OperandALoc = res;			
 		}
-
 
 		//check if it is string concatenation
 		// operator '+' on a non integer operand
