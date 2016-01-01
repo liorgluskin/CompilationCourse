@@ -280,7 +280,6 @@ public class Environment {
 		}
 
 		for(String method : methods){
-			System.out.println("method="+method+"\t\tmethodName="+methodName);///////////////////
 			// method is obviously not what we are looking for
 			if(method.length() - methodName.length() < 1){
 				continue;
