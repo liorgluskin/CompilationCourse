@@ -465,14 +465,21 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		// get the type of the array location index
 		types.Type indexType = (types.Type) arr_loc.getIndex().accept(this, o);
 		// validate index type is int
-
 		if(!indexType.extendsType(new TypeInt())){
 			SemanticError error = new SemanticError("Array location invalid, index not of type int",
 					arr_loc.getLineNum());
 			System.out.println(error);
 			System.exit(1);
 		}
-
+		// check if arrType is a legal TypeArray
+		try{
+			TypeArray castArrType = ((TypeArray)arrType);
+		}catch(java.lang.ClassCastException e){
+			SemanticError error = new SemanticError("Array location invalid, illegal array type",
+					arr_loc.getLineNum());
+			System.out.println(error);
+			System.exit(1);
+		}
 
 		return ((TypeArray)arrType).getElementType();
 	}
