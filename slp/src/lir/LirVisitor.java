@@ -683,8 +683,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 
 		// dealing with static method inheritance	
 		if(!class_name.equals("Library")){
-			// get the class name where the static method is defined,
-			ClassSymbolTable classSymTable = ((BlockSymbolTable) static_call.getScope()).getEnclosingClassSymbolTable();
+
+			// get the class name where the static method is defined
+			ClassSymbolTable classSymTable = globalSymTable.getClassSymbolTable(class_name);
 			class_name = getStaticMethodClassName(static_call.getMethodName(), classSymTable);
 		}
 		
@@ -765,7 +766,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			// get the current class symbol
 			ClassSymbol classSymbol = (ClassSymbol)classSymTable.getSymbol();
 			// returns the AST class, of the current class
-			ClassDecl class_decl =classSymbol.getClassDecl();
+			ClassDecl class_decl = classSymbol.getClassDecl();
 
 			// if no super class exists and the static method was not found 
 			// print the error exit the program
