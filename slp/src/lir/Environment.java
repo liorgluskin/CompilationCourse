@@ -172,9 +172,12 @@ public class Environment {
 
 				//if the original function has is the overriden function then
 				//rawMethod is its name and substring will return its name
-				String originalMethodName = superMethodName
-						.substring(superMethodName.length() - rawMethod.length());
-
+				
+				// method is obviously not what we are looking for
+				if(superMethodName.length() - rawMethod.length() < 1){
+					continue;
+				}
+				String originalMethodName = superMethodName.substring(superMethodName.length() - rawMethod.length());
 
 				if(originalMethodName.equals(rawMethod)){
 					isOverride = true;
