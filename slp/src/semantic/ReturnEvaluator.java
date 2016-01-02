@@ -85,12 +85,13 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 			for(Stmt s : method.getStatementList().getStatements()){
 				// method contains a 'return' statement
 				if(s.accept(this,o) != null){
+					System.out.println("BBBBBB");//////
 					return null;
 				}
 			}
 			// did not find 'return' statement
 			SemanticError error = new SemanticError("Invalid method, method with type '"
-					+method.getType().getFullName()+"' must have 'return' statement on each prgram path", method.getLineNum());
+					+method.getType().getFullName()+"' must have 'return' statement on each program path", method.getLineNum());
 			System.out.println(error);
 			System.exit(-1);
 		}
@@ -123,10 +124,18 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 	}
 
 	public Object visit(StmtList stmts, Object o) {
+		// determines if statement block contains 'return'
+		Object lastStmtReturn = null; 
 		for (Stmt s : stmts.getStatements()) {
-			s.accept(this, o);
+			Object hasReturn = s.accept(this, o);
+			// found return statement
+			if(lastStmtReturn == null){
+				lastStmtReturn = hasReturn;
+			}
 		}
-		return null;
+		// if statement in block was return
+		// then lastStmtReturn is not null
+		return lastStmtReturn;
 	}
 
 	public Object visit(Stmt stmt, Object o) {
@@ -150,7 +159,7 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 		}
 		return "Return";
 	}
-	
+
 	/**
 	 * Helper method to determine if the condition of an 'if',
 	 * or 'while' statement is set to 'true' or 'false'.
@@ -188,9 +197,9 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 		else if(ifCondVal == 0){
 			return elseRes;
 		}
-		
+
 		// If condition is not constant
-		
+
 		// 'if' body does not contain 'return'
 		if(ifRes == null){
 			return ifRes;
@@ -202,11 +211,11 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 		}		
 	}
 
-	
+
 	public Object visit(WhileStmt stmt, Object o) {
 		Expr cond = stmt.getCond();
 		Object body = stmt.getBody().accept(this, o);
-		
+
 		// a case of 'while(true)'
 		if(getStagnantCondition(cond) == 1){
 			// the body must contains 'return' statement
@@ -215,7 +224,7 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 		return null;
 	}
 
-	
+
 	public Object visit(BreakStmt stmt, Object o) {
 		return null;
 	}
@@ -225,10 +234,17 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 	}
 
 	public Object visit(BlockStmt stmt, Object o) {
+		Object lastStmtReturn = null;
 		for(Stmt s : stmt.getStatementList().getStatements()){
-			s.accept(this, o);
+			Object hasReturn = s.accept(this, o);
+			// found return statement
+			if(lastStmtReturn == null){
+				lastStmtReturn = hasReturn;
+			}
 		}
-		return null;
+		// if statement in block was return
+		// then lastStmtReturn is not null
+		return lastStmtReturn;
 	}
 
 	public Object visit(IDStmt idStmt, Object o) { 
@@ -288,8 +304,7 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 	}
 
 	public Object visit(Length length, Object o) {
-		length.getExpression().accept(this, o);
-		return null;
+		return length.getExpression().accept(this, o);
 	}
 
 	public Object visit(Expr expr, Object o) {
@@ -297,13 +312,11 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 	}
 
 	public Object visit(BlockExpr expr, Object o) {
-		expr.getExpression().accept(this, o);
-		return null;
+		return expr.getExpression().accept(this, o);
 	}
 
 	public Object visit(UnaryOpExpr expr, Object o) {
-		expr.getOperand().accept(this, o);
-		return null;
+		return expr.getOperand().accept(this, o);
 	}
 
 	public Object visit(BinaryOpExpr expr, Object o) {
