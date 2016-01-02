@@ -684,7 +684,11 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		String method_name = static_call.getMethodName();
 		if (static_call.getClassName().equals("Library")){
 			code = "__"+method_name+"(";
-		}else{
+		}
+		else{
+			System.out.println("class_name= "+class_name);////////////////
+			System.out.println("method_name= "+method_name);////////////////
+
 			code = "_"+class_name+"_"+method_name+"(";
 		}
 		int i = 0;
@@ -751,7 +755,9 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(virtual_call.getMethodName());
 		// call is actually of static method defined in the same class: static()
 		if(methodSym != null){
-			if(methodSym.isStatic()){
+			// check method symbol belongs to a static method of the class
+			// and verify the method does not have external object reference, meaning it's virtual
+			if(methodSym.isStatic() && obj_ref == null){
 				// accept the inner static method call
 				StaticCall innerStaticCall = 
 						new StaticCall(virtual_call.getLineNum(), classSymTable.getSymbol().getName(), 
@@ -1081,7 +1087,7 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		// operator '+' on a non integer operand
 		types.Type lhs_type = (types.Type) expr.getLeftOperand().accept(new TypeEvaluator(globalSymTable), null);
 		if (lhs_type.toString().compareTo("int")!=0 && expr.getOp().equals(BinOperator.PLUS)){
-			d.addInstructionToBuilder("Library","__stringCat("+operandB.getRegisterLocation()+","+operandA.getRegisterLocation()
+			d.addInstructionToBuilder("Library","__stringCat("+operandB.getRegisterLocation()+","+OperandALoc
 					+")","R"+d.getCurrentRegister());
 
 			String res = "R"+d.getCurrentRegister();
