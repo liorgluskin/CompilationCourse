@@ -679,16 +679,20 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 	 */
 	public LirReturnInfo visit(StaticCall static_call, Environment d) {
 		String code;
-
 		String class_name = static_call.getClassName();
+
+		// dealing with static method inheritance	
+		if(!class_name.equals("Library")){
+			// get the class name where the static method is defined,
+			ClassSymbolTable classSymTable = ((BlockSymbolTable) static_call.getScope()).getEnclosingClassSymbolTable();
+			class_name = getStaticMethodClassName(static_call.getMethodName(), classSymTable);
+		}
+		
 		String method_name = static_call.getMethodName();
 		if (static_call.getClassName().equals("Library")){
 			code = "__"+method_name+"(";
 		}
 		else{
-			System.out.println("class_name= "+class_name);////////////////
-			System.out.println("method_name= "+method_name);////////////////
-
 			code = "_"+class_name+"_"+method_name+"(";
 		}
 		int i = 0;
@@ -741,6 +745,43 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 		return new LirReturnInfo(MoveEnum.MOVE,resReg);
 	}
 
+	/**
+	 * Helper method that for a given static-method symbol,
+	 * searches the first class in scope that contains the method.
+	 * This is due to static method inheritance in IC.
+	 * 
+	 * If method does not exist in any of the super-classes, 
+	 * we print a semantic error and exit the program
+	 */
+	public String getStaticMethodClassName(String methodName, ClassSymbolTable classSymTable){
+
+		// check if the static method is defined in Current class
+		MethodSymbol methodSym = classSymTable.getCurrentMethodSymbol(methodName);
+		if(methodSym != null && methodSym.isStatic()){
+			return classSymTable.getSymbol().getName();
+		}
+		// if not defined, search superclass if exists
+		else{
+			// get the current class symbol
+			ClassSymbol classSymbol = (ClassSymbol)classSymTable.getSymbol();
+			// returns the AST class, of the current class
+			ClassDecl class_decl =classSymbol.getClassDecl();
+
+			// if no super class exists and the static method was not found 
+			// print the error exit the program
+			String superClassName = class_decl.getSuperClassName();
+			if(superClassName == null){
+				System.out.println("Runtime Error: Invalid static method call '"+
+						methodName+"', static method does not exist in class scope");
+				System.exit(-1);
+			}
+			// else, super class exists and we search the method-name in super-class
+			// get super class symbol table
+			ClassSymbolTable superClassTable = globalSymTable.getClassSymbolTable(superClassName);
+			return getStaticMethodClassName(methodName, superClassTable);
+		}
+	}
+
 
 	/**
 	 * Translating Virtual call to LIR code
@@ -758,10 +799,16 @@ public class LirVisitor implements PropagatingVisitor<Environment,LirReturnInfo>
 			// check method symbol belongs to a static method of the class
 			// and verify the method does not have external object reference, meaning it's virtual
 			if(methodSym.isStatic() && obj_ref == null){
-				// accept the inner static method call
+				// Accept the inner-static method call
+
+				// get the class name where the static method is defined,
+				// dealing with static method inheritance
+				String staticMethodClassName = getStaticMethodClassName(virtual_call.getMethodName(), classSymTable);
 				StaticCall innerStaticCall = 
-						new StaticCall(virtual_call.getLineNum(), classSymTable.getSymbol().getName(), 
+						new StaticCall(virtual_call.getLineNum(), staticMethodClassName, 
 								virtual_call.getMethodName(), virtual_call.getArguments());
+				// set the static method scope
+				innerStaticCall.setScope(virtual_call.getScope());
 				return innerStaticCall.accept(this, d);		
 			}
 		}
