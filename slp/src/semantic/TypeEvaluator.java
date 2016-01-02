@@ -506,7 +506,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		}
 		// validate method is defined as static
 		if (!methodSym.isStatic()){
-			SemanticError error = new SemanticError("Invalid static method call, method is not static",
+			SemanticError error = new SemanticError("Invalid static method call, method is not defined as static",
 					static_call.getLineNum());
 			System.out.println(error);
 			System.exit(1);
