@@ -44,8 +44,10 @@ import slp.VirtualCall;
 import slp.Visitor;
 import slp.WhileStmt;
 import symbolTableHandler.BlockSymbolTable;
+import symbolTableHandler.ClassSymbol;
 import symbolTableHandler.ClassSymbolTable;
 import symbolTableHandler.GlobalSymbolTable;
+import symbolTableHandler.MethodSymbol;
 import symbolTableHandler.SymbolTable;
 import types.Type;
 import types.TypeArray;
@@ -63,7 +65,7 @@ import types.TypeVoid;
  * */
 public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
-	private GlobalSymbolTable globaSymlTable;
+	private GlobalSymbolTable globalSymTable;
 	int inLoopScope = 0;
 	private boolean inStaticMethod = false;
 
@@ -72,7 +74,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 	 * @param symbol-table of the program global scope
 	 */
 	public TypeEvaluator(GlobalSymbolTable globaSymlTable){
-		this.globaSymlTable = globaSymlTable;
+		this.globalSymTable = globaSymlTable;
 	}
 
 
@@ -418,7 +420,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			// Verify the class contains a field with var_loc's name
 			// get the class symbol table - if class exists 
 			////// handle when class not found in sym table!
-			symbolTableHandler.ClassSymbolTable classSymTable = globaSymlTable.getClassSymbolTable(locationType.getName());
+			symbolTableHandler.ClassSymbolTable classSymTable = globalSymTable.getClassSymbolTable(locationType.getName());
 			// get the class field - if exists
 			////// handle when field not found in class table!
 			symbolTableHandler.FieldSymbol fieldSymbol = classSymTable.getFieldSymbol(var_loc.getName());
@@ -477,6 +479,42 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 
 	/**
+	 * Helper method that for a given static-method symbol,
+	 * searches the first class in scope that contains the method.
+	 * This is due to static method inheritance in IC.
+	 * 
+	 * If method does not exist in any of the super-classes, 
+	 * we return 'null'
+	 */
+	public String getStaticMethodClassName(String methodName, ClassSymbolTable classSymTable){
+
+		// check if the static method is defined in Current class
+		MethodSymbol methodSym = classSymTable.getCurrentMethodSymbol(methodName);
+		if(methodSym != null && methodSym.isStatic()){
+			return classSymTable.getSymbol().getName();
+		}
+		// if not defined, search superclass if exists
+		else{
+			// get the current class symbol
+			ClassSymbol classSymbol = (ClassSymbol)classSymTable.getSymbol();
+			// returns the AST class, of the current class
+			ClassDecl class_decl =classSymbol.getClassDecl();
+
+			// if no super class exists and the static method was not found 
+			// print the error exit the program
+			String superClassName = class_decl.getSuperClassName();
+			if(superClassName == null){
+				return null;
+			}
+			// else, super class exists and we search the method-name in super-class
+			// get super class symbol table
+			ClassSymbolTable superClassTable = globalSymTable.getClassSymbolTable(superClassName);
+			return getStaticMethodClassName(methodName, superClassTable);
+		}
+	}
+
+
+	/**
 	 * Type checks for an Static Call expression:
 	 * validate static method's enclosing class exists
 	 * validate called method is defined in enclosing class, as static method
@@ -488,7 +526,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 
 		// validate static method's enclosing class exists
 		symbolTableHandler.ClassSymbolTable classSymTable = null;
-		classSymTable = globaSymlTable.getClassSymbolTable(static_call.getClassName());
+		classSymTable = globalSymTable.getClassSymbolTable(static_call.getClassName());
 		if(classSymTable == null){
 			SemanticError error = new SemanticError("Invalid static method call, method class is undefined",
 					static_call.getLineNum());
@@ -505,7 +543,10 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			System.exit(1);
 		}
 		// validate method is defined as static
-		if (!methodSym.isStatic()){
+		// or that it is defined as static in one of its super-classes
+		String methodDefinitionClass = getStaticMethodClassName(methodSym.getName(), classSymTable);
+		boolean definedStaticInSuper = (methodDefinitionClass==null);
+		if (!methodSym.isStatic() && definedStaticInSuper){
 			SemanticError error = new SemanticError("Invalid static method call, method is not defined as static",
 					static_call.getLineNum());
 			System.out.println(error);
@@ -563,7 +604,7 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		if(virtual_call.getObjectReference() != null){
 			// get instance type
 			types.Type objType = (types.Type) virtual_call.getObjectReference().accept(this, o);
-			symbolTableHandler.ClassSymbolTable objClassTable = ((GlobalSymbolTable) globaSymlTable).getClassSymbolTable(objType.getName());
+			symbolTableHandler.ClassSymbolTable objClassTable = ((GlobalSymbolTable) globalSymTable).getClassSymbolTable(objType.getName());
 			classSymTable = objClassTable;
 			// instance class undefined
 			if(objClassTable == null){
@@ -583,10 +624,16 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 				// and verify the method does not have external object reference, meaning it's virtual
 				Expr obj_ref = virtual_call.getObjectReference();
 				if(methodSym.isStatic() && obj_ref == null){
-					// accept the inner static method call
+					// Accept the inner-static method call
+
+					// get the class name where the static method is defined,
+					// dealing with static method inheritance
+					String staticMethodClassName = getStaticMethodClassName(virtual_call.getMethodName(), classSymTable);
 					StaticCall innerStaticCall = 
-							new StaticCall(virtual_call.getLineNum(), classSymTable.getSymbol().getName(), 
+							new StaticCall(virtual_call.getLineNum(), staticMethodClassName, 
 									virtual_call.getMethodName(), virtual_call.getArguments());
+					// set the static method scope
+					innerStaticCall.setScope(virtual_call.getScope());
 					return innerStaticCall.accept(this, o);		
 				}
 			}
