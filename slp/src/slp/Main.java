@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java_cup.runtime.*;
+import semantic.ReturnEvaluator;
 import semantic.SemanticEvaluator;
 import semantic.TypeEvaluator;
 import symbolTableHandler.GlobalSymbolTable;
@@ -75,6 +76,10 @@ public class Main {
 			// validate semantics of program types
 			TypeEvaluator typeEvalutor = new TypeEvaluator(global_st);
 			typeEvalutor.visit(root, null);
+			// for non-void methods:
+			//validate each branch in program contains 'return' statement
+			ReturnEvaluator returnEvaluator = new ReturnEvaluator(global_st);
+			returnEvaluator.visit(root, null);
 
 
 
@@ -95,7 +100,7 @@ public class Main {
 			bw.write(lirCode);
 			bw.close();
 
-			System.out.println("Done");
+			System.out.println("### LIR Translation Finished ###");
 			
 			
 			
