@@ -579,7 +579,10 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 			symbolTableHandler.MethodSymbol methodSym = classSymTable.getMethodSymbol(virtual_call.getMethodName());
 			// call is actually of static method defined in the same class: static()
 			if(methodSym != null){
-				if(methodSym.isStatic()){
+				// check method symbol belongs to a static method of the class
+				// and verify the method does not have external object reference, meaning it's virtual
+				Expr obj_ref = virtual_call.getObjectReference();
+				if(methodSym.isStatic() && obj_ref == null){
 					// accept the inner static method call
 					StaticCall innerStaticCall = 
 							new StaticCall(virtual_call.getLineNum(), classSymTable.getSymbol().getName(), 
@@ -995,5 +998,5 @@ public class TypeEvaluator implements PropagatingVisitor<Object, Object>{
 		return leftParamType;
 	}
 
- 
+
 }
