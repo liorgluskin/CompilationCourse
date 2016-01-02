@@ -85,7 +85,6 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 			for(Stmt s : method.getStatementList().getStatements()){
 				// method contains a 'return' statement
 				if(s.accept(this,o) != null){
-					System.out.println("BBBBBB");//////
 					return null;
 				}
 			}
