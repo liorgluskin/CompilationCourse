@@ -90,7 +90,7 @@ public class ReturnEvaluator implements PropagatingVisitor<Object, Object>{
 			}
 			// did not find 'return' statement
 			SemanticError error = new SemanticError("Invalid method, method with type '"
-					+method.getType().getFullName()+"' must have 'return' statement", method.getLineNum());
+					+method.getType().getFullName()+"' must have 'return' statement on each prgram path", method.getLineNum());
 			System.out.println(error);
 			System.exit(-1);
 		}
